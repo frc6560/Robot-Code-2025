@@ -1,43 +1,50 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-package com.team6560.frc2024.subsystems;
+package com.team6560.frc2025.subsystems;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.Encoder;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.team6560.frc2024.Constants.WristConstants;
+import com.revrobotics.spark.SparkRelativeEncoder;
+import com.team6560.frc2025.Constants.WristConstants;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
+
 
 public class Wrist extends SubsystemBase {
+
   // motor
   private final TalonFX WristMotor;
-
 
   // sensors
   private final DigitalInput limitSwitch;
 
   // relative encoder 
-  private final DigitalInput input;
-  private final DutyCycleEncoder encoder;
+  private final Encoder encoder;
+
+  private double initialEncoderPos;
 
   /** Creates a new Wrist. */
   public Wrist() {
       this.WristMotor = new TalonFX(WristConstants.KRAKEN_ID);
-      this.limitSwitch = new DigitalInput(0);
+      initialEncoderPos = WristMotor.getPosition().getValueAsDouble();
 
-      this.input = new DigitalInput(0); //fix ports according to constants file
-      this.encoder = new DutyCycleEncoder(input);
+      //fix channels
+      this.limitSwitch = new DigitalInput(0);
+      this.encoder = new Encoder(0, 1);
 
       // configs gear ratio
       var wristGR = new FeedbackConfigs();
@@ -45,15 +52,16 @@ public class Wrist extends SubsystemBase {
 
       //PID
       var wristPIDController = new Slot0Configs();
-      //do we need kS?
       wristPIDController.kS = 0;
-
       wristPIDController.kP = 0;
       wristPIDController.kI = 0;
       wristPIDController.kD = 0;
 
-
-      
+      // Network Tables
+      ntDispTab("Hood ")
+            .add("Wrist Angle", this::getWristAngle)
+            .add("Limit switch", this::topLimitDown)  
+            .add("Soft limit", this::getUpperBound)
   }
 
   @Override
@@ -61,13 +69,19 @@ public class Wrist extends SubsystemBase {
      
   }
 
-  // setting wrist velocity logic
-  public void SetMotorSpeed(double speed){
+  // setting wrist velocity
+  public void SetMotorPosition(double position){
+    position /= WristConstants.GEAR_RATIO;
+    
+    final PositionVoltage m_request;
     if(limitSwitch.get()){
-      WristMotor.set(0);
+      m_request = new PositionVoltage(position);
     }
     else{
-      WristMotor.set(speed);
+      m_request = new PositionVoltage(0);
     }
+    WristMotor.setControl(m_request);
   }
+
+
 }
