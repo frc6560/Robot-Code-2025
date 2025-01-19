@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
+import javax.swing.text.Position;
+
 
 public class Wrist extends SubsystemBase {
 
@@ -40,7 +42,7 @@ public class Wrist extends SubsystemBase {
       // PID
       var wristPIDController = new Slot0Configs();
       //all random
-      wristPIDController.kS = 0;
+      wristPIDController.kS = 0.1;
       wristPIDController.kP = 0;
       wristPIDController.kI = 0;
       wristPIDController.kD = 0;
@@ -50,7 +52,8 @@ public class Wrist extends SubsystemBase {
             .add("Wrist angle", this::getWristAngle)
             .add("Limit switch", this::LimitDown)  
             .add("Soft upper limit", this::getUpperBound)
-            .add("Soft bottom limit", this::getLowerBound);
+            .add("Soft bottom limit", this::getLowerBound)
+            .add("Overshot limits", this::getOvershoot);
   }
 
   @Override
@@ -77,6 +80,11 @@ public class Wrist extends SubsystemBase {
     return WristConstants.LOWER_SOFT_BOUND;
   }
 
+  public boolean getOvershoot(){
+    double position = this.getWristAngle();
+    return(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND);
+  }
+
   /** Actually sets wrist position. */
   public void SetMotorPosition(double position){
     double currentPosition = this.getWristAngle();
@@ -87,9 +95,8 @@ public class Wrist extends SubsystemBase {
     WristMotor.setControl(m_request);
   }
 
-  public void WristSafetyCheck(){
-    double position = this.getWristAngle();
-    if(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND){
+  public void overshootHandler(){
+    if(getOvershoot()){
       WristMotor.setControl(new PositionVoltage(0));
     }
   }
