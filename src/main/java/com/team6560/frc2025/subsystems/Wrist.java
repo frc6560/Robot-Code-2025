@@ -55,31 +55,20 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // uses soft bounds to stop the motor
-    double position = this.getWristAngle();
-    if(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND){
-      WristMotor.setControl(new PositionVoltage(0));
-    }
+    //don't hard code into periodic yet !!
   }
 
-  /**
- * Checks if the wrist is down based on the limit switch.
- * @return true if wrist is down, false otherwise.
- */
+  /** Checks if the wrist is down based on the limit switch. */
   private boolean LimitDown(){
     return !(limitSwitch.get());
   }
 
-  /**
-   * Gets the current wrist angle
-   */
+  /** Gets the current wrist angle */
   public double getWristAngle(){
     return ((WristMotor.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
   }
 
-  /**
-   * Gets the upper bound of the wrist. Static value defined in Constants.
-   */
+  /** Gets the upper bound of the wrist. Static value defined in Constants. */
   public double getUpperBound(){
     return WristConstants.UPPER_SOFT_BOUND;
   }
@@ -94,13 +83,14 @@ public class Wrist extends SubsystemBase {
 
     double deltaPos = (position-currentPosition) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
-    final PositionVoltage m_request;
-    if(limitSwitch.get()){
-      m_request = new PositionVoltage(0);
-    }
-    else{
-      m_request = new PositionVoltage(deltaPos);
-    }
+    final PositionVoltage m_request = new PositionVoltage(deltaPos);
     WristMotor.setControl(m_request);
+  }
+
+  public void WristSafetyCheck(){
+    double position = this.getWristAngle();
+    if(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND){
+      WristMotor.setControl(new PositionVoltage(0));
+    }
   }
 }
