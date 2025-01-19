@@ -3,7 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 // Cloned from YAGSL 2025.1.1
 
-package com.team6560.frc2024.subsystems.swervedrive;
+package com.team6560.frc2025.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -18,8 +18,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-import com.team6560.frc2024.Constants;
-import com.team6560.frc2024.subsystems.swervedrive.Vision.Cameras;
+import com.team6560.frc2025.Constants;
+import com.team6560.frc2025.subsystems.swervedrive.Vision.Cameras;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;

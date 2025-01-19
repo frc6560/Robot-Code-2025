@@ -12,6 +12,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkRelativeEncoder;
+import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.Constants.WristConstants;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -60,28 +61,41 @@ public class Wrist extends SubsystemBase {
       // Network Tables
       ntDispTab("Hood ")
             .add("Wrist Angle", this::getWristAngle)
-            .add("Limit switch", this::topLimitDown)  
-            .add("Soft limit", this::getUpperBound)
+            .add("Limit switch", this::LimitDown)  
+            .add("Soft limit", this::getUpperBound);
   }
 
   @Override
   public void periodic() {
-     
+    // redundancy to check for limit switch stuff
+    if (limitSwitch.get()) {
+      WristMotor.setControl(new PositionVoltage(0)); // Stop motor immediately
+    }
+  }
+
+  private boolean LimitDown(){
+    return !(limitSwitch.get());
+  }
+
+  public double getWristAngle(){
+    return 0.0;
+  }
+
+  public double getUpperBound(){
+    return WristConstants.SOFT_BOUND;
   }
 
   // setting wrist velocity
   public void SetMotorPosition(double position){
-    position /= WristConstants.GEAR_RATIO;
+    position = position / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
     final PositionVoltage m_request;
     if(limitSwitch.get()){
-      m_request = new PositionVoltage(position);
+      m_request = new PositionVoltage(0);
     }
     else{
-      m_request = new PositionVoltage(0);
+      m_request = new PositionVoltage(position);
     }
     WristMotor.setControl(m_request);
   }
-
-
 }

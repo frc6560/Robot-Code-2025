@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package com.team6560.frc2024;
+package com.team6560.frc2025;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -52,5 +52,6 @@ public final class Constants
   public static final class WristConstants{
     public static final int KRAKEN_ID = 16;
     public static final double GEAR_RATIO = 69.42;
+    public static final double SOFT_BOUND = 0.0;
   }
 }

@@ -1,11 +1,12 @@
-package frc.robot.commands.swervedrive.auto;
+package com.team6560.frc2025.commands.swervedrive.auto;
+
+import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 
 /**
