@@ -16,10 +16,6 @@ import com.revrobotics.spark.SparkRelativeEncoder;
 import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.Constants.WristConstants;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,6 +30,7 @@ public class Wrist extends SubsystemBase {
   // sensors
   private final DigitalInput limitSwitch;
 
+  // initial encoder stuff
   private double initialEncoderPos;
 
   /** Creates a new Wrist. */
@@ -53,7 +50,7 @@ public class Wrist extends SubsystemBase {
 
       // Telemetry
       ntDispTab("Hood ")
-            .add("Wrist Angle", this::getWristAngle)
+            .add("Wrist angle", this::getWristAngle)
             .add("Limit switch", this::LimitDown)  
             .add("Soft limit", this::getUpperBound);
   }
