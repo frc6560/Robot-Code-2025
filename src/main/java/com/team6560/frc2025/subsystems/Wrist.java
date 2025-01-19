@@ -33,9 +33,6 @@ public class Wrist extends SubsystemBase {
   // sensors
   private final DigitalInput limitSwitch;
 
-  // relative encoder 
-  private final Encoder encoder;
-
   private double initialEncoderPos;
 
   /** Creates a new Wrist. */
@@ -43,22 +40,17 @@ public class Wrist extends SubsystemBase {
       this.WristMotor = new TalonFX(WristConstants.KRAKEN_ID);
       initialEncoderPos = WristMotor.getPosition().getValueAsDouble();
 
-      //fix channels
-      this.limitSwitch = new DigitalInput(0);
-      this.encoder = new Encoder(0, 1);
+      this.limitSwitch = new DigitalInput(0); //random
 
-      // configs gear ratio
-      var wristGR = new FeedbackConfigs();
-      wristGR.SensorToMechanismRatio = WristConstants.GEAR_RATIO;
-
-      //PID
+      // PID
       var wristPIDController = new Slot0Configs();
+      //all random
       wristPIDController.kS = 0;
       wristPIDController.kP = 0;
       wristPIDController.kI = 0;
       wristPIDController.kD = 0;
 
-      // Network Tables
+      // Telemetry
       ntDispTab("Hood ")
             .add("Wrist Angle", this::getWristAngle)
             .add("Limit switch", this::LimitDown)  
@@ -67,7 +59,7 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // redundancy to check for limit switch stuff
+    // Redundancy to check for limit switch stuff
     if (limitSwitch.get()) {
       WristMotor.setControl(new PositionVoltage(0)); // Stop motor immediately
     }
@@ -85,10 +77,10 @@ public class Wrist extends SubsystemBase {
     return WristConstants.SOFT_BOUND;
   }
 
-  // actually sets wrist position
+  /** Actually sets wrist position. */
   public void SetMotorPosition(double position){
     double currentPosition = this.getWristAngle();
-    
+
     double deltaPos = (position-currentPosition) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
     final PositionVoltage m_request;
