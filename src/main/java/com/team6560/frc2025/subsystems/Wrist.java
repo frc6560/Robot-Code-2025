@@ -87,14 +87,16 @@ public class Wrist extends SubsystemBase {
 
   // actually sets wrist position
   public void SetMotorPosition(double position){
-    position = position / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
+    double currentPosition = this.getWristAngle();
+    
+    double deltaPos = (position-currentPosition) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
     final PositionVoltage m_request;
     if(limitSwitch.get()){
       m_request = new PositionVoltage(0);
     }
     else{
-      m_request = new PositionVoltage(position);
+      m_request = new PositionVoltage(deltaPos);
     }
     WristMotor.setControl(m_request);
   }
