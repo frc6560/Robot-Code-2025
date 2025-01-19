@@ -6,14 +6,11 @@ package com.team6560.frc2025.subsystems;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import edu.wpi.first.wpilibj.Encoder;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.spark.SparkRelativeEncoder;
-import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.Constants.WristConstants;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -49,7 +46,7 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kD = 0;
 
       // Telemetry
-      ntDispTab("Hood ")
+      ntDispTab("Wrist")
             .add("Wrist angle", this::getWristAngle)
             .add("Limit switch", this::LimitDown)  
             .add("Soft limit", this::getUpperBound);
