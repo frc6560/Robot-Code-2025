@@ -49,27 +49,43 @@ public class Wrist extends SubsystemBase {
       ntDispTab("Wrist")
             .add("Wrist angle", this::getWristAngle)
             .add("Limit switch", this::LimitDown)  
-            .add("Soft limit", this::getUpperBound);
+            .add("Soft upper limit", this::getUpperBound)
+            .add("Soft bottom limit", this::getLowerBound);
   }
 
   @Override
   public void periodic() {
-    // Redundancy to check for limit switch stuff
-    if (limitSwitch.get()) {
-      WristMotor.setControl(new PositionVoltage(0)); // Stop motor immediately
+    // uses soft bounds to stop the motor
+    double position = this.getWristAngle();
+    if(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND){
+      WristMotor.setControl(new PositionVoltage(0));
     }
   }
 
+  /**
+ * Checks if the wrist is down based on the limit switch.
+ * @return true if wrist is down, false otherwise.
+ */
   private boolean LimitDown(){
     return !(limitSwitch.get());
   }
 
+  /**
+   * Gets the current wrist angle
+   */
   public double getWristAngle(){
     return ((WristMotor.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
   }
 
+  /**
+   * Gets the upper bound of the wrist. Static value defined in Constants.
+   */
   public double getUpperBound(){
-    return WristConstants.SOFT_BOUND;
+    return WristConstants.UPPER_SOFT_BOUND;
+  }
+
+  public double getLowerBound(){
+    return WristConstants.LOWER_SOFT_BOUND;
   }
 
   /** Actually sets wrist position. */
