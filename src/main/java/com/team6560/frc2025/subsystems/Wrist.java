@@ -78,14 +78,14 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getWristAngle(){
-    return 0.0;
+    return ((WristMotor.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
   }
 
   public double getUpperBound(){
     return WristConstants.SOFT_BOUND;
   }
 
-  // setting wrist velocity
+  // actually sets wrist position
   public void SetMotorPosition(double position){
     position = position / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
