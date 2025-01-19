@@ -52,6 +52,6 @@ public final class Constants
   public static final class WristConstants{
     public static final int KRAKEN_ID = 16;
     public static final double GEAR_RATIO = 69.42;
-    public static final double SOFT_BOUND = 0.0;
+    public static final double SOFT_BOUND = 0.0; //random
   }
 }
