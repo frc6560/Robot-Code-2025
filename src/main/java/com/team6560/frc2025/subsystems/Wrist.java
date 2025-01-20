@@ -4,15 +4,12 @@
 
 package com.team6560.frc2025.subsystems;
 
-import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.core.CoreCANcoder;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.team6560.frc2025.Constants.WristConstants;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
-import javax.swing.text.Position;
 
 
 public class Wrist extends SubsystemBase {
@@ -34,7 +30,7 @@ public class Wrist extends SubsystemBase {
   // encoder stuff
   private CANcoder relativeEncoder;
   private double initialEncoderPos;
-  private FeedbackConfigs feedbackConfig;
+  private TalonFXConfiguration fxConfig;
 
   /** Creates a new Wrist. */
   public Wrist() {
@@ -43,10 +39,11 @@ public class Wrist extends SubsystemBase {
 
       this.limitSwitch = new DigitalInput(WristConstants.LIMSWITCH_ID); //random
       this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
-      this.feedbackConfig = new FeedbackConfigs();
-      feedbackConfig.FeedbackRemoteSensorID = WristConstants.CC_ID;
-      //TODO: ??
-      WristMotor.getConfigurator().apply(feedbackConfig);
+
+      // applies the cancoder to the wrist motor
+      fxConfig.Feedback.FeedbackRemoteSensorID = relativeEncoder.getDeviceID();
+      fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+      WristMotor.getConfigurator().apply(fxConfig);
 
       // PID
       var wristPIDController = new Slot0Configs();
