@@ -9,7 +9,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.core.CoreCANcoder;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.team6560.frc2025.Constants.WristConstants;
 
@@ -29,15 +30,17 @@ public class Wrist extends SubsystemBase {
   // sensors
   private final DigitalInput limitSwitch;
 
-  // initial encoder stuff
+  // encoder stuff
+  private CANcoder relativeEncoder;
   private double initialEncoderPos;
 
   /** Creates a new Wrist. */
   public Wrist() {
       this.WristMotor = new TalonFX(WristConstants.KRAKEN_ID);
-      initialEncoderPos = WristMotor.getPosition().getValueAsDouble();
+      initialEncoderPos = relativeEncoder.getPosition().getValueAsDouble();
 
-      this.limitSwitch = new DigitalInput(0); //random
+      this.limitSwitch = new DigitalInput(WristConstants.LIMSWITCH_ID); //random
+      this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
 
       // PID
       var wristPIDController = new Slot0Configs();
@@ -68,7 +71,7 @@ public class Wrist extends SubsystemBase {
 
   /** Gets the current wrist angle */
   public double getWristAngle(){
-    return ((WristMotor.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
+    return ((relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
   }
 
   /** Gets the upper bound of the wrist. Static value defined in Constants. */
