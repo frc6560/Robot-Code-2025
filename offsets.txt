@@ -1,0 +1,8 @@
+FL 181.49
+BL 179.38
+FR 0.351
+BR 180.61
+
+debugging:
+
+- motors / 

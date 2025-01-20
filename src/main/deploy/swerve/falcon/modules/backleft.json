@@ -3,19 +3,19 @@
     "front": -9.875,
     "left": 9.875
   },
-  "absoluteEncoderOffset": 179.38,
+  "absoluteEncoderOffset": 251.016,
   "drive": {
     "type": "falcon",
     "id": 6,
     "canbus": null
   },
   "angle": {
-    "type": "sparkmax_neo",
+    "type": "sparkmax",
     "id": 10,
     "canbus": null
   },
   "encoder": {
-    "type": "none",
+    "type": "cancoder",
     "id": 2,
     "canbus": null
   },
