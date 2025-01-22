@@ -51,4 +51,16 @@ public final class Constants
 
   public static int MotorContId = 10;
 
+  public static final class ElevConstants {
+    public static int ELEV_LEFT_ID = 14;
+    public static int ELEV_RIGHT_ID = 15;
+    public static int ELEV_UPPER_LIMIT_SWITCH_ID = 28;
+    public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
+    //probably will change, so remember to check in the future
+  }
+
+  public static final class Controller {
+    public static final double CONTROLLER_DEADBAND = 0.1;
+  }
+  
 }
