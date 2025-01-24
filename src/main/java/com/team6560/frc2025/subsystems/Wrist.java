@@ -69,7 +69,7 @@ public class Wrist extends SubsystemBase {
 
   /** Checks if the wrist is down based on the limit switch. */
   private boolean LimitDown(){
-    return !(limitSwitch.get());
+    return limitSwitch.get();
   }
 
   /** Gets the current wrist angle */
