@@ -50,7 +50,7 @@ public final class Constants
   }
 
   public static final class WristConstants{
-    public static final int KRAKEN_ID = 16;
+    public static final int M_ID = 16;
     public static final int LIMSWITCH_ID = 0; //randomized
     public static final int CC_ID = 0; //randomized
     public static final double GEAR_RATIO = 69.42;
