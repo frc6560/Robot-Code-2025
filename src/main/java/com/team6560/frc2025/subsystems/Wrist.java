@@ -53,6 +53,8 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kI = 0;
       wristPIDController.kD = 0;
 
+      WristMotor.getConfigurator().apply(wristPIDController);
+
       // Telemetry
       ntDispTab("Wrist")
             .add("Wrist angle", this::getWristAngle)
@@ -62,9 +64,10 @@ public class Wrist extends SubsystemBase {
             .add("Overshot limits", this::getOvershoot);
   }
 
-  @Override
+  /** WPILib default periodic function. leave empty. */
+  @Override 
   public void periodic() {
-    //don't hard code into periodic yet !!
+    overshootHandler();
   }
 
   /** Checks if the wrist is down based on the limit switch. */
@@ -101,9 +104,13 @@ public class Wrist extends SubsystemBase {
     WristMotor.setControl(m_request);
   }
 
+  public void stopMotor(){
+    WristMotor.setControl(new PositionVoltage(0));
+  }
+
   public void overshootHandler(){
     if(getOvershoot()){
-      WristMotor.setControl(new PositionVoltage(0));
+      stopMotor();
     }
   }
 }

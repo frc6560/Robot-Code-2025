@@ -1,3 +1,6 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package com.team6560.frc2025.controls;
 
 import com.team6560.frc2025.Constants;
@@ -9,7 +12,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 import com.team6560.frc2025.utility.NumberStepper;
 import com.team6560.frc2025.utility.PovNumberStepper;
-
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -41,19 +43,19 @@ public class ManualControls{
         wristTable = NetworkTableInstance.getDefault().getTable("Wrist");
     }
     // ---- WRIST ----
-    public boolean getMoveStow(){
+    public boolean getSetStow(){
         return scoringController.getAButton();
     }
 
-    public boolean getMoveIntake(){
+    public boolean getSetIntake(){
         return scoringController.getBButton();
     }
 
-    public boolean getMoveLowLevel(){
+    public boolean getSetLowLevel(){
         return scoringController.getXButton();
     }
 
-    public boolean getMoveHighLevel(){
+    public boolean getSetHighLevel(){
         return scoringController.getYButton();
     }
     // ---- DRIVETRAIN ---- (copied from 2024 code)
