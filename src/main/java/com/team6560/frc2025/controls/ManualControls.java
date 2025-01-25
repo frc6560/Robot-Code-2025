@@ -7,6 +7,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+import com.team6560.frc2025.utility.NumberStepper;
+import com.team6560.frc2025.utility.PovNumberStepper;
+
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.math.MathUtil;
@@ -18,6 +22,9 @@ public class ManualControls{
     private XboxController scoringController;
 
     private NetworkTable wristTable;
+
+    private final PovNumberStepper speed;
+    private final PovNumberStepper turnSpeed;  
     
     /** 1 controller implementation */
     public ManualControls(XboxController xbox){
@@ -28,44 +35,59 @@ public class ManualControls{
         this.drivingController = xbox;
         this.scoringController = controllerStation;
 
-        ntDispTab("Controls")
-            .add("Y Joystick", this::driveY)
-            .add("X Joystick", this::driveX)
-            .add("Rotation Joystick", this::driveRotationX);
-            
+        this.speed = null;
+        this.turnSpeed = null;
+        
+        wristTable = NetworkTableInstance.getDefault().getTable("Wrist");
+    }
+    // ---- WRIST ----
+    public boolean getMoveStow(){
+        return scoringController.getAButton();
+    }
+
+    public boolean getMoveIntake(){
+        return scoringController.getBButton();
+    }
+
+    public boolean getMoveLowLevel(){
+        return scoringController.getXButton();
+    }
+
+    public boolean getMoveHighLevel(){
+        return scoringController.getYButton();
     }
     // ---- DRIVETRAIN ---- (copied from 2024 code)
 
-  @Override
-  public double driveX() {
-    double speedModifier = nitroMode() ? 1.25 : 1;
+//   @Override
+//   public double driveX() {
+//     double speedModifier = nitroMode() ? 1.25 : 1;
 
-    return -modifyAxis(drivingController.getLeftY() * speed.get() * speedModifier);
-  }
+//     return -modifyAxis(drivingController.getLeftY() * speed.get() * speedModifier);
+//   }
 
-  @Override
-  public double driveY() {
-    double speedModifier = nitroMode() ? 1.25 : 1;
+//   @Override
+//   public double driveY() {
+//     double speedModifier = nitroMode() ? 1.25 : 1;
 
-    return -modifyAxis(drivingController.getLeftX() * speed.get() * speedModifier);
-  }
+//     return -modifyAxis(drivingController.getLeftX() * speed.get() * speedModifier);
+//   }
 
-  @Override
-  public double driveRotationX() {
-    return -modifyAxis(drivingController.getRightX() * turnSpeed.get());
-  }
+//   @Override
+//   public double driveRotationX() {
+//     return -modifyAxis(drivingController.getRightX() * turnSpeed.get());
+//   }
 
-  @Override
-  public boolean driveResetYaw() {
-    return drivingController.getStartButton();
-  }
+//   @Override
+//   public boolean driveResetYaw() {
+//     return drivingController.getStartButton();
+//   }
 
-  @Override
-  public boolean driveResetGlobalPose() {
-    return drivingController.getBackButton();
-  }
+//   @Override
+//   public boolean driveResetGlobalPose() {
+//     return drivingController.getBackButton();
+//   }
 
-  public boolean nitroMode(){
-    return drivingController.getRightTriggerAxis() > 0.2;
-  }
+//   public boolean nitroMode(){
+//     return drivingController.getRightTriggerAxis() > 0.2;
+//   }
 }
