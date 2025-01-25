@@ -3,21 +3,12 @@
 // the WPILib BSD license file in the root directory of this project.
 package com.team6560.frc2025.controls;
 
-import com.team6560.frc2025.Constants;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-import com.team6560.frc2025.utility.NumberStepper;
 import com.team6560.frc2025.utility.PovNumberStepper;
-
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.math.MathUtil;
-
-import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 public class ManualControls{
     private XboxController drivingController;
