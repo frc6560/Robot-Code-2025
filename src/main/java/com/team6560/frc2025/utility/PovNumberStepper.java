@@ -1,4 +1,4 @@
-package com.team6560.frc2025.utility.NetworkTable;
+package com.team6560.frc2025.utility;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
