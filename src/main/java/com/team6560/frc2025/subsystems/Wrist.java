@@ -41,6 +41,7 @@ public class Wrist extends SubsystemBase {
       this.limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
 
       // applies the cancoder to the wrist motor
+      this.fxConfig = new TalonFXConfiguration();
       fxConfig.Feedback.FeedbackRemoteSensorID = relativeEncoder.getDeviceID();
       fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       WristMotor.getConfigurator().apply(fxConfig);
