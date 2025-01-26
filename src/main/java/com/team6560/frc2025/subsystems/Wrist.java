@@ -35,10 +35,10 @@ public class Wrist extends SubsystemBase {
   /** Creates a new Wrist. */
   public Wrist() {
       this.WristMotor = new TalonFX(WristConstants.M_ID);
+      this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
       initialEncoderPos = relativeEncoder.getPosition().getValueAsDouble();
 
       this.limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
-      this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
 
       // applies the cancoder to the wrist motor
       fxConfig.Feedback.FeedbackRemoteSensorID = relativeEncoder.getDeviceID();
