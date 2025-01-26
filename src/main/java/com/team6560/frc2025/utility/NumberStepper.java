@@ -1,4 +1,4 @@
-package com.team6560.frc2025.utility.NetworkTable;
+package com.team6560.frc2025.utility;
 
 /**
  * The `NumberStepper` class provides utility methods for stepping up or down a
