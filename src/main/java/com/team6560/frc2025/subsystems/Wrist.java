@@ -58,10 +58,11 @@ public class Wrist extends SubsystemBase {
       // Telemetry
       ntDispTab("Wrist")
             .add("Wrist angle", this::getWristAngle)
+            .add("Wrist angular velocity", this::getWristVelocity)
             .add("Limit switch", this::LimitDown)  
             .add("Soft upper limit", this::getUpperBound)
             .add("Soft bottom limit", this::getLowerBound)
-            .add("Overshot limits", this::getOvershoot);
+            .add("Overshot", this::getOvershoot);
   }
 
   /** WPILib default periodic function. leave empty. */
@@ -78,6 +79,10 @@ public class Wrist extends SubsystemBase {
   /** Gets the current wrist angle */
   public double getWristAngle(){
     return ((relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
+  }
+
+  public double getWristVelocity(){
+    return((relativeEncoder.getVelocity().getValueAsDouble() * 360)/WristConstants.GEAR_RATIO);
   }
 
   /** Gets the upper bound of the wrist. Static value defined in Constants. */
