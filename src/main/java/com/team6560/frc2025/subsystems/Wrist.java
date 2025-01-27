@@ -22,7 +22,7 @@ import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab
 public class Wrist extends SubsystemBase {
 
   // motor
-  private final TalonFX WristMotor;
+  private final TalonFX m_WristMotor;
 
   // sensors
   private final DigitalInput limitSwitch;
@@ -34,7 +34,7 @@ public class Wrist extends SubsystemBase {
 
   /** Creates a new Wrist. */
   public Wrist() {
-      this.WristMotor = new TalonFX(WristConstants.M_ID);
+      this.m_WristMotor = new TalonFX(WristConstants.M_ID);
       this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
       initialEncoderPos = relativeEncoder.getPosition().getValueAsDouble();
 
@@ -44,7 +44,7 @@ public class Wrist extends SubsystemBase {
       this.fxConfig = new TalonFXConfiguration();
       fxConfig.Feedback.FeedbackRemoteSensorID = relativeEncoder.getDeviceID();
       fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-      WristMotor.getConfigurator().apply(fxConfig);
+      m_WristMotor.getConfigurator().apply(fxConfig);
 
       // PID
       var wristPIDController = new Slot0Configs();
@@ -54,7 +54,7 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kI = 0.01;
       wristPIDController.kD = 2;
 
-      WristMotor.getConfigurator().apply(wristPIDController);
+      m_WristMotor.getConfigurator().apply(wristPIDController);
 
       // Telemetry
       ntDispTab("Wrist")
@@ -65,6 +65,8 @@ public class Wrist extends SubsystemBase {
             .add("Soft bottom limit", this::getLowerBound)
             .add("Overshot", this::getOvershoot);
   }
+
+
 
   /** WPILib default periodic function. leave empty. */
   @Override 
@@ -100,6 +102,7 @@ public class Wrist extends SubsystemBase {
     return(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND);
   }
 
+
   /** Actually sets wrist position. */
   public void SetMotorPosition(double position){
     double currentPosition = this.getWristAngle();
@@ -107,11 +110,13 @@ public class Wrist extends SubsystemBase {
     double deltaPos = (position-currentPosition) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
     final PositionVoltage m_request = new PositionVoltage(deltaPos);
-    WristMotor.setControl(m_request);
+    m_WristMotor.setControl(m_request);
   }
 
+  
+
   public void stopMotor(){
-    WristMotor.setControl(new PositionVoltage(0));
+    m_WristMotor.setControl(new PositionVoltage(0));
   }
 
   public void overshootHandler(){
