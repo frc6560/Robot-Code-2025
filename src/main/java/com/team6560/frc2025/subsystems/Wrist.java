@@ -113,7 +113,7 @@ public class Wrist extends SubsystemBase {
     m_WristMotor.setControl(m_request);
   }
 
-  
+
 
   public void stopMotor(){
     m_WristMotor.setControl(new PositionVoltage(0));
