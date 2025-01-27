@@ -32,15 +32,27 @@ public class Wrist extends SubsystemBase {
   private double initialEncoderPos;
   private TalonFXConfiguration fxConfig;
 
+  private enum State{
+    PICKUP,
+    STOW,
+    L2,
+    L4
+  };
+
+  private State state;
+
   /** Creates a new Wrist. */
   public Wrist() {
+      // Initializes motors
       this.m_WristMotor = new TalonFX(WristConstants.M_ID);
       this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
       initialEncoderPos = relativeEncoder.getPosition().getValueAsDouble();
 
       this.limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
+      this.state = state.STOW;
 
-      // applies the cancoder to the wrist motor
+
+      // Applies the cancoder to the wrist motor
       this.fxConfig = new TalonFXConfiguration();
       fxConfig.Feedback.FeedbackRemoteSensorID = relativeEncoder.getDeviceID();
       fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -102,6 +114,9 @@ public class Wrist extends SubsystemBase {
     return(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND);
   }
 
+  public void updateState(State state){
+    this.state = state;
+  }
 
   /** Actually sets wrist position. */
   public void SetMotorPosition(double position){
