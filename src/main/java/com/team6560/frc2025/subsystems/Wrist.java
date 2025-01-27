@@ -49,10 +49,10 @@ public class Wrist extends SubsystemBase {
       // PID
       var wristPIDController = new Slot0Configs();
       //all random
-      wristPIDController.kS = 0.1;
-      wristPIDController.kP = 0;
-      wristPIDController.kI = 0;
-      wristPIDController.kD = 0;
+      wristPIDController.kS = 0.2;
+      wristPIDController.kP = 0.002;
+      wristPIDController.kI = 0.01;
+      wristPIDController.kD = 2;
 
       WristMotor.getConfigurator().apply(wristPIDController);
 
