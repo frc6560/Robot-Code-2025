@@ -49,7 +49,7 @@ public class Wrist extends SubsystemBase {
       initialEncoderPos = relativeEncoder.getPosition().getValueAsDouble();
 
       this.limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
-      this.state = state.STOW;
+      this.state = State.STOW;
 
 
       // Applies the cancoder to the wrist motor
