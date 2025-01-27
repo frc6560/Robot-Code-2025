@@ -60,7 +60,7 @@ public class Wrist extends SubsystemBase {
 
       // PID
       var wristPIDController = new Slot0Configs();
-      //all random
+      // all random
       wristPIDController.kS = 0.2;
       wristPIDController.kP = 0.002;
       wristPIDController.kI = 0.01;
@@ -68,14 +68,15 @@ public class Wrist extends SubsystemBase {
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
-      // Telemetry
+      // Telemetry using shuffleboard's display tab. See NtValueDisplay.
       ntDispTab("Wrist")
             .add("Wrist angle", this::getWristAngle)
             .add("Wrist angular velocity", this::getWristVelocity)
             .add("Limit switch", this::LimitDown)  
             .add("Soft upper limit", this::getUpperBound)
             .add("Soft bottom limit", this::getLowerBound)
-            .add("Overshot", this::getOvershoot);
+            .add("Overshot", this::getOvershoot)
+            .add("State", this::getState);
   }
 
 
@@ -96,6 +97,7 @@ public class Wrist extends SubsystemBase {
     return ((relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
   }
 
+  /** Gets the current wrist velocity. */
   public double getWristVelocity(){
     return((relativeEncoder.getVelocity().getValueAsDouble() * 360)/WristConstants.GEAR_RATIO);
   }
@@ -104,18 +106,25 @@ public class Wrist extends SubsystemBase {
   public double getUpperBound(){
     return WristConstants.UPPER_SOFT_BOUND;
   }
-
+  /** Gets the lower bound of the wrist. */
   public double getLowerBound(){
     return WristConstants.LOWER_SOFT_BOUND;
   }
 
+  /** Determines if the wrist has overshot its intial angle */
   public boolean getOvershoot(){
     double position = this.getWristAngle();
     return(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND);
   }
 
+  /** Updates the state of the wrist.  */
   public void updateState(State state){
     this.state = state;
+  }
+
+  /** Fetches the state of the wrist */
+  public State getState(){
+    return this.state;
   }
 
   /** Actually sets wrist position. */
