@@ -25,14 +25,14 @@ public class Wrist extends SubsystemBase {
   private final TalonFX m_WristMotor;
 
   // sensors
-  private final DigitalInput limitSwitch;
+  private final DigitalInput m_limitSwitch;
 
   // encoder stuff
-  private CANcoder relativeEncoder;
+  private CANcoder m_relativeEncoder;
   private double initialEncoderPos;
   private TalonFXConfiguration fxConfig;
 
-  private enum State{
+  enum State{
     PICKUP,
     STOW,
     L2,
@@ -45,16 +45,16 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
       // Initializes motors
       this.m_WristMotor = new TalonFX(WristConstants.M_ID);
-      this.relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
-      initialEncoderPos = relativeEncoder.getPosition().getValueAsDouble();
+      this.m_relativeEncoder = new CANcoder(WristConstants.CC_ID); //random
+      initialEncoderPos = m_relativeEncoder.getPosition().getValueAsDouble();
 
-      this.limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
+      this.m_limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
       this.state = State.STOW;
 
 
       // Applies the cancoder to the wrist motor
       this.fxConfig = new TalonFXConfiguration();
-      fxConfig.Feedback.FeedbackRemoteSensorID = relativeEncoder.getDeviceID();
+      fxConfig.Feedback.FeedbackRemoteSensorID = m_relativeEncoder.getDeviceID();
       fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       m_WristMotor.getConfigurator().apply(fxConfig);
 
@@ -89,17 +89,17 @@ public class Wrist extends SubsystemBase {
 
   /** Checks if the wrist is down based on the limit switch. */
   private boolean LimitDown(){
-    return limitSwitch.get();
+    return m_limitSwitch.get();
   }
 
   /** Gets the current wrist angle */
   public double getWristAngle(){
-    return ((relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
+    return ((m_relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
   }
 
   /** Gets the current wrist velocity. */
   public double getWristVelocity(){
-    return((relativeEncoder.getVelocity().getValueAsDouble() * 360)/WristConstants.GEAR_RATIO);
+    return((m_relativeEncoder.getVelocity().getValueAsDouble() * 360)/WristConstants.GEAR_RATIO);
   }
 
   /** Gets the upper bound of the wrist. Static value defined in Constants. */
