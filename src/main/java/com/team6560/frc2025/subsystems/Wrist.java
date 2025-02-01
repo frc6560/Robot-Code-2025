@@ -61,10 +61,12 @@ public class Wrist extends SubsystemBase {
       // PID
       var wristPIDController = new Slot0Configs();
       // all random
-      wristPIDController.kS = 0.2;
+      wristPIDController.kS = 2;
+      wristPIDController.kG = 0;
+
       wristPIDController.kP = 0.002;
       wristPIDController.kI = 0.01;
-      wristPIDController.kD = 2;
+      wristPIDController.kD = 0.2;
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
@@ -94,12 +96,12 @@ public class Wrist extends SubsystemBase {
 
   /** Gets the current wrist angle */
   public double getWristAngle(){
-    return ((m_relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360) / WristConstants.GEAR_RATIO);
+    return ((m_relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360)) / WristConstants.GEAR_RATIO;
   }
 
   /** Gets the current wrist velocity. */
   public double getWristVelocity(){
-    return((m_relativeEncoder.getVelocity().getValueAsDouble() * 360)/WristConstants.GEAR_RATIO);
+    return (m_relativeEncoder.getVelocity().getValueAsDouble() * 360)/WristConstants.GEAR_RATIO;
   }
 
   /** Gets the upper bound of the wrist. Static value defined in Constants. */

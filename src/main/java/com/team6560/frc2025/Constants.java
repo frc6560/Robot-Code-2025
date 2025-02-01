@@ -51,15 +51,15 @@ public final class Constants
 
   public static final class WristConstants{
     public static final int M_ID = 16;
-    public static final int SWITCH_ID = 0; //randomized
-    public static final int CC_ID = 0; //randomized
+    public static final int SWITCH_ID = 0;  //this is still randomized
+    public static final int CC_ID = 17; 
     public static final double GEAR_RATIO = 92.57;
-    public static final double UPPER_SOFT_BOUND = 160.0; // placeholder values. these are NOT finalized.
+    public static final double UPPER_SOFT_BOUND = 175.0; // placeholder values. these are NOT finalized.
     public static final double LOWER_SOFT_BOUND = -20.0;
 
     public static final double STOW_ANGLE = 0.0;
     public static final double INTAKE_ANGLE = -10.0;
     public static final double L2_ANGLE = 145.0;
-    public static final double L4_ANGLE = 89.9;
+    public static final double L4_ANGLE = 169.0;
   }
 }
