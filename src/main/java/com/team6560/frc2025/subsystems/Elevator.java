@@ -1,11 +1,7 @@
 package com.team6560.frc2025.subsystems;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.team6560.frc2025.Constants.ElevatorConstants;
-
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 
 
