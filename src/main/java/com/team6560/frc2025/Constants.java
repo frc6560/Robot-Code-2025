@@ -54,6 +54,8 @@ public final class Constants
     public static int ELEV_RIGHT_ID = 15;
     public static int ELEV_UPPER_LIMIT_SWITCH_ID = 28;
     public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
+
+    public static double ELEV_GEAR_RATIO = 16/108; // random
   }
 
   public static final class WristConstants{
@@ -61,12 +63,12 @@ public final class Constants
     public static final int SWITCH_ID = 22;  //this is still randomized
     public static final int CANCODER_ID = 17; 
     public static final double GEAR_RATIO = 92.57;
-    public static final double UPPER_SOFT_BOUND = 170.0; // placeholder values. these are NOT finalized.
-    public static final double LOWER_SOFT_BOUND = -80.0;
+    public static final double UPPER_SOFT_BOUND = 240.0; // placeholder values. these are NOT finalized.
+    public static final double LOWER_SOFT_BOUND = -5.0;
 
-    public static final double STOW_ANGLE = 0.0;
-    public static final double INTAKE_ANGLE = -25.0;
-    public static final double L2_ANGLE = 135.0;
-    public static final double L4_ANGLE = 145.0;
+    public static final double STOW_ANGLE = 100.0;
+    public static final double INTAKE_ANGLE = 0.0;
+    public static final double L2_ANGLE = 190.0;
+    public static final double L4_ANGLE = 22.0;
   }
 }

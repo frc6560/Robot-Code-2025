@@ -69,6 +69,12 @@ public class Elevator extends SubsystemBase {
         return bottomLimitSwitch.get();
     }
 
+    //PLACEHOLDER
+
+    public double getElevatorHeight(){
+        return 0.0;
+    }
+
     public void resetEncoderPos(double setposition) {
         m_leftElev.setPosition(setposition);
         m_rightElev.setPosition(setposition);
