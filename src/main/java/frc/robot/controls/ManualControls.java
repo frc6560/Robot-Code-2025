@@ -13,9 +13,9 @@ public class ManualControls {
     private XboxController driverController;
     private XboxController interactController;
 
-    private final PovNumberStepper speed;
+    /* private final PovNumberStepper speed;
     private final PovNumberStepper turnSpeed;
-
+    */
     private NetworkTableEntry ntIntakeSpeed;
 
     /* ManualControls is initialized with two controllers - one for driving, another for shooting (turret control) */
@@ -23,6 +23,10 @@ public class ManualControls {
 
         this.driverController = driverController;
         this.interactController = interactController;
+
+
+        //DRIVETRAIN STUFF
+
 
         // speed and turnSpeed incremented by POV axes on driver controller
 
@@ -57,8 +61,8 @@ public class ManualControls {
 
         ntIntakeSpeed = NetworkTableInstance.getDefault().getTable("Intake").getEntry("speed");
         ntIntakeSpeed.setDouble(0.0);
-    }
-*/
+*/    }
+
     // UTIL
 
     /* Deadband - filters out values with absolute value less than deadband, normalizes otherwise. */
@@ -138,38 +142,16 @@ public class ManualControls {
         return driverController.getRightBumper();
     }
 */
+
+    //EJECT
+
+    public boolean getRunEject() {
+        return driverController.getRightBumperButton();
+    }
     // ELEVATOR
 
-    /* Run elevator - X for now */
-    public boolean getRunShooter() { 
-        return driverController.getLeftBumper();
-    }
-
-    /* Reverse shooter - Y for now */
-    public boolean getReverseShooter() { 
-        return driverController.getYButton();
-    }
-
-    // TURRET
-
-    /* Bring turret up */
-    public boolean getTurretUp() { 
-        return interactController.getRightBumper();
-    }
-
-    /* Bring turret down */
-    public boolean getTurretDown() { 
-        return interactController.getLeftBumper();
-    }
-
-    /* Turn turret clockwise */
-    public boolean getTurretClockwise() { 
-        return interactController.getAButton();
-    }
-
-    /* Turn turret counterclockwise */
-    public boolean getTurretCounterClockwise() { 
-        return interactController.getBButton();
+    public boolean getRunClimb() {
+        return true;
     }
 
     // RUMBLE
