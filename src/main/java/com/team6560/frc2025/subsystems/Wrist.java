@@ -32,7 +32,7 @@ public class Wrist extends SubsystemBase {
   private double initialEncoderPos;
   private TalonFXConfiguration fxConfig;
 
-  enum State{
+  public enum State{
     PICKUP,
     STOW,
     L2,

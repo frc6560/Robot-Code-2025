@@ -5,6 +5,7 @@
 package com.team6560.frc2025.commands;
 
 import com.team6560.frc2025.subsystems.Wrist;
+import com.team6560.frc2025.subsystems.Wrist.State;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.controls.ManualControls;
@@ -12,9 +13,31 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-/** A command that controls the Wrist subsystem */
-public class ScoringCommand extends Command{
+/** A helper command that controls the Wrist subsystem */
+public class WristCommand extends Command{
+    final Wrist wrist;
+
+    public WristCommand(Wrist wrist){
+      this.wrist = wrist;
+      addRequirements(wrist);
+    }
+
+    @Override
+    public void initialize(){
+      State state = wrist.getState();
+      if(wrist.getState() == State.STOW){
+
+      } else if (wrist.)
+    }
+
+    public void execute(){
+
+    }
+    
+}
+public class ScoringCommand extends SequentialCommandGroup{
     final Wrist wrist;
     final Elevator elevator;
     final ManualControls controls;
@@ -46,17 +69,7 @@ public class ScoringCommand extends Command{
 
     @Override
     public void execute(){
-        if(controls.getSetStow()){
-            wrist.SetMotorPosition(WristConstants.STOW_ANGLE);
-        } else if (controls.getSetIntake()){
-            wrist.SetMotorPosition(WristConstants.INTAKE_ANGLE);
-        } else if (controls.getSetLowLevel()){
-            wrist.SetMotorPosition(WristConstants.L2_ANGLE);
-        } else if (controls.getSetHighLevel()){
-            wrist.SetMotorPosition(WristConstants.L4_ANGLE);
-        } else{
-            wrist.stopMotor();
-        }
+
     }
 
     // Called once the command ends or is interrupted.

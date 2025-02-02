@@ -42,11 +42,11 @@ public class ManualControls{
         return scoringController.getBButton();
     }
 
-    public boolean getSetLowLevel(){
+    public boolean getSetL2(){
         return scoringController.getXButton();
     }
 
-    public boolean getSetHighLevel(){
+    public boolean getSetL4(){
         return scoringController.getYButton();
     }
     // ---- DRIVETRAIN ---- (copied from 2024 code)
