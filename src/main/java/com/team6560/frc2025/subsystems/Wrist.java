@@ -122,18 +122,19 @@ public class Wrist extends SubsystemBase {
 
   /** Updates the state of the wrist.  */
   public void handleState(){
+    final double tolerance = 5;
     if(getWristVelocity() > 0.1){
       this.state = State.MOVING;
     }
     else{
       double angle = getWristAngle();
-      if(angle > WristConstants.STOW_ANGLE - 5 && angle > WristConstants.STOW_ANGLE + 5){
+      if(angle > WristConstants.STOW_ANGLE - tolerance && angle < WristConstants.STOW_ANGLE + tolerance){
         this.state = State.STOW;
-      } else if(angle > WristConstants.INTAKE_ANGLE - 5 && angle > WristConstants.INTAKE_ANGLE + 5){
+      } else if(angle > WristConstants.INTAKE_ANGLE - tolerance && angle < WristConstants.INTAKE_ANGLE + tolerance){
         this.state = State.PICKUP;
-      } else if (angle > WristConstants.L2_ANGLE - 5 && angle > WristConstants.L2_ANGLE + 5){
+      } else if (angle > WristConstants.L2_ANGLE - tolerance && angle < WristConstants.L2_ANGLE + tolerance){
         this.state = State.L2;
-      } else if (angle > WristConstants.L4_ANGLE - 5 && angle > WristConstants.L4_ANGLE + 5){
+      } else if (angle > WristConstants.L4_ANGLE - tolerance && angle < WristConstants.L4_ANGLE + tolerance){
         this.state = State.L4;
       }
       else this.state = State.MOVING;
