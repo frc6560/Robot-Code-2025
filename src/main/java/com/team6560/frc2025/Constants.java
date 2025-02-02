@@ -59,7 +59,7 @@ public final class Constants
   public static final class WristConstants{
     public static final int M_ID = 16;
     public static final int SWITCH_ID = 22;  //this is still randomized
-    public static final int CC_ID = 17; 
+    public static final int CANCODER_ID = 17; 
     public static final double GEAR_RATIO = 92.57;
     public static final double UPPER_SOFT_BOUND = 170.0; // placeholder values. these are NOT finalized.
     public static final double LOWER_SOFT_BOUND = -80.0;

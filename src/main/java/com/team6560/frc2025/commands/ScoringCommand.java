@@ -5,6 +5,7 @@
 package com.team6560.frc2025.commands;
 
 import com.team6560.frc2025.subsystems.Wrist;
+import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.controls.ManualControls;
 import edu.wpi.first.networktables.NetworkTable;
@@ -13,25 +14,29 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** A command that controls the Wrist subsystem */
-public class WristCommand extends Command{
+public class ScoringCommand extends Command{
     final Wrist wrist;
+    final Elevator elevator;
     final ManualControls controls;
 
-    final NetworkTable ntTable = NetworkTableInstance.getDefault().getTable("Wrist");
+    final NetworkTable ntTableWrist = NetworkTableInstance.getDefault().getTable("Wrist");
+    final NetworkTable ntTableElevator = NetworkTableInstance.getDefault().getTable("Elevator");
+
 
     public static interface Controls{
-        boolean setStow();
-        boolean setIntake();
-
-        boolean setLow();
-        boolean setHigh();
+        boolean playerStationPickup();
+        boolean scoreL2();
+        boolean scoreL3();
+        boolean scoreL4();
     }
 
-    public WristCommand(Wrist wrist, ManualControls controls){
+    public ScoringCommand(Wrist wrist, Elevator elevator, ManualControls controls){
         this.wrist = wrist;
+        this.elevator = elevator;
         this.controls = controls;
 
         addRequirements(wrist);
+        addRequirements(elevator);
     }
 
     // Called when the command is initially scheduled. (leave empty)

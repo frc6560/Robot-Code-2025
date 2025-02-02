@@ -36,7 +36,8 @@ public class Wrist extends SubsystemBase {
     PICKUP,
     STOW,
     L2,
-    L4
+    L4,
+    MOVING // placeholder bad state
   };
 
   private State state;
@@ -113,15 +114,30 @@ public class Wrist extends SubsystemBase {
     return WristConstants.LOWER_SOFT_BOUND;
   }
 
-  /** Determines if the wrist has overshot its intial angle */
+  /** Determines if the wrist has overshot its initial angle */
   public boolean getOvershoot(){
     double position = this.getWristAngle();
     return(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND);
   }
 
   /** Updates the state of the wrist.  */
-  public void updateState(State state){
-    this.state = state;
+  public void handleState(){
+    if(getWristVelocity() > 0.1){
+      this.state = State.MOVING;
+    }
+    else{
+      double angle = getWristAngle();
+      if(angle > WristConstants.STOW_ANGLE - 5 && angle > WristConstants.STOW_ANGLE + 5){
+        this.state = State.STOW;
+      } else if(angle > WristConstants.INTAKE_ANGLE - 5 && angle > WristConstants.INTAKE_ANGLE + 5){
+        this.state = State.PICKUP;
+      } else if (angle > WristConstants.L2_ANGLE - 5 && angle > WristConstants.L2_ANGLE + 5){
+        this.state = State.L2;
+      } else if (angle > WristConstants.L4_ANGLE - 5 && angle > WristConstants.L4_ANGLE + 5){
+        this.state = State.L4;
+      }
+      else this.state = State.MOVING;
+    }
   }
 
   /** Fetches the state of the wrist */
