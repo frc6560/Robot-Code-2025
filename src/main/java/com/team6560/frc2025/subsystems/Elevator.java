@@ -1,8 +1,11 @@
 package com.team6560.frc2025.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.team6560.frc2025.Constants.ElevatorConstants;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
+
+import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 
 public class Elevator extends SubsystemBase {
@@ -18,6 +21,13 @@ public class Elevator extends SubsystemBase {
         this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID);
         this.topLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_UPPER_LIMIT_SWITCH_ID);
         this.bottomLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_LOWER_LIMIT_SWITCH_ID);
+
+        ntDispTab("Elevator")
+            .add("Elevator Height", this::getElevatorHeight)
+            .add("Elevator angular velocity", this::getElevatorVelocity)
+            .add("Upper limit switch", this::getUpperBound)
+            .add("Bottom limit switch", this::getLowerBound)
+            .add("State", this::getState);
     }
 
     public void setelevpos(int posnum) {
@@ -35,26 +45,12 @@ public class Elevator extends SubsystemBase {
         else if (posnum == 4) {
             targetrotelev = 9;
         }
+
+        final PositionVoltage m_request = new PositionVoltage(targetrotelev);
+        m_leftElev.setControl(m_request);
+        m_rightElev.setControl(m_request);
         
-        while (true) {
-            double currentelevepos = m_leftElev.getPosition().getValueAsDouble();
-            //elevator motor position in rotations as double
-
-            if (currentelevepos < targetrotelev - 0.1) {
-                m_leftElev.set(0.1);
-                m_rightElev.set(0.1);
-            }
-
-            if (currentelevepos > 0.1 + targetrotelev) {
-                m_leftElev.set(-0.1);
-                m_rightElev.set(-0.1);
-            }
-
-            else {
-                m_rightElev.stopMotor();
-                m_rightElev.stopMotor();
-            }
-        }
+        
     }
     public void stopMotors() {
         m_rightElev.stopMotor();
@@ -69,10 +65,12 @@ public class Elevator extends SubsystemBase {
         return bottomLimitSwitch.get();
     }
 
-    //PLACEHOLDER
-
     public double getElevatorHeight(){
         return m_leftElev.getPosition().getValueAsDouble() * ElevatorConstants.ELEV_GEAR_RATIO;
+    }
+
+    public double getElevatorVelocity(){
+        return m_leftElev.getVelocity().getValueAsDouble();
     }
 
     public void resetEncoderPos(double setposition) {
@@ -80,3 +78,12 @@ public class Elevator extends SubsystemBase {
         m_rightElev.setPosition(setposition);
     }
 }
+
+// l2: 4.3in
+// l3: 20.05in
+// 44.425in
+
+//in rotations:
+// l2: 1.613
+// l3: 7.521
+// l4: 16.664

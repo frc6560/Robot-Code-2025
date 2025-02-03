@@ -7,6 +7,7 @@ package com.team6560.frc2025.subsystems;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -47,7 +48,9 @@ public class Wrist extends SubsystemBase {
       // Initializes motors
       this.m_WristMotor = new TalonFX(WristConstants.M_ID);
       this.m_relativeEncoder = new CANcoder(WristConstants.CANCODER_ID); //random
-      initialEncoderPos = m_relativeEncoder.getPosition().getValueAsDouble();
+      initialEncoderPos = 0;
+      m_relativeEncoder.setPosition(initialEncoderPos);
+
 
       this.m_limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
       this.state = State.STOW;
@@ -88,6 +91,7 @@ public class Wrist extends SubsystemBase {
   @Override 
   public void periodic() {
     overshootHandler();
+    setEncoderPosition();
   }
 
   /** Checks if the wrist is down based on the limit switch. */
@@ -146,8 +150,15 @@ public class Wrist extends SubsystemBase {
     return this.state;
   }
 
+  /** Does not actually set wrist position. Sets encoder position instead.  */
+  public void setEncoderPosition(){
+    if(LimitDown()){
+      m_relativeEncoder.setPosition(0);
+    }
+  }
+
   /** Actually sets wrist position. */
-  public void SetMotorPosition(double position){
+  public void setMotorPosition(double position){
 
     double targetPos = (position) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
     
@@ -158,7 +169,7 @@ public class Wrist extends SubsystemBase {
 
 
   public void stopMotor(){
-    m_WristMotor.setControl(new PositionVoltage(0));
+    m_WristMotor.setControl(new VelocityVoltage(0));
   }
 
   public void overshootHandler(){
