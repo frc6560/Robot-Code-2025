@@ -45,7 +45,7 @@ public class Wrist extends SubsystemBase {
 
   /** Creates a new Wrist. */
   public Wrist() {
-      // Initializes motors
+      // Initializes motors and encoders
       this.m_WristMotor = new TalonFX(WristConstants.M_ID);
       this.m_relativeEncoder = new CANcoder(WristConstants.CANCODER_ID); //random
       initialEncoderPos = 0;
@@ -78,7 +78,7 @@ public class Wrist extends SubsystemBase {
       ntDispTab("Wrist")
             .add("Wrist angle", this::getWristAngle)
             .add("Wrist angular velocity", this::getWristVelocity)
-            .add("Limit switch", this::LimitDown)  
+            .add("Limit switch", this::limitDown)  
             .add("Soft upper limit", this::getUpperBound)
             .add("Soft bottom limit", this::getLowerBound)
             .add("Overshot", this::getOvershoot)
@@ -95,7 +95,7 @@ public class Wrist extends SubsystemBase {
   }
 
   /** Checks if the wrist is down based on the limit switch. */
-  private boolean LimitDown(){
+  private boolean limitDown(){
     return m_limitSwitch.get();
   }
 
@@ -152,7 +152,7 @@ public class Wrist extends SubsystemBase {
 
   /** Does not actually set wrist position. Sets encoder position instead.  */
   public void setEncoderPosition(){
-    if(LimitDown()){
+    if(limitDown()){
       m_relativeEncoder.setPosition(0);
     }
   }

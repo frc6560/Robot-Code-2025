@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
         ntDispTab("Elevator")
             .add("Elevator Height", this::getElevatorHeight)
             .add("Elevator angular velocity", this::getElevatorVelocity)
-            .add("Upper limit switch", this::getUpperBound)
+            .add("Upper limit switch", this::topLimitSwitchDown)
             .add("Bottom limit switch", this::getLowerBound)
             .add("State", this::getState);
     }

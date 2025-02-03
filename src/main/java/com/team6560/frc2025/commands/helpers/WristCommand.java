@@ -20,13 +20,13 @@ public class WristCommand extends Command{
     @Override
     public void initialize(){
       if(targetState == State.STOW){
-        wrist.SetMotorPosition(WristConstants.STOW_ANGLE);
+        wrist.setMotorPosition(WristConstants.STOW_ANGLE);
       } else if (targetState == State.PICKUP){
-        wrist.SetMotorPosition(WristConstants.INTAKE_ANGLE);
+        wrist.setMotorPosition(WristConstants.INTAKE_ANGLE);
       } else if (targetState == State.L2){
-        wrist.SetMotorPosition(WristConstants.L2_ANGLE);
+        wrist.setMotorPosition(WristConstants.L2_ANGLE);
       } else{
-        wrist.SetMotorPosition(WristConstants.L4_ANGLE);
+        wrist.setMotorPosition(WristConstants.L4_ANGLE);
       }
     }
 
