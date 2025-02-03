@@ -48,4 +48,7 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+  public static final class GrabberConstants {
+    public static final int  GRABBER_MOTOR_ID = 16; //change later NEED TO CHANGE THIS 
+  }
 }
