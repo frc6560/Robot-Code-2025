@@ -91,6 +91,12 @@ public class Elevator extends SubsystemBase {
         m_leftElev.setPosition(setposition);
         m_rightElev.setPosition(setposition);
     }
+
+    // all code below this point is for testing purposes
+    public void turnOnMotor(){
+        m_leftElev.setControl(new PositionVoltage(0.2));
+        m_rightElev.setControl(new PositionVoltage(0.2));
+    }
 }
 
 // l2: 4.3in

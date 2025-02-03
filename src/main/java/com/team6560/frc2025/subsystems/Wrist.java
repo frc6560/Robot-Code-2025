@@ -177,4 +177,9 @@ public class Wrist extends SubsystemBase {
       stopMotor();
     }
   }
+
+  // all code below this point is for testing purposes only
+  public void turnOnMotor(){
+    m_WristMotor.setControl(new VelocityVoltage(0.2));
+  }
 }
