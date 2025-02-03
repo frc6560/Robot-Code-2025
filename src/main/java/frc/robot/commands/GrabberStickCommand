@@ -1,0 +1,43 @@
+
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Grabber;
+import edu.wpi.first.wpilibj.XboxController;
+
+public class GrabberStickCommand extends CommandBase {
+    private final Grabber grabber;
+    private final XboxController controller;
+
+    public GrabberStickCommand(Grabber grabber, XboxController controller) {
+        this.grabber = grabber;
+        this.controller = controller;
+        addRequirements(grabber);
+    }
+
+    @Override
+    public void initialize() {
+        //if (controls.getgrabber()) {
+        //if (controls.getgrabber()) {
+            //grabber.setSpeed(constants.grabber.GMOTOR)
+            //else
+        }
+        grabber.stop();
+    }
+
+    @Override
+    public void execute() {
+        double speed = controller.getRightTriggerAxis() - controller.getLeftTriggerAxis();
+        grabber.setSpeed(speed);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        grabber.stop();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+}
