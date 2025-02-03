@@ -1,6 +1,7 @@
 package com.team6560.frc2025.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.team6560.frc2025.Constants.ElevatorConstants;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -19,8 +20,22 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         this.m_leftElev = new TalonFX(ElevatorConstants.ELEV_LEFT_ID);
         this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID);
+
         this.topLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_UPPER_LIMIT_SWITCH_ID);
         this.bottomLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_LOWER_LIMIT_SWITCH_ID);
+
+        Slot0Configs elevatorPID = new Slot0Configs();
+        // all random
+            elevatorPID.kS = 2;
+            elevatorPID.kG = 0;
+
+            elevatorPID.kP = 0.002;
+            elevatorPID.kI = 0.01;
+            elevatorPID.kD = 0.2;
+        
+        m_leftElev.getConfigurator().apply(elevatorPID);
+        m_rightElev.getConfigurator().apply(elevatorPID);
+
 
         ntDispTab("Elevator")
             .add("Elevator Height", this::getElevatorHeight)

@@ -56,6 +56,10 @@ public final class Constants
     public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
 
     public static double ELEV_GEAR_RATIO = 2.66;
+
+    public static double L2_ELEV_ROTATIONS = 1.613;
+    public static double L3_ELEV_ROTATIONS = 7.521;
+    public static double L4_ELEV_ROTATIONS = 16.664;
   }
 
   public static final class WristConstants{
