@@ -55,7 +55,7 @@ public final class Constants
     public static int ELEV_UPPER_LIMIT_SWITCH_ID = 28;
     public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
 
-    public static double ELEV_GEAR_RATIO = 16/108; // random
+    public static double ELEV_GEAR_RATIO = 2.66;
   }
 
   public static final class WristConstants{

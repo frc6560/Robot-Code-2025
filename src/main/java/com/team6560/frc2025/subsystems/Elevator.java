@@ -72,7 +72,7 @@ public class Elevator extends SubsystemBase {
     //PLACEHOLDER
 
     public double getElevatorHeight(){
-        return 0.0;
+        return m_leftElev.getPosition().getValueAsDouble() * ElevatorConstants.ELEV_GEAR_RATIO;
     }
 
     public void resetEncoderPos(double setposition) {
