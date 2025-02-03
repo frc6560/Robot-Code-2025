@@ -63,7 +63,7 @@ public class Wrist extends SubsystemBase {
       m_WristMotor.getConfigurator().apply(fxConfig);
 
       // PID
-      var wristPIDController = new Slot0Configs();
+      Slot0Configs wristPIDController = new Slot0Configs();
       // all random
       wristPIDController.kS = 2;
       wristPIDController.kG = 0;
@@ -81,7 +81,7 @@ public class Wrist extends SubsystemBase {
             .add("Limit switch", this::limitDown)  
             .add("Soft upper limit", this::getUpperBound)
             .add("Soft bottom limit", this::getLowerBound)
-            .add("Overshot", this::getOvershoot)
+            .add("Overshot bounds", this::getOvershoot)
             .add("State", this::getState);
   }
 
