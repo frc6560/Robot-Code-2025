@@ -1,11 +1,9 @@
 package com.team6560.frc2025.subsystems;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.team6560.frc2025.Constants.GrabberConstants;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix6.hardware.CANrange;
+import com.team6560.frc2025.Constants.GrabberConstants;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.core.CoreCANrange;
 
 
@@ -30,7 +28,7 @@ public class Grabber extends SubsystemBase {
             stop();
         }
     }
-    
+
     public void release() {
         GMOTOR.set(-0.1);
     }
@@ -43,5 +41,8 @@ public class Grabber extends SubsystemBase {
         grab(); // Automatically runs the grab in periodic liewke signals     
     } 
 
-    
+    // all code below this point is for testing purposes only
+    public void turnOn() {
+        GMOTOR.set(0.1);
+    }
 }

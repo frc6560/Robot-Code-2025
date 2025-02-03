@@ -180,6 +180,10 @@ public class Wrist extends SubsystemBase {
 
   // all code below this point is for testing purposes only
   public void turnOnMotor(){
+    m_WristMotor.set(0.2);
+  }
+  
+  public void turnOnMotorWithPID(){
     m_WristMotor.setControl(new VelocityVoltage(0.2));
   }
 }

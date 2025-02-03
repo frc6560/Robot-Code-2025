@@ -3,6 +3,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -68,7 +69,7 @@ public class Elevator extends SubsystemBase {
     }
     public void stopMotors() {
         m_rightElev.stopMotor();
-        m_rightElev.stopMotor();
+        m_leftElev.stopMotor();
     }
 
     public boolean topLimitSwitchDown() {
@@ -93,17 +94,13 @@ public class Elevator extends SubsystemBase {
     }
 
     // all code below this point is for testing purposes
-    public void turnOnMotor(){
-        m_leftElev.setControl(new PositionVoltage(0.2));
-        m_rightElev.setControl(new PositionVoltage(0.2));
+    public void turnOnMotors(){
+        m_leftElev.setControl(new VelocityVoltage(0.2));
+        m_rightElev.setControl(new VelocityVoltage(0.2));
+    }
+
+    public void turnOnMotorsNoPID(){
+        m_leftElev.set(0.1);
+        m_rightElev.set(0.1);
     }
 }
-
-// l2: 4.3in
-// l3: 20.05in
-// 44.425in
-
-//in rotations:
-// l2: 1.613
-// l3: 7.521
-// l4: 16.664
