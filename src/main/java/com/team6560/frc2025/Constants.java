@@ -66,7 +66,9 @@ public final class Constants
     public static final int M_ID = 16;
     public static final int SWITCH_ID = 22;  //this is still randomized
     public static final int CANCODER_ID = 17; 
+
     public static final double GEAR_RATIO = 92.57;
+
     public static final double UPPER_SOFT_BOUND = 240.0; // placeholder values. these are NOT finalized.
     public static final double LOWER_SOFT_BOUND = -5.0;
 
@@ -74,5 +76,9 @@ public final class Constants
     public static final double INTAKE_ANGLE = 0.0;
     public static final double L2_ANGLE = 190.0;
     public static final double L4_ANGLE = 22.0;
+  }
+
+  public static final class GrabberConstants{
+    public static final int  GRABBER_MOTOR_ID = 16; //change later NEED TO CHANGE THIS
   }
 }
