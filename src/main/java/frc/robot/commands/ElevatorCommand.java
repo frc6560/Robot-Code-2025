@@ -29,6 +29,7 @@ public class ElevatorCommand extends Command {
     public void execute() {
         if(controls.getRunScoreL2()){
             targetState = State.STOW;
+            System.out.println("GOing to stage 2 Elevator");
 
         } else if(controls.getRunScoreL3()){
             targetState = State.L3;

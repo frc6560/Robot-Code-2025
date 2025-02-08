@@ -56,7 +56,7 @@ public class RobotContainer {
   public RobotContainer() {
     climb = new Climb(controls);
     climbCommand = new ClimbCommand(climb, controls);
-    climb.setDefaultCommand(climbCommand);
+    // climb.setDefaultCommand(climbCommand);
 
     grabber = new Grabber();
     grabberCommand = new GrabberCommand(grabber, controls);
@@ -84,6 +84,8 @@ public class RobotContainer {
     // driverXbox.b().whileTrue(
     //   drivebase.driveToPose(
     //     new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+    
+    // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
   }
   
   public Command getAutonomousCommand() {

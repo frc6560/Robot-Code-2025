@@ -34,9 +34,9 @@ public class ClimbCommand extends Command {
 
     @Override
     public void execute() {
-        double speed = -controls.getClimbSpeed(); // Inverted for correct joystick behavior
-        test = speed; // Debugging value to track input
-        climb.setClimbSpeed(); // Apply joystick input to climb
+        // double speed = -controls.getClimbSpeed(); // Inverted for correct joystick behavior
+        // test = speed; // Debugging value to track input
+        // climb.setClimbSpeed(); // Apply joystick input to climb
     }
 
     @Override

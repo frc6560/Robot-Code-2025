@@ -26,8 +26,8 @@ public class Elevator extends SubsystemBase {
     private final DigitalInput bottomLimitSwitch;
 
     public Elevator() {
-        this.m_leftElev = new TalonFX(ElevatorConstants.ELEV_LEFT_ID);
-        this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID);
+        this.m_leftElev = new TalonFX(ElevatorConstants.ELEV_LEFT_ID, "Canivore");
+        this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID, "Canivore");
 
         this.topLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_UPPER_LIMIT_SWITCH_ID);
         this.bottomLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_LOWER_LIMIT_SWITCH_ID);
@@ -35,9 +35,9 @@ public class Elevator extends SubsystemBase {
         Slot0Configs elevatorPID = new Slot0Configs();
         // all random
             elevatorPID.kS = 0;
-            elevatorPID.kG = 0;
+            elevatorPID.kG = 0.8;
 
-            elevatorPID.kP = 0.02;
+            elevatorPID.kP = 0.75;
             elevatorPID.kI = 0.0;
             elevatorPID.kD = 0;
         
@@ -99,5 +99,14 @@ public class Elevator extends SubsystemBase {
     public void turnOnMotorsNoPID(){
         m_leftElev.set(0.1);
         m_rightElev.set(0.1);
+    }
+    public void revMotorsNoPID(){
+        m_leftElev.set(-0.1);
+        m_rightElev.set(-0.1);
+    }
+
+    public void testMotor(double output){
+        m_leftElev.set(output);
+        m_rightElev.set(output);
     }
 }

@@ -48,7 +48,7 @@ public class Wrist extends SubsystemBase {
   /** Creates a new Wrist. */
   public Wrist() {
       // Initializes motors and encoders
-      this.m_WristMotor = new TalonFX(WristConstants.M_ID);
+      this.m_WristMotor = new TalonFX(WristConstants.M_ID, "Canivore");
       this.m_relativeEncoder = new CANcoder(WristConstants.CANCODER_ID); //random
       initialEncoderPos = 0;
       m_relativeEncoder.setPosition(initialEncoderPos);
@@ -70,7 +70,7 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kS = 0;
       wristPIDController.kG = 0;
 
-      wristPIDController.kP = 0.02;
+      wristPIDController.kP = 0.5;
       wristPIDController.kI = 0.0;
       wristPIDController.kD = 0;
 
@@ -93,7 +93,7 @@ public class Wrist extends SubsystemBase {
   /** WPILib default periodic function. leave empty. */
   @Override 
   public void periodic() {
-    setEncoderPosition();
+    // setEncoderPosition();
   }
 
   /** Checks if the wrist is down based on the limit switch. */
@@ -183,10 +183,18 @@ public class Wrist extends SubsystemBase {
 
   // all code below this point is for testing purposes only
   public void turnOnMotor(){
-    m_WristMotor.set(0.2);
+    m_WristMotor.set(0.1);
+  }
+
+  public void revMotor(){
+    m_WristMotor.set(-0.1);
   }
   
   public void turnOnMotorWithPID(){
     m_WristMotor.setControl(new VelocityVoltage(200));
+  }
+
+  public void testMotor(double output){
+    m_WristMotor.set(output);
   }
 }

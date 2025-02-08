@@ -30,6 +30,7 @@ public class WristCommand extends Command{
 
       if(controls.getRunScoreL2() || controls.getRunScoreL3()){
         targetState = State.L2;
+        System.out.println("GOing to stage 2 Wrist");
 
       } else if(controls.getRunScoreL4()){
         targetState = State.L4;
@@ -41,23 +42,25 @@ public class WristCommand extends Command{
         targetState = State.PICKUP;
       }
 
+      wrist.stopMotor();
+
       
 
-      if(targetState == State.STOW){
-        wrist.setMotorPosition(WristConstants.WristStates.STOW);
+      // if(targetState == State.STOW){
+      //   wrist.setMotorPosition(WristConstants.WristStates.STOW);
 
-      } else if (targetState == State.PICKUP){
-        wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
+      // } else if (targetState == State.PICKUP){
+      //   wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
 
-      } else if (targetState == State.L1){
-        wrist.setMotorPosition(WristConstants.WristStates.L1);
+      // } else if (targetState == State.L1){
+      //   wrist.setMotorPosition(WristConstants.WristStates.L1);
 
-      } else if (targetState == State.L2){
-        wrist.setMotorPosition(WristConstants.WristStates.L2);
+      // } else if (targetState == State.L2){
+      //   wrist.setMotorPosition(WristConstants.WristStates.L2);
 
-      } else if (targetState == State.L4){
-        wrist.setMotorPosition(WristConstants.WristStates.L4);
-      }
+      // } else if (targetState == State.L4){
+      //   wrist.setMotorPosition(WristConstants.WristStates.L4);
+      // }
     }
 
     @Override

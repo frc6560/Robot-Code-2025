@@ -80,4 +80,11 @@ public class ManualControls {
     public boolean getRunScoreBall(){
         return secondXbox.getBackButton(); // TODO change to correct button
     }
+
+    public double testWrist(){
+      return secondXbox.getRightX();
+    }
+    public double testEle(){
+      return secondXbox.getLeftX();
+    }
 }
