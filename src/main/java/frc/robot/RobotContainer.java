@@ -16,9 +16,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.Elevator;
 
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.GrabberCommand;
+import frc.robot.commands.ScoringCommand;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
