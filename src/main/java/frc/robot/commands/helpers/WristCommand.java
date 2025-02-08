@@ -25,16 +25,20 @@ public class WristCommand extends Command{
 
     @Override
     public void execute(){
-        wrist.handleState();
-        if(targetState == State.STOW){
-          wrist.setMotorPosition(WristConstants.STOW_ANGLE);
-        } else if (targetState == State.PICKUP){
-          wrist.setMotorPosition(WristConstants.INTAKE_ANGLE);
-        } else if (targetState == State.L2){
-          wrist.setMotorPosition(WristConstants.L2_ANGLE);
-        } else{
-          wrist.setMotorPosition(WristConstants.L4_ANGLE);
-        }
+
+      if(controls.getRunScoreL2() || controls.getRunScoreL3()){
+        targetState  = State.L2;
+      }
+
+      if(targetState == State.STOW){
+        wrist.setMotorPosition(WristConstants.STOW_ANGLE);
+      } else if (targetState == State.PICKUP){
+        wrist.setMotorPosition(WristConstants.INTAKE_ANGLE);
+      } else if (targetState == State.L2){
+        wrist.setMotorPosition(WristConstants.L2_ANGLE);
+      } else{
+        wrist.setMotorPosition(WristConstants.L4_ANGLE);
+      }
     }
 
     @Override

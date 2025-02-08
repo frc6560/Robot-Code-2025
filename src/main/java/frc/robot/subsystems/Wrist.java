@@ -83,7 +83,7 @@ public class Wrist extends SubsystemBase {
             .add("Soft upper limit", this::getUpperBound)
             .add("Soft bottom limit", this::getLowerBound)
             .add("Overshot bounds", this::getOvershoot)
-            .add("State", this::getState);
+            .add("State", ()-> {return this.state.toString();});
   }
 
 
@@ -124,8 +124,8 @@ public class Wrist extends SubsystemBase {
     return(position > WristConstants.UPPER_SOFT_BOUND || position < WristConstants.LOWER_SOFT_BOUND);
   }
 
-  /** Updates the state of the wrist.  */
-  public void handleState(){
+  /** Updates and fetches the state of the wrist.  */
+  public State getState(){
     final double tolerance = 5;
     if(getWristVelocity() > 0.1){
       this.state = State.MOVING;
@@ -144,11 +144,7 @@ public class Wrist extends SubsystemBase {
       }
       else this.state = State.MOVING;
     }
-  }
-
-  /** Fetches the state of the wrist */
-  public State getState(){
-    return this.state;
+    return this.state
   }
 
   /** Does not actually set wrist position. Sets encoder position instead.  */
