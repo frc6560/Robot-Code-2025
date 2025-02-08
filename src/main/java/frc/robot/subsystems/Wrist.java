@@ -133,13 +133,13 @@ public class Wrist extends SubsystemBase {
     else{
       double angle = getWristAngle();
       // TODO: fix with abs values like an actual good programmer would do
-      if(angle > WristConstants.STOW_ANGLE - tolerance && angle < WristConstants.STOW_ANGLE + tolerance){
+      if(math.abs(angle - WristConstants.STOW_ANGLE) < tolerance){
         this.state = State.STOW;
-      } else if(angle > WristConstants.INTAKE_ANGLE - tolerance && angle < WristConstants.INTAKE_ANGLE + tolerance){
+      } else if(math.abs(angle - WristConstants.INTAKE_ANGLE) < tolerance){
         this.state = State.PICKUP;
-      } else if (angle > WristConstants.L2_ANGLE - tolerance && angle < WristConstants.L2_ANGLE + tolerance){
+      } else if (math.abs(angle - WristConstants.L2_ANGLE) < tolerance){
         this.state = State.L2;
-      } else if (angle > WristConstants.L4_ANGLE - tolerance && angle < WristConstants.L4_ANGLE + tolerance){
+      } else if (math.abs(angle - WristConstants.L4_ANGLE) < tolerance){
         this.state = State.L4;
       }
       else this.state = State.MOVING;

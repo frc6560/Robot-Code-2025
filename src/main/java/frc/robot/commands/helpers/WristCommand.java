@@ -29,6 +29,7 @@ public class WristCommand extends Command{
       if(controls.getRunScoreL2() || controls.getRunScoreL3()){
         targetState  = State.L2;
       }
+      // add else if
 
       if(targetState == State.STOW){
         wrist.setMotorPosition(WristConstants.STOW_ANGLE);
