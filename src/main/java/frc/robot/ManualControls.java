@@ -1,11 +1,14 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Second;
+
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class ManualControls {
 
+    // private final XboxController secondXbox;
     private final XboxController secondXbox;
+    
     private static double deadband(double value, double deadband) {
         if (Math.abs(value) > deadband) {
           if (value > 0.0) {
@@ -40,10 +43,11 @@ public class ManualControls {
         return secondXbox.getAButton(); // Returns true while held
     }
     public boolean getRunClimb() {
-        return secondXbox.getRightBumper(); // Returns true while held
+      // retun secondXbox.get
+        return secondXbox.getRightBumperButton(); // Returns true while held
     }
     public boolean getDownClimb() {
-        return secondXbox.getLeftBumper(); // Returns true while held
+        return secondXbox.getLeftBumperButton(); // Returns true while held
     }
     public double getClimbSpeed() {
         return - modifyAxis(secondXbox.getLeftY());
@@ -63,5 +67,17 @@ public class ManualControls {
 
     public boolean getRunScoreL4(){
         return secondXbox.getYButton();
+    }
+
+    public boolean getRunScoreStow(){
+        return secondXbox.getBackButton(); // TODO change to correct button
+    }
+
+    public boolean getRunScorePickup(){
+        return secondXbox.getStartButton();
+    }
+
+    public boolean getRunScoreBall(){
+        return secondXbox.getBackButton(); // TODO change to correct button
     }
 }

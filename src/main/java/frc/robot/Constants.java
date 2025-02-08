@@ -56,10 +56,13 @@ public final class Constants
     public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
 
     public static double ELEV_GEAR_RATIO = 2.66;
-
-    public static double L2_ELEV_ROTATIONS = 1.613;
-    public static double L3_ELEV_ROTATIONS = 7.521;
-    public static double L4_ELEV_ROTATIONS = 16.664;
+    
+    public static final class ElevatorStates{
+      public static final double STOW = 1.613;
+      public static final double L3 = 7.521;
+      public static final double L4 = 16.664;
+      public static final double BALL = 10.0; // placeholder value
+    }
   }
 
   public static final class WristConstants{
@@ -72,11 +75,16 @@ public final class Constants
     public static final double UPPER_SOFT_BOUND = 240.0; // placeholder values. these are NOT finalized.
     public static final double LOWER_SOFT_BOUND = -5.0;
 
-    public static final double STOW_ANGLE = 100.0;
-    public static final double INTAKE_ANGLE = 0.0;
-    public static final double L2_ANGLE = 190.0;
-    public static final double L4_ANGLE = 22.0;
+
+    public static final class WristStates{
+      public static final double STOW = 100.0;
+      public static final double PICKUP = 35.0;
+      public static final double L1 = 190.0;
+      public static final double L2 = 190.0;
+      public static final double L4 = 22.0;
+    }
   }
+
 
   
 }

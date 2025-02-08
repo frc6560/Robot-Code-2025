@@ -12,6 +12,12 @@ import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 
 public class Elevator extends SubsystemBase {
+    public enum State{
+        STOW,
+        L3,
+        L4,
+        BALL
+    };
     
     private final TalonFX m_leftElev;
     private final TalonFX m_rightElev;
@@ -48,26 +54,11 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        checkElevatorBounds();
     }
 
-    public void setelevpos(int posnum) {
-        double targetrotelev = 0;
-
-        if (posnum == 1) {
-            targetrotelev = 0;
-        }
-        else if (posnum == 2) {
-            targetrotelev = 3;
-        }
-        else if (posnum == 3) {
-            targetrotelev = 6;
-        }
-        else if (posnum == 4) {
-            targetrotelev = 9;
-        }
-
+    public void setElevatorPosition(double targetrotelev) {
         final PositionVoltage m_request = new PositionVoltage(targetrotelev);
+
         m_leftElev.setControl(m_request);
         m_rightElev.setControl(m_request);
     }
@@ -99,16 +90,10 @@ public class Elevator extends SubsystemBase {
         m_rightElev.setPosition(setposition);
     }
 
-    public void checkElevatorBounds() {
-        if (topLimitSwitchDown() || bottomLimitSwitchDown()) {
-            stopMotors();;
-        }
-    }
-
     // all code below this point is for testing purposes
     public void turnOnMotors(){
-        m_leftElev.setControl(new VelocityVoltage(0.2));
-        m_rightElev.setControl(new VelocityVoltage(0.2));
+        m_leftElev.setControl(new VelocityVoltage(200));
+        m_rightElev.setControl(new VelocityVoltage(200));
     }
 
     public void turnOnMotorsNoPID(){

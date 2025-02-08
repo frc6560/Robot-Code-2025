@@ -21,9 +21,8 @@ import frc.robot.subsystems.Elevator;
 
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.GrabberCommand;
-import frc.robot.commands.helpers.WristCommand;
-import frc.robot.commands.helpers.ElevatorCommand;
-import frc.robot.commands.ScoringCommand;
+import frc.robot.commands.WristCommand;
+import frc.robot.commands.ElevatorCommand;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -44,7 +43,6 @@ public class RobotContainer {
 
   private final Wrist wrist;
   private final Elevator elevator;
-  private final ScoringCommand scoringCommand;
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
@@ -54,28 +52,24 @@ public class RobotContainer {
     .deadband(OperatorConstants.DEADBAND)
     .scaleTranslation(0.8)
     .allianceRelativeControl(true);
-  public RobotContainer() {
 
+  public RobotContainer() {
     climb = new Climb(controls);
-    climbCommand = new ClimbCommand(climb, controls); 
+    climbCommand = new ClimbCommand(climb, controls);
     climb.setDefaultCommand(climbCommand);
+
     grabber = new Grabber();
     grabberCommand = new GrabberCommand(grabber, controls);
     grabber.setDefaultCommand(grabberCommand);
 
     wrist = new Wrist();
+    wrist.setDefaultCommand(new WristCommand(wrist, controls));
+
     elevator = new Elevator();
+    elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
-  
-
-    scoringCommand = new ScoringCommand(wrist, elevator, controls);
-    wrist.setDefaultCommand(scoringCommand);
 
     configureBindings();
-    DriverStation.silenceJoystickConnectionWarning(true);
-
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-
   }
 
   // configure drivetrain bullshit - do this with a normal XboxController if easier
@@ -85,15 +79,11 @@ public class RobotContainer {
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-    driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-    driverXbox.b().whileTrue(
-      drivebase.driveToPose(
-        new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    driverXbox.start().whileTrue(Commands.none());
-    driverXbox.back().whileTrue(Commands.none());
-    driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    driverXbox.rightBumper().onTrue(Commands.none());
+    driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+    // driverXbox.b().whileTrue(
+    //   drivebase.driveToPose(
+    //     new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
   }
   
   public Command getAutonomousCommand() {

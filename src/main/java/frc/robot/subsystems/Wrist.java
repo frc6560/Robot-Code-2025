@@ -37,9 +37,9 @@ public class Wrist extends SubsystemBase {
   public enum State{
     PICKUP,
     STOW,
+    L1,
     L2,
     L4,
-    // L1, // see what other ones we need
     MOVING // placeholder bad state
   };
 
@@ -67,12 +67,13 @@ public class Wrist extends SubsystemBase {
       // PID
       Slot0Configs wristPIDController = new Slot0Configs();
       // all random
-      wristPIDController.kS = 2;
+      wristPIDController.kS = 0;
       wristPIDController.kG = 0;
 
-      wristPIDController.kP = 0.2;
-      wristPIDController.kI = 0.01;
+      wristPIDController.kP = 0.02;
+      wristPIDController.kI = 0.0;
       wristPIDController.kD = 0;
+
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
@@ -127,25 +128,35 @@ public class Wrist extends SubsystemBase {
 
   /** Updates and fetches the state of the wrist.  */
   public State getState(){
-    final double tolerance = 5;
+    final double tolerance = 2.5; // degrees
     if(getWristVelocity() > 0.1){
       this.state = State.MOVING;
-    }
-    else{
+
+    } else{
       double angle = getWristAngle();
-      // TODO: fix with abs values like an actual good programmer would do
-      if(angle > WristConstants.STOW_ANGLE - tolerance && angle < WristConstants.STOW_ANGLE + tolerance){
+
+      if (Math.abs(angle - WristConstants.WristStates.STOW) < tolerance){
         this.state = State.STOW;
-      } else if(angle > WristConstants.INTAKE_ANGLE - tolerance && angle < WristConstants.INTAKE_ANGLE + tolerance){
+
+      } else if(Math.abs(angle - WristConstants.WristStates.PICKUP) < tolerance){
         this.state = State.PICKUP;
-      } else if (angle > WristConstants.L2_ANGLE - tolerance && angle < WristConstants.L2_ANGLE + tolerance){
+
+      } else if (Math.abs(angle - WristConstants.WristStates.L1) < tolerance){
+        this.state = State.L1;
+
+      } else if (Math.abs(angle - WristConstants.WristStates.L2) < tolerance){
         this.state = State.L2;
-      } else if (angle > WristConstants.L4_ANGLE - tolerance && angle < WristConstants.L4_ANGLE + tolerance){
+
+      } else if (Math.abs(angle - WristConstants.WristStates.L4) < tolerance){
         this.state = State.L4;
+
+      } else {
+        this.state = State.MOVING;
       }
-      else this.state = State.MOVING;
+
     }
-    return this.state
+    
+    return this.state;
   }
 
   /** Does not actually set wrist position. Sets encoder position instead.  */
@@ -160,12 +171,13 @@ public class Wrist extends SubsystemBase {
     position = Math.min(Math.max(position, WristConstants.LOWER_SOFT_BOUND), WristConstants.UPPER_SOFT_BOUND);
 
     double targetPos = (position) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
+
     final PositionVoltage m_request = new PositionVoltage(targetPos);
     m_WristMotor.setControl(m_request);
   }
 
   public void stopMotor(){
-    m_WristMotor.setControl(new VelocityVoltage(0));
+    m_WristMotor.set(0);
   }
 
 
