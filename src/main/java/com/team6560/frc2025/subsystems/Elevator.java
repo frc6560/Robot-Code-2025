@@ -45,6 +45,11 @@ public class Elevator extends SubsystemBase {
             .add("Bottom limit switch", this::bottomLimitSwitchDown);
     }
 
+    @Override
+    public void periodic() {
+        checkElevatorBounds();
+    }
+
     public void setelevpos(int posnum) {
         double targetrotelev = 0;
 
@@ -91,6 +96,12 @@ public class Elevator extends SubsystemBase {
     public void resetEncoderPos(double setposition) {
         m_leftElev.setPosition(setposition);
         m_rightElev.setPosition(setposition);
+    }
+
+    public void checkElevatorBounds() {
+        if (topLimitSwitchDown() || bottomLimitSwitchDown()) {
+            stopMotors();;
+        }
     }
 
     // all code below this point is for testing purposes
