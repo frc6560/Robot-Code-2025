@@ -69,9 +69,9 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kS = 2;
       wristPIDController.kG = 0;
 
-      wristPIDController.kP = 0.002;
+      wristPIDController.kP = 0.2;
       wristPIDController.kI = 0.01;
-      wristPIDController.kD = 0.2;
+      wristPIDController.kD = 0;
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
@@ -91,7 +91,6 @@ public class Wrist extends SubsystemBase {
   /** WPILib default periodic function. leave empty. */
   @Override 
   public void periodic() {
-    overshootHandler();
     setEncoderPosition();
   }
 
@@ -133,6 +132,7 @@ public class Wrist extends SubsystemBase {
     }
     else{
       double angle = getWristAngle();
+      // TODO: fix with abs values like an actual good programmer would do
       if(angle > WristConstants.STOW_ANGLE - tolerance && angle < WristConstants.STOW_ANGLE + tolerance){
         this.state = State.STOW;
       } else if(angle > WristConstants.INTAKE_ANGLE - tolerance && angle < WristConstants.INTAKE_ANGLE + tolerance){
@@ -160,24 +160,17 @@ public class Wrist extends SubsystemBase {
 
   /** Actually sets wrist position. */
   public void setMotorPosition(double position){
+    position = Math.min(Math.max(position, WristConstants.LOWER_SOFT_BOUND), WristConstants.UPPER_SOFT_BOUND);
 
     double targetPos = (position) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
-    
     final PositionVoltage m_request = new PositionVoltage(targetPos);
     m_WristMotor.setControl(m_request);
   }
-
-
 
   public void stopMotor(){
     m_WristMotor.setControl(new VelocityVoltage(0));
   }
 
-  public void overshootHandler(){
-    if(getOvershoot()){
-      stopMotor();
-    }
-  }
 
   // all code below this point is for testing purposes only
   public void turnOnMotor(){
@@ -185,6 +178,6 @@ public class Wrist extends SubsystemBase {
   }
   
   public void turnOnMotorWithPID(){
-    m_WristMotor.setControl(new VelocityVoltage(0.2));
+    m_WristMotor.setControl(new VelocityVoltage(200));
   }
 }
