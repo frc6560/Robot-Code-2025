@@ -37,7 +37,7 @@ public class WristCommand extends Command{
     }
 
     @Override
-    public void end(boolean isFinished){
+    public void end(boolean interrupted){
         wrist.stopMotor();
     }
 
