@@ -35,10 +35,10 @@ public class Elevator extends SubsystemBase {
         Slot0Configs elevatorPID = new Slot0Configs();
         // all random
             elevatorPID.kS = 0;
-            elevatorPID.kG = 0.8;
+            elevatorPID.kG = 1.0;
 
-            elevatorPID.kP = 0.75;
-            elevatorPID.kI = 0.0;
+            elevatorPID.kP = 0.65;
+            elevatorPID.kI = 0.001;
             elevatorPID.kD = 0;
         
         m_leftElev.getConfigurator().apply(elevatorPID);
