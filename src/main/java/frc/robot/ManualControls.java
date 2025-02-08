@@ -53,32 +53,32 @@ public class ManualControls {
         return - modifyAxis(secondXbox.getLeftY());
     }
 
-    public boolean getRunScoreL1(){
+    public boolean goToL1(){
         return secondXbox.getAButton();
     }
 
-    public boolean getRunScoreL2(){
+    public boolean goToL2(){
         return secondXbox.getBButton();
     }
 
-    public boolean getRunScoreL3(){
+    public boolean goToL3(){
         return secondXbox.getXButton();
     }
 
-    public boolean getRunScoreL4(){
+    public boolean goToL4(){
         return secondXbox.getYButton();
     }
 
-    public boolean getRunScoreStow(){
+    public boolean goToStow(){
         return secondXbox.getBackButton(); // TODO change to correct button
     }
 
-    public boolean getRunScorePickup(){
-        return secondXbox.getStartButton();
+    public boolean goToPickup(){
+        return secondXbox.getRightTriggerAxis() > 0.25;
     }
 
-    public boolean getRunScoreBall(){
-        return secondXbox.getBackButton(); // TODO change to correct button
+    public boolean goToAlgae(){
+        return secondXbox.getStartButton(); // TODO change to correct button
     }
 
     public double testWrist(){

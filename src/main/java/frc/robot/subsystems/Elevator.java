@@ -52,7 +52,7 @@ public class Elevator extends SubsystemBase {
         elevatorPID.kG = 0.4;
 
         elevatorPID.kP = 0.7;
-        elevatorPID.kI = 0.007;
+        elevatorPID.kI = 0.01;
         elevatorPID.kD = 0;
 
         TalonFXConfiguration config = new TalonFXConfiguration();

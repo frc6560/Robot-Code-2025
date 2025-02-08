@@ -28,17 +28,19 @@ public class WristCommand extends Command{
     @Override
     public void execute(){
 
-      if(controls.getRunScoreL2() || controls.getRunScoreL3()){
-        targetState = State.L2;
-        System.out.println("GOing to stage 2 Wrist");
+      if(controls.goToL1()){
+        targetState = State.L1;
 
-      } else if(controls.getRunScoreL4()){
+      } else if(controls.goToL2() || controls.goToL3()){
+        targetState = State.L2;
+
+      } else if(controls.goToL4()){
         targetState = State.L4;
 
-      } else if(controls.getRunScoreStow()){
+      } else if(controls.goToStow()){
         targetState = State.STOW;
 
-      } else if(controls.getRunScorePickup()){
+      } else if(controls.goToPickup()){
         targetState = State.PICKUP;
       }
 
@@ -52,9 +54,9 @@ public class WristCommand extends Command{
       }
 
       
-      // if (Math.abs(controls.testWrist()) > 0 || true){
-      //   wrist.testMotor(controls.testWrist());
-      // } else 
+      if (Math.abs(controls.testWrist()) > 0.15){
+        wrist.testMotor(controls.testWrist());
+      } else 
       if(targetState == State.STOW){
         wrist.setMotorPosition(WristConstants.WristStates.STOW);
 

@@ -65,9 +65,9 @@ public class Wrist extends SubsystemBase {
       this.m_WristMotor = new TalonFX(WristConstants.M_ID, "Canivore");
       this.m_relativeEncoder = new CANcoder(WristConstants.CANCODER_ID, "Canivore");
 
-      this.m_WristMotor.setPosition(m_relativeEncoder.getPosition().getValueAsDouble());
+      this.m_WristMotor.setPosition(getWristAngle() / 3.33333);
       initialEncoderPos = 0;
-      // m_relativeEncoder.setPosition(initialEncoderPos);
+      // m_relativeEncoder.setPosition(initialEncoderPos * );
 
 
       this.m_limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
@@ -80,7 +80,7 @@ public class Wrist extends SubsystemBase {
       // fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       fxConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-      fxConfig.Feedback.RotorToSensorRatio = 92.52;
+      fxConfig.Feedback.RotorToSensorRatio = 108;
       fxConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
       m_WristMotor.getConfigurator().apply(fxConfig);
@@ -91,8 +91,8 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kS = 0;
       wristPIDController.kG = 0;
 
-      wristPIDController.kP = 0.5;
-      wristPIDController.kI = 0.001;
+      wristPIDController.kP = 1.2;
+      wristPIDController.kI = 0.014;
       wristPIDController.kD = 0;
 
 
@@ -137,7 +137,7 @@ public class Wrist extends SubsystemBase {
 
   /** Gets the current wrist angle */
   public double getWristAngle(){
-    return m_relativeEncoder.getPosition().getValueAsDouble() * 360 / 5.14;
+    return m_relativeEncoder.getPosition().getValueAsDouble() * 360 / 6;
   }
 
   public double getWristPosition(){
@@ -208,7 +208,7 @@ public class Wrist extends SubsystemBase {
     position = Math.min(Math.max(position, WristConstants.LOWER_SOFT_BOUND), WristConstants.UPPER_SOFT_BOUND);
     this.targetPos = position;
 
-    double targetPos = (position) / 3.89; //hopefully this conversion factor is correct.
+    double targetPos = (position) / 360 * 108; //hopefully this conversion factor is correct.
 
     // 1 rot      5 rot        18                       
     // 360        1 rot        1 rot

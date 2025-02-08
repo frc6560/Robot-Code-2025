@@ -27,17 +27,18 @@ public class ElevatorCommand extends Command {
 
     @Override
     public void execute() {
-        if(controls.getRunScoreL2() || controls.getRunScoreL1()){
+        if(controls.goToL2() || controls.goToL1()
+            || controls.goToPickup()
+            || controls.goToStow()){
             targetState = State.STOW;
-            System.out.println("GOing to stage 2 Elevator");
 
-        } else if(controls.getRunScoreL3()){
+        } else if(controls.goToL3()){
             targetState = State.L3;
             
-        } else if(controls.getRunScoreL4()){
+        } else if(controls.goToL4()){
             targetState = State.L4;
 
-        } else if(controls.getRunScoreBall()){
+        } else if(controls.goToAlgae()){
             targetState = State.BALL;
         } 
         
