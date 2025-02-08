@@ -40,6 +40,12 @@ public class RobotContainer {
   private final Grabber grabber;
   private final GrabberCommand grabberCommand;
 
+  private final Wrist wrist;
+  private final WristCommand wristCommand;
+  private final Elevator elevator;
+  private final ElevatorCommand elevatorCommand;
+  private final ScoringCommand scoringCommand;
+
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
       () -> driverXbox.getLeftY() * -1,
@@ -56,6 +62,11 @@ public class RobotContainer {
     grabber = new Grabber();
     grabberCommand = new GrabberCommand(grabber, controls);
     grabber.setDefaultCommand(grabberCommand);
+
+    wrist = new Wrist();
+    elevator = new Elevator();
+    scoringCommand = new ScoringCommand(wrist, elevator, controls);
+    wrist.setDefaultCommand(scoringCommand);
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
