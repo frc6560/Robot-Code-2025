@@ -1,7 +1,7 @@
 package frc.robot.commands.helpers;
 
 import frc.robot.subsystems.Elevator;
-import frc.robot.frc2025.Constants.ElevatorConstants;
+import frc.robot.Constants.ElevatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ElevatorCommand extends Command {

@@ -21,6 +21,8 @@ import frc.robot.subsystems.Elevator;
 
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.GrabberCommand;
+import frc.robot.commands.helpers.WristCommand;
+import frc.robot.commands.helpers.ElevatorCommand;
 import frc.robot.commands.ScoringCommand;
 
 import java.io.File;

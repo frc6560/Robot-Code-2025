@@ -8,6 +8,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Wrist.State;
@@ -41,7 +42,7 @@ public class ScoringCommand extends Command{
             new WristCommand(wrist, State.L2).schedule();
             new ElevatorCommand(elevator, 2).schedule();
         } else if(controls.getRunScoreL3()){
-            new WristCommand(wrist, State.L3).schedule();
+            new WristCommand(wrist, State.L2).schedule();
             new ElevatorCommand(elevator, 3).schedule();
         }
     }
@@ -55,6 +56,6 @@ public class ScoringCommand extends Command{
     @Override
     public boolean isFinished() {
         // This command should run continuously until all buttons are released
-        return !getRunScoreL2() && !getRunScoreL3();
+        return !controls.getRunScoreL2() && !controls.getRunScoreL3();
     }
 }
