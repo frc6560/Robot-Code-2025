@@ -43,9 +43,7 @@ public class RobotContainer {
   private final GrabberCommand grabberCommand;
 
   private final Wrist wrist;
-  private final WristCommand wristCommand;
   private final Elevator elevator;
-  private final ElevatorCommand elevatorCommand;
   private final ScoringCommand scoringCommand;
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
@@ -67,6 +65,9 @@ public class RobotContainer {
 
     wrist = new Wrist();
     elevator = new Elevator();
+
+  
+
     scoringCommand = new ScoringCommand(wrist, elevator, controls);
     wrist.setDefaultCommand(scoringCommand);
 
