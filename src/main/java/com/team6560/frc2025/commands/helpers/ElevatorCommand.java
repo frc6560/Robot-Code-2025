@@ -13,6 +13,8 @@ public class ElevatorCommand extends Command {
     public ElevatorCommand(Elevator elevator, int targetState){
         this.elevator = elevator;
         this.targetState = targetState;
+
+        addRequirements(elevator);
     }
 
     @Override
@@ -26,6 +28,11 @@ public class ElevatorCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(elevator.getElevatorHeight() - elevatorPositions[targetState+1] * ElevatorConstants.ELEV_GEAR_RATIO) < 5;
+        return Math.abs(elevator.getElevatorHeight() - elevatorPositions[targetState-1] * ElevatorConstants.ELEV_GEAR_RATIO) < 5;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        elevator.stopMotors();
     }
 }
