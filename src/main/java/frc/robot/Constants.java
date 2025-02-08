@@ -48,4 +48,35 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+
+  public static final class ElevatorConstants{
+    public static int ELEV_LEFT_ID = 14;
+    public static int ELEV_RIGHT_ID = 15;
+    public static int ELEV_UPPER_LIMIT_SWITCH_ID = 28;
+    public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
+
+    public static double ELEV_GEAR_RATIO = 2.66;
+
+    public static double L2_ELEV_ROTATIONS = 1.613;
+    public static double L3_ELEV_ROTATIONS = 7.521;
+    public static double L4_ELEV_ROTATIONS = 16.664;
+  }
+
+  public static final class WristConstants{
+    public static final int M_ID = 16;
+    public static final int SWITCH_ID = 22;  //this is still randomized
+    public static final int CANCODER_ID = 17; 
+
+    public static final double GEAR_RATIO = 92.57;
+
+    public static final double UPPER_SOFT_BOUND = 240.0; // placeholder values. these are NOT finalized.
+    public static final double LOWER_SOFT_BOUND = -5.0;
+
+    public static final double STOW_ANGLE = 100.0;
+    public static final double INTAKE_ANGLE = 0.0;
+    public static final double L2_ANGLE = 190.0;
+    public static final double L4_ANGLE = 22.0;
+  }
+
+  
 }
