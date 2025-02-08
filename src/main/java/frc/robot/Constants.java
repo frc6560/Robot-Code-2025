@@ -70,7 +70,7 @@ public final class Constants
     public static final int SWITCH_ID = 22;  //this is still randomized
     public static final int CANCODER_ID = 17; 
 
-    public static final double GEAR_RATIO = 92.57;
+    public static final double GEAR_RATIO = 108;
 
     public static final double UPPER_SOFT_BOUND = 240.0; // placeholder values. these are NOT finalized.
     public static final double LOWER_SOFT_BOUND = -5.0;

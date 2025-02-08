@@ -81,6 +81,14 @@ public class ManualControls {
         return secondXbox.getStartButton(); // TODO change to correct button
     }
 
+    public boolean runIntake(){
+      return secondXbox.getLeftTriggerAxis() > 0.25;
+    }
+
+    public boolean runOuttake(){
+      return secondXbox.getLeftBumperButton();
+    }
+
     public double testWrist(){
       return deadband(secondXbox.getRightX(), 0.1);
     }

@@ -22,10 +22,10 @@ public class GrabberCommand extends Command {
     
     @Override
     public void execute() {
-        if (controls.grabberOuttake()) {
-            grabber.outtake();
-        } else if (controls.grabberIntake()) { // Use else if to prevent both running at once
-            grabber.intake();
+        if (controls.runIntake()) {
+            grabber.runIntake();
+        } else if (controls.runOuttake()) {
+            grabber.runOuttake();
         } else {
             grabber.stop();
         }
