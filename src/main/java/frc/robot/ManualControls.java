@@ -48,4 +48,12 @@ public class ManualControls {
     public double getClimbSpeed() {
         return - modifyAxis(secondXbox.getLeftY());
     }
+
+    public boolean getRunScoreL2(){
+        return secondXbox.getYButton();
+    }
+
+    public boolean getRunScoreL3(){
+        return secondXbox.getXButton();
+    }
 }

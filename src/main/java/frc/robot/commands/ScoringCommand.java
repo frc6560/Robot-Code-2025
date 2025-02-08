@@ -9,31 +9,43 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Wrist.State;
 import frc.robot.subsystems.Elevator;
+import frc.robot.ManualControls;
 
 import frc.robot.commands.helpers.WristCommand;
 import frc.robot.commands.helpers.ElevatorCommand;
 
-public class ScoringCommand extends SequentialCommandGroup {
+public class ScoringCommand extends Command{
+    private final Wrist wrist;
+    private final Elevator elevator;
+    final ManualControls controls;
 
-    public ScoringCommand(Wrist wrist, Elevator elevator, int elevatorTargetState, State wristTargetState) {
-        addCommands(
-            new WristCommand(wrist, Wrist.State.STOW), 
-            new ElevatorCommand(elevator, elevatorTargetState), 
-            new WristCommand(wrist, wristTargetState)  
-        );
+    public ScoringCommand(Wrist wrist, Elevator elevator, ManualControls controls) {
+        this.wrist = wrist;
+        this.elevator = elevator;
+
+        this.controls = controls;
+        addRequirements(wrist, elevator);
+    }
+
+    @Override
+    public void initialize() {
+        
     }
 
     @Override
     public void execute(){
-        if (!isButtonPressed.getAsBoolean()) {
-            this.cancel();
+        if(controls.getRunScoreL2()){
+            new WristCommand(wrist, State.L2).schedule();
+            new ElevatorCommand(elevator, 2).schedule();
+        } else if(controls.getRunScoreL3()){
+            new WristCommand(wrist, State.L3).schedule();
+            new ElevatorCommand(elevator, 3).schedule();
         }
     }
-    
+
     @Override
     public void end(boolean interrupted) {
         new WristCommand(wrist, Wrist.State.STOW).schedule();
