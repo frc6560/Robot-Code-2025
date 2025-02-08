@@ -49,11 +49,19 @@ public class ManualControls {
         return - modifyAxis(secondXbox.getLeftY());
     }
 
+    public boolean getRunScoreL1(){
+        return secondXbox.getAButton();
+    }
+
     public boolean getRunScoreL2(){
-        return secondXbox.getYButton();
+        return secondXbox.getBButton();
     }
 
     public boolean getRunScoreL3(){
         return secondXbox.getXButton();
+    }
+
+    public boolean getRunScoreL4(){
+        return secondXbox.getYButton();
     }
 }

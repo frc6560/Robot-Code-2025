@@ -15,6 +15,7 @@ public class WristCommand extends Command{
     public WristCommand(Wrist wrist, State targetState){
       this.wrist = wrist;
       this.targetState = targetState;
+
       addRequirements(wrist);
     }
 
@@ -28,15 +29,29 @@ public class WristCommand extends Command{
 
       if(controls.getRunScoreL2() || controls.getRunScoreL3()){
         targetState  = State.L2;
+
+      } else if(controls.getRunScoreL4()){
+        targetState = State.L4;
+
+      } else if(controls.getRunScoreStow()){
+        targetState = State.STOW;
+
+      } else if(controls.getRunScorePickup()){
+        targetState = State.PICKUP;
       }
+
+      
 
       if(targetState == State.STOW){
         wrist.setMotorPosition(WristConstants.STOW_ANGLE);
+
       } else if (targetState == State.PICKUP){
         wrist.setMotorPosition(WristConstants.INTAKE_ANGLE);
+
       } else if (targetState == State.L2){
         wrist.setMotorPosition(WristConstants.L2_ANGLE);
-      } else{
+
+      } else if (targetState == State.L4){
         wrist.setMotorPosition(WristConstants.L4_ANGLE);
       }
     }

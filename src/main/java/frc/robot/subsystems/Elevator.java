@@ -28,12 +28,12 @@ public class Elevator extends SubsystemBase {
 
         Slot0Configs elevatorPID = new Slot0Configs();
         // all random
-            elevatorPID.kS = 2;
+            elevatorPID.kS = 0;
             elevatorPID.kG = 0;
 
-            elevatorPID.kP = 0.002;
-            elevatorPID.kI = 0.01;
-            elevatorPID.kD = 0.2;
+            elevatorPID.kP = 0.02;
+            elevatorPID.kI = 0.0;
+            elevatorPID.kD = 0;
         
         m_leftElev.getConfigurator().apply(elevatorPID);
         m_rightElev.getConfigurator().apply(elevatorPID);
@@ -70,9 +70,9 @@ public class Elevator extends SubsystemBase {
         final PositionVoltage m_request = new PositionVoltage(targetrotelev);
         m_leftElev.setControl(m_request);
         m_rightElev.setControl(m_request);
-        
-        
     }
+
+
     public void stopMotors() {
         m_rightElev.stopMotor();
         m_leftElev.stopMotor();
