@@ -33,22 +33,6 @@ public class ManualControls{
         
         wristTable = NetworkTableInstance.getDefault().getTable("Wrist");
     }
-    // ---- WRIST ----
-    public boolean getSetStow(){
-        return scoringController.getAButton();
-    }
-
-    public boolean getSetIntake(){
-        return scoringController.getBButton();
-    }
-
-    public boolean getSetL2(){
-        return scoringController.getXButton();
-    }
-
-    public boolean getSetL4(){
-        return scoringController.getYButton();
-    }
     // ---- DRIVETRAIN ---- (copied from 2024 code)
 
 //   @Override
