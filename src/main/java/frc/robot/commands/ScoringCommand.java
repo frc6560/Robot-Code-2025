@@ -51,4 +51,10 @@ public class ScoringCommand extends Command{
         new WristCommand(wrist, Wrist.State.STOW).schedule();
         new ElevatorCommand(elevator, 0).schedule();
     }
+
+    @Override
+    public boolean isFinished() {
+        // This command should run continuously until all buttons are released
+        return !getRunScoreL2() && !getRunScoreL3();
+    }
 }
