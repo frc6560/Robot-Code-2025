@@ -82,9 +82,12 @@ public class ManualControls {
     }
 
     public double testWrist(){
-      return secondXbox.getRightX();
+      return deadband(secondXbox.getRightX(), 0.1);
     }
     public double testEle(){
       return secondXbox.getLeftX();
+    }
+    public boolean resetWrist(){
+      return secondXbox.getRightBumperButton();
     }
 }

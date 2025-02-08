@@ -58,7 +58,7 @@ public final class Constants
     public static double ELEV_GEAR_RATIO = 2.66;
     
     public static final class ElevatorStates{
-      public static final double STOW = 1.613;
+      public static final double STOW = 0.4;
       public static final double L3 = 7.521;
       public static final double L4 = 16.664;
       public static final double BALL = 10.0; // placeholder value
@@ -77,11 +77,11 @@ public final class Constants
 
 
     public static final class WristStates{
-      public static final double STOW = 100.0;
+      public static final double STOW = 0.0;
       public static final double PICKUP = 35.0;
-      public static final double L1 = 190.0;
-      public static final double L2 = 190.0;
-      public static final double L4 = 22.0;
+      public static final double L1 = 75.0;
+      public static final double L2 = 120.0;
+      public static final double L4 = 160.0;
     }
   }
 

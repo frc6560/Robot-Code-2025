@@ -12,11 +12,18 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import frc.robot.Constants.WristConstants;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.robot.Constants.WristConstants;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableInstance.NetworkMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static edu.wpi.first.units.Units.Degree;
 import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 
@@ -45,13 +52,22 @@ public class Wrist extends SubsystemBase {
 
   private State state;
 
+  private final NetworkTable ntTable = NetworkTableInstance.getDefault().getTable("Wrist");
+  private final NetworkTableEntry ntAngle = ntTable.getEntry("Angle");
+  private final NetworkTableEntry ntPosition = ntTable.getEntry("wrist position");
+  private final NetworkTableEntry ntTargetPos = ntTable.getEntry("Target angle");
+
+  private double targetPos = 0;
+
   /** Creates a new Wrist. */
   public Wrist() {
       // Initializes motors and encoders
       this.m_WristMotor = new TalonFX(WristConstants.M_ID, "Canivore");
-      this.m_relativeEncoder = new CANcoder(WristConstants.CANCODER_ID); //random
+      this.m_relativeEncoder = new CANcoder(WristConstants.CANCODER_ID, "Canivore");
+
+      this.m_WristMotor.setPosition(m_relativeEncoder.getPosition().getValueAsDouble());
       initialEncoderPos = 0;
-      m_relativeEncoder.setPosition(initialEncoderPos);
+      // m_relativeEncoder.setPosition(initialEncoderPos);
 
 
       this.m_limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
@@ -60,8 +76,13 @@ public class Wrist extends SubsystemBase {
 
       // Applies the cancoder to the wrist motor
       this.fxConfig = new TalonFXConfiguration();
-      fxConfig.Feedback.FeedbackRemoteSensorID = m_relativeEncoder.getDeviceID();
-      fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+      // fxConfig.Feedback.FeedbackRemoteSensorID = m_relativeEncoder.getDeviceID();
+      // fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+      fxConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+      fxConfig.Feedback.RotorToSensorRatio = 92.52;
+      fxConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
       m_WristMotor.getConfigurator().apply(fxConfig);
 
       // PID
@@ -71,21 +92,26 @@ public class Wrist extends SubsystemBase {
       wristPIDController.kG = 0;
 
       wristPIDController.kP = 0.5;
-      wristPIDController.kI = 0.0;
+      wristPIDController.kI = 0.001;
       wristPIDController.kD = 0;
 
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
       // Telemetry using shuffleboard's display tab. See NtValueDisplay.
-      ntDispTab("Wrist")
-            .add("Wrist angle", this::getWristAngle)
-            .add("Wrist angular velocity", this::getWristVelocity)
-            .add("Limit switch", this::limitDown)  
-            .add("Soft upper limit", this::getUpperBound)
-            .add("Soft bottom limit", this::getLowerBound)
-            .add("Overshot bounds", this::getOvershoot)
-            .add("State", ()-> {return this.state.toString();});
+      // ntDispTab("Wrist")
+      //       .add("Wrist angle", this::getWristAngle)
+      //       .add("Wrist angular velocity", this::getWristVelocity)
+      //       .add("Limit switch", this::limitDown)  
+      //       .add("Soft upper limit", this::getUpperBound)
+      //       .add("Soft bottom limit", this::getLowerBound)
+      //       .add("Overshot bounds", this::getOvershoot)
+      //       .add("State", ()-> {return this.state.toString();});
+
+      
+      ntAngle.setDouble(0.0);
+      ntTargetPos.setDouble(this.targetPos);
+      ntPosition.setDouble(m_WristMotor.getPosition().getValueAsDouble());
   }
 
 
@@ -93,9 +119,17 @@ public class Wrist extends SubsystemBase {
   /** WPILib default periodic function. leave empty. */
   @Override 
   public void periodic() {
-    // setEncoderPosition();
+    updateNTTable();
+    // if (limitDown()){
+    //   System.out.println("Limit down");
+    // }
   }
 
+  public void updateNTTable(){
+      ntAngle.setDouble(getWristAngle());
+      ntTargetPos.setDouble(this.targetPos);
+      ntPosition.setDouble(m_WristMotor.getPosition().getValueAsDouble());
+  }
   /** Checks if the wrist is down based on the limit switch. */
   private boolean limitDown(){
     return m_limitSwitch.get();
@@ -103,7 +137,11 @@ public class Wrist extends SubsystemBase {
 
   /** Gets the current wrist angle */
   public double getWristAngle(){
-    return ((m_relativeEncoder.getPosition().getValueAsDouble() * 360) - (this.initialEncoderPos * 360)) / WristConstants.GEAR_RATIO;
+    return m_relativeEncoder.getPosition().getValueAsDouble() * 360 / 5.14;
+  }
+
+  public double getWristPosition(){
+    return m_WristMotor.getPosition().getValueAsDouble();
   }
 
   /** Gets the current wrist velocity. */
@@ -160,17 +198,20 @@ public class Wrist extends SubsystemBase {
   }
 
   /** Does not actually set wrist position. Sets encoder position instead.  */
-  public void setEncoderPosition(){
-    if(limitDown()){
-      m_relativeEncoder.setPosition(0);
-    }
+  public void setEncoderPosition(double pos){
+    this.m_relativeEncoder.setPosition(0.0);
+    this.m_WristMotor.setPosition(0.0);
   } 
 
   /** Actually sets wrist position. */
   public void setMotorPosition(double position){
     position = Math.min(Math.max(position, WristConstants.LOWER_SOFT_BOUND), WristConstants.UPPER_SOFT_BOUND);
+    this.targetPos = position;
 
-    double targetPos = (position) / 360 * WristConstants.GEAR_RATIO; //hopefully this conversion factor is correct.
+    double targetPos = (position) / 3.89; //hopefully this conversion factor is correct.
+
+    // 1 rot      5 rot        18                       
+    // 360        1 rot        1 rot
 
     final PositionVoltage m_request = new PositionVoltage(targetPos);
     m_WristMotor.setControl(m_request);

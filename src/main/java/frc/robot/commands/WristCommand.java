@@ -42,25 +42,34 @@ public class WristCommand extends Command{
         targetState = State.PICKUP;
       }
 
-      wrist.stopMotor();
+      // wrist.stopMotor();
+
+
+      if (controls.resetWrist()){
+        // System.out.println("Restesting");
+        
+        wrist.setEncoderPosition(0.0);
+      }
 
       
+      // if (Math.abs(controls.testWrist()) > 0 || true){
+      //   wrist.testMotor(controls.testWrist());
+      // } else 
+      if(targetState == State.STOW){
+        wrist.setMotorPosition(WristConstants.WristStates.STOW);
 
-      // if(targetState == State.STOW){
-      //   wrist.setMotorPosition(WristConstants.WristStates.STOW);
+      } else if (targetState == State.PICKUP){
+        wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
 
-      // } else if (targetState == State.PICKUP){
-      //   wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
+      } else if (targetState == State.L1){
+        wrist.setMotorPosition(WristConstants.WristStates.L1);
 
-      // } else if (targetState == State.L1){
-      //   wrist.setMotorPosition(WristConstants.WristStates.L1);
+      } else if (targetState == State.L2){
+        wrist.setMotorPosition(WristConstants.WristStates.L2);
 
-      // } else if (targetState == State.L2){
-      //   wrist.setMotorPosition(WristConstants.WristStates.L2);
-
-      // } else if (targetState == State.L4){
-      //   wrist.setMotorPosition(WristConstants.WristStates.L4);
-      // }
+      } else if (targetState == State.L4){
+        wrist.setMotorPosition(WristConstants.WristStates.L4);
+      }
     }
 
     @Override

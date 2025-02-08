@@ -3,9 +3,15 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
@@ -25,6 +31,14 @@ public class Elevator extends SubsystemBase {
     private final DigitalInput topLimitSwitch;
     private final DigitalInput bottomLimitSwitch;
 
+    private double targetPos = 0;
+
+    private final NetworkTable ntTable = NetworkTableInstance.getDefault().getTable("Elevator");
+    private final NetworkTableEntry ntHeight = ntTable.getEntry("Height");
+    private final NetworkTableEntry ntTargetPos = ntTable.getEntry("Target height");
+
+
+
     public Elevator() {
         this.m_leftElev = new TalonFX(ElevatorConstants.ELEV_LEFT_ID, "Canivore");
         this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID, "Canivore");
@@ -33,30 +47,47 @@ public class Elevator extends SubsystemBase {
         this.bottomLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_LOWER_LIMIT_SWITCH_ID);
 
         Slot0Configs elevatorPID = new Slot0Configs();
-        // all random
-            elevatorPID.kS = 0;
-            elevatorPID.kG = 1.0;
 
-            elevatorPID.kP = 0.65;
-            elevatorPID.kI = 0.001;
-            elevatorPID.kD = 0;
+        elevatorPID.kS = 0;
+        elevatorPID.kG = 0.4;
+
+        elevatorPID.kP = 0.7;
+        elevatorPID.kI = 0.007;
+        elevatorPID.kD = 0;
+
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.CurrentLimits.SupplyCurrentLimit = 40;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
-        m_leftElev.getConfigurator().apply(elevatorPID);
-        m_rightElev.getConfigurator().apply(elevatorPID);
+        m_leftElev.getConfigurator().apply(config.withSlot0(elevatorPID));
+        m_rightElev.getConfigurator().apply(config.withSlot0(elevatorPID));
+
+        ntHeight.setDouble(0.0);
+        ntTargetPos.setDouble(0.0);
 
 
-        ntDispTab("Elevator")
-            .add("Elevator Height", this::getElevatorHeight)
-            .add("Elevator angular velocity", this::getElevatorVelocity)
-            .add("Upper limit switch", this::topLimitSwitchDown)
-            .add("Bottom limit switch", this::bottomLimitSwitchDown);
+        // ntDispTab("Elevator")
+        //     .add("Elevator Height", this::getElevatorHeight)
+        //     .add("Elevator angular velocity", this::getElevatorVelocity)
+        //     .add("Upper limit switch", this::topLimitSwitchDown)
+        //     .add("Bottom limit switch", this::bottomLimitSwitchDown);
     }
 
     @Override
     public void periodic() {
+        updateNTTable();
+    }
+
+    public void updateNTTable(){
+        ntHeight.setDouble(getElevatorHeight());
+        ntTargetPos.setDouble(this.targetPos);
+
     }
 
     public void setElevatorPosition(double targetrotelev) {
+        this.targetPos = targetrotelev;
         final PositionVoltage m_request = new PositionVoltage(targetrotelev);
 
         m_leftElev.setControl(m_request);
@@ -78,7 +109,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getElevatorHeight(){
-        return m_leftElev.getPosition().getValueAsDouble() * ElevatorConstants.ELEV_GEAR_RATIO;
+        return m_leftElev.getPosition().getValueAsDouble();// * ElevatorConstants.ELEV_GEAR_RATIO;
     }
 
     public double getElevatorVelocity(){
