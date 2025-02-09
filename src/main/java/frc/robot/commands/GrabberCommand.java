@@ -26,6 +26,8 @@ public class GrabberCommand extends Command {
     public void execute() {
         if (controls.runIntake()) {
             grabber.runIntake();
+        } else if (controls.runOuttake()) {
+            grabber.runOuttake();
         } else {
             grabber.stop();
         }
