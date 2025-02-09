@@ -48,7 +48,7 @@ public class WristCommand extends Command{
       } else if(controls.goToPickup()) {
         targetState = State.PICKUP;
 
-      } else if (controls.runOuttake()) {
+      } else if (controls.goToPlacePos()) {
         outtake = 1;
 
       } 

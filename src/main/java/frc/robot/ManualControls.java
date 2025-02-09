@@ -82,8 +82,12 @@ public class ManualControls {
       return secondXbox.getLeftTriggerAxis() > 0.25;
     }
 
-    public boolean runOuttake(){
-      return secondXbox.getLeftBumperButton() || firstXbox.getRightBumperButton();
+    public boolean runOuttake() {
+      return firstXbox.getRightBumperButton();
+    }
+
+    public boolean goToPlacePos() {
+      return secondXbox.getLeftBumperButton();
     }
 
     public double testWrist(){
