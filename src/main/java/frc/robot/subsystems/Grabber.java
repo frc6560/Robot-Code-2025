@@ -17,11 +17,9 @@ public class Grabber extends SubsystemBase {
     private static final double INTAKE_SPEED = -0.3;
     private static final double OUTTAKE_SPEED = 0.3;
     private static final double CURRENT_LIMIT = 40.0; // Stop the motor if current exceeds 40A
-    private boolean hasGamePiece = false; // Track whether the grabber is holding something
 
     public Grabber() {
         this.grabberMotor = new SparkMax(GRABBER_MOTOR_ID, MotorType.kBrushless);
-
         ntDispTab("Grabber")
             .add("Grabber Duty Cycle", this::getDutyCycle);
     
@@ -48,7 +46,9 @@ public class Grabber extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return false; // need to write stuff using a sensor
+        return !this.grabberMotor.getReverseLimitSwitch().isPressed();
+        // return false;
+        // return grabberMotor.getOutputCurrent() > CURRENT_LIMIT;
     }
     public double getOutputCurrent() {
         return grabberMotor.getOutputCurrent();
