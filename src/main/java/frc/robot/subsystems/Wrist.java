@@ -4,14 +4,12 @@
 
 package frc.robot.subsystems;
 
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -214,9 +212,6 @@ public class Wrist extends SubsystemBase {
     this.targetPos = position;
 
     double targetPos = (position) / 360 * 108; //hopefully this conversion factor is correct.
-
-    // 1 rot      5 rot        18                       
-    // 360        1 rot        1 rot
 
     final PositionVoltage m_request = new PositionVoltage(targetPos);
     m_WristMotor.setControl(m_request);
