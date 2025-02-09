@@ -8,6 +8,7 @@ public class ManualControls {
 
     // private final XboxController secondXbox;
     private final XboxController secondXbox;
+    private final XboxController firstXbox;
     
     private static double deadband(double value, double deadband) {
         if (Math.abs(value) > deadband) {
@@ -30,25 +31,21 @@ public class ManualControls {
     
         return value;
       }
-    public ManualControls(XboxController secondXbox) {
+    public ManualControls(XboxController firstXbox, XboxController secondXbox) {
         this.secondXbox = secondXbox;
+        this.firstXbox = firstXbox;
         
     }
 
-    public boolean grabberOuttake() {
-        return secondXbox.getBButton(); // Returns true while held
-    }
-
-    public boolean grabberIntake() {
-        return secondXbox.getAButton(); // Returns true while held
-    }
     public boolean getRunClimb() {
       // retun secondXbox.get
         return secondXbox.getRightBumperButton(); // Returns true while held
     }
+
     public boolean getDownClimb() {
         return secondXbox.getLeftBumperButton(); // Returns true while held
     }
+    
     public double getClimbSpeed() {
         return - modifyAxis(secondXbox.getLeftY());
     }
@@ -58,11 +55,11 @@ public class ManualControls {
     }
 
     public boolean goToL2(){
-        return secondXbox.getBButton();
+        return secondXbox.getXButton();
     }
 
     public boolean goToL3(){
-        return secondXbox.getXButton();
+        return secondXbox.getBButton();
     }
 
     public boolean goToL4(){
@@ -86,7 +83,7 @@ public class ManualControls {
     }
 
     public boolean runOuttake(){
-      return secondXbox.getLeftBumperButton();
+      return secondXbox.getLeftBumperButton() || firstXbox.getRightBumperButton();
     }
 
     public double testWrist(){
