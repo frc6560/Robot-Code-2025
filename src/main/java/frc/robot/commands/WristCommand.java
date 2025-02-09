@@ -3,19 +3,25 @@ package frc.robot.commands;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Wrist.State;
 import frc.robot.Constants.WristConstants;
+import frc.robot.subsystems.Grabber;
 import frc.robot.ManualControls;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
 /** A helper command that controls the Wrist subsystem */
 public class WristCommand extends Command{
     final Wrist wrist;
+    final Grabber grabber;
     State targetState = State.STOW;
     final ManualControls controls;
+    DigitalInput LimitSwitch = new DigitalInput(WristConstants.LIMIT_SWITCH_PORT_ID);
 
-    public WristCommand(Wrist wrist, ManualControls controls){
+
+    public WristCommand(Wrist wrist, ManualControls controls, Grabber grabber){
       this.wrist = wrist;
       this.controls = controls;
+      this.grabber = grabber;
 
       addRequirements(wrist);
     }
@@ -42,12 +48,20 @@ public class WristCommand extends Command{
 
       } else if(controls.goToPickup()){
         targetState = State.PICKUP;
-      }
 
+      } else if (controls.runOuttake()) {
+        //move wrist depending on current state
+        if (targetState == State.L2) {
+          targetState = State.GrabberL2;
+        } else if (targetState == State.L4) {
+          targetState = State.GrabberL4;
+        } else {}
+        grabber.runOuttake();
+      }
       // wrist.stopMotor();
 
 
-      if (controls.resetWrist()){
+      if (controls.resetWrist() || LimitSwitch.get()) {
         // System.out.println("Restesting");
         
         wrist.setEncoderPosition(0.0);
@@ -56,8 +70,8 @@ public class WristCommand extends Command{
       
       if (Math.abs(controls.testWrist()) > 0.15){
         wrist.testMotor(controls.testWrist());
-      } else 
-      if(targetState == State.STOW){
+
+      } else if(targetState == State.STOW){
         wrist.setMotorPosition(WristConstants.WristStates.STOW);
 
       } else if (targetState == State.PICKUP){
@@ -71,7 +85,15 @@ public class WristCommand extends Command{
 
       } else if (targetState == State.L4){
         wrist.setMotorPosition(WristConstants.WristStates.L4);
-      }
+
+      } else if (targetState == State.GrabberL2){
+        wrist.setMotorPosition(WristConstants.WristStates.L2 - 20);
+
+      } else if (targetState == State.GrabberL4){
+        wrist.setMotorPosition(WristConstants.WristStates.L4 - 20);
+      
+      } else {}
+
     }
 
     @Override

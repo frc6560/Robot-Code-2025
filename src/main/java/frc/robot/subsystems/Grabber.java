@@ -48,7 +48,7 @@ public class Grabber extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return false;
+        return false; // need to write stuff using a sensor
     }
     public double getOutputCurrent() {
         return grabberMotor.getOutputCurrent();
