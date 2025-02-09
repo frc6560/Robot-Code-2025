@@ -59,7 +59,7 @@ public final class Constants
     
     public static final class ElevatorStates{
       public static final double STOW = 0.4;
-      public static final double L3 = 7.0;
+      public static final double L3 = 6.3;
       public static final double L4 = 20.0;
       public static final double BALL = 10.0; // placeholder value
     }
@@ -82,7 +82,7 @@ public final class Constants
       public static final double STOW = 90.0;
       public static final double PICKUP = 225.0;
       public static final double L1 = 30.0;
-      public static final double L2 = 75.0;
+      public static final double L2 = 65.0;
       public static final double L4 = 20.0;
 
       public static final double L1Offset = 0.0;
