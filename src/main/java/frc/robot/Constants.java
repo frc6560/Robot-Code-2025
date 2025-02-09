@@ -86,8 +86,8 @@ public final class Constants
       public static final double L4 = 20.0;
 
       public static final double L1Offset = 0.0;
-      public static final double L2Offset = 20.0;
-      public static final double L4Offset = 20.0;
+      public static final double L2Offset = 30.0;
+      public static final double L4Offset = 30.0;
       public static final double StowOffset = 0.0;
       public static final double PickupOffset = 0.0;
     }
