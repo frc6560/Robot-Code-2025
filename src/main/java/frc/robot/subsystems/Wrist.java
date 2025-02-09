@@ -45,6 +45,8 @@ public class Wrist extends SubsystemBase {
     L1,
     L2,
     L4,
+    GrabberL2,
+    GrabberL4,
     MOVING // placeholder bad state
   };
 
@@ -200,13 +202,13 @@ public class Wrist extends SubsystemBase {
     return this.state;
   }
 
-  /** Does not actually set wrist position. Sets encoder position instead.  */
+  /* Does not actually set wrist position. Sets encoder position instead.  */
   public void setEncoderPosition(double pos){
     this.m_relativeEncoder.setPosition(0.0);
     this.m_WristMotor.setPosition(0.0);
   } 
 
-  /** Actually sets wrist position. */
+  /* Actually sets wrist position. */
   public void setMotorPosition(double position){
     position = Math.min(Math.max(position, WristConstants.LOWER_SOFT_BOUND), WristConstants.UPPER_SOFT_BOUND);
     this.targetPos = position;

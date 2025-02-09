@@ -75,13 +75,21 @@ public final class Constants
     public static final double UPPER_SOFT_BOUND = 240.0; // placeholder values. these are NOT finalized.
     public static final double LOWER_SOFT_BOUND = -5.0;
 
+    public static final int LIMIT_SWITCH_PORT_ID = 19;
+
 
     public static final class WristStates{
       public static final double STOW = 90.0;
       public static final double PICKUP = 225.0;
-      public static final double L1 = 90.0;
+      public static final double L1 = 30.0;
       public static final double L2 = 75.0;
       public static final double L4 = 20.0;
+
+      public static final double L1Offset = 0.0;
+      public static final double L2Offset = 30.0;
+      public static final double L4Offset = 30.0;
+      public static final double StowOffset = 0.0;
+      public static final double PickupOffset = 0.0;
     }
   }
 

@@ -30,9 +30,10 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
 
   final CommandXboxController driverXbox = new CommandXboxController(0);
+  final XboxController firstXbox = new XboxController(0);
   final XboxController secondXbox = new XboxController(1);
 
-  private final ManualControls controls = new ManualControls(secondXbox);
+  private final ManualControls controls = new ManualControls(firstXbox, secondXbox);
 
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
@@ -89,7 +90,7 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("New Auto");
+    return drivebase.getAutonomousCommand("Test Auto");
   }
   
   public void setMotorBrake(boolean brake) {
