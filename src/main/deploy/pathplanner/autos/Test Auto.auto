@@ -9,30 +9,6 @@
           "data": {
             "pathName": "Test Auto Segment A"
           }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.3
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Test Auto Segment B"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Test Auto Segment C"
-          }
         }
       ]
     }
