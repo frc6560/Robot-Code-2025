@@ -9,6 +9,12 @@
           "data": {
             "pathName": "Test Auto Segment A"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Test Auto Segment B"
+          }
         }
       ]
     }
