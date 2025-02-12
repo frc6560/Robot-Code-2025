@@ -45,7 +45,7 @@
     "rotation": -60.08209487328384
   },
   "reversed": false,
-  "folder": null,
+  "folder": "3p Auto Segments",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 126.97902896590602
