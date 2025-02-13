@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5273849311440677,
-        "y": 6.175273934057203
+        "x": 3.6828392650462956,
+        "y": 6.136494502314815
       },
       "isLocked": false,
       "linkedName": null
@@ -48,7 +48,7 @@
   "folder": "Test Autos",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.99733469589953
+    "rotation": 90.50098937068864
   },
   "useDefaultConstraints": false
 }
