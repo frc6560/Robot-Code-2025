@@ -178,6 +178,9 @@ public class SwerveSubsystem extends SubsystemBase
           (speedsRobotRelative, moduleFeedForwards) -> {
             if (enableFeedforward)
             {
+              speedsRobotRelative = new ChassisSpeeds(speedsRobotRelative.vxMetersPerSecond,
+                                                      speedsRobotRelative.vyMetersPerSecond,
+                                                      -speedsRobotRelative.omegaRadiansPerSecond);
               swerveDrive.drive(
                   speedsRobotRelative,
                   swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
