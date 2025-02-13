@@ -48,7 +48,7 @@
   "folder": "Test Autos",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.50098937068864
+    "rotation": 179.51548756269293
   },
   "useDefaultConstraints": false
 }

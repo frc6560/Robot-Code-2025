@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.239518544225784,
-        "y": 6.16158345776108
+        "x": 2.6875368923611105,
+        "y": 4.946172960069444
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 6.1686385995370365
       },
       "prevControl": {
-        "x": 3.1719596354166644,
-        "y": 6.170490017361111
+        "x": 4.055815610532407,
+        "y": 7.353311631944445
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 89.91676163796028
+    "rotation": -179.74249261242122
   },
   "reversed": false,
   "folder": "Test Autos",
