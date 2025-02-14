@@ -84,7 +84,7 @@ public class RobotContainer {
     // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
     // driverXbox.b().whileTrue(
     //   drivebase.driveToPose(
-    //     new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+    //     new Pose2d(new Translatio n2d(4, 4), Rotation2d.fromDegrees(0))));
     
     // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
   }
