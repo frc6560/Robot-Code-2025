@@ -54,8 +54,7 @@ public class Camera {
     // Cached results from Limelight
     // public List<LimelightTarget> resultsList = new ArrayList<>();
 
-
-// Last read timestamp for debounce
+    // Last read timestamp for debounce
     private double lastReadTimestamp = Timer.getFPGATimestamp();
 
     private final NetworkTable limelightTable;
@@ -63,10 +62,11 @@ public class Camera {
     public Camera(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation, Matrix<N3, N1> singleTagStdDevs) {
         this.limelightTable = NetworkTableInstance.getDefault().getTable(name);
         robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
+        this.singleTagStdDevs = singleTagStdDevs;
         this.curStdDevs = singleTagStdDevs;
     }
 
-    // Get ID of apriltag if present
+    // Get ID of apriltag if present (revise later for multiple tags detected)
     public Optional<Integer> getBestTagId() {
         double bestTagId = limelightTable.getEntry("tid").getDouble(-1);  
         double bestAmbiguity = limelightTable.getEntry("t6c_amb").getDouble(-1); 
@@ -78,7 +78,7 @@ public class Camera {
         return Optional.of((int) bestTagId);
     }
 
-    // same thing as above method but no ambiguity check
+    // same thing as above method but no ambiguity check (fastest)
     public Optional<Integer> getLatestTagId() {
         double latestId = limelightTable.getEntry("tid").getDouble(-1);
         return (latestId >= 0) ? Optional.of((int) latestId) : Optional.empty();

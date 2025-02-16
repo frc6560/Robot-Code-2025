@@ -83,6 +83,7 @@ public class ManualControls {
     }
 
     public boolean runOuttake() {
+      // change to elliot right bumper
       return firstXbox.getRightBumperButton();
     }
 

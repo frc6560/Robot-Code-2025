@@ -20,3 +20,26 @@ limelight.java:
 
 take methods from vision class
 
+
+overall pipeline for limelight.java / camera.java:
+
+limelight.java:
+
+getApriltagPoes: get location of apriltag on field DONE
+updatePoseEstimation: get estimated global pose from camera and set robot pose
+getEstimatedGlobalPose: getEstimatedGlobalPose from camera and return as pose estimation
+getDistanceFromAprilTag: get distance of robot from aprilTag with given id using tag.map
+getTargetFromId (may require significant rewrite for limelight): essentially checks pipeline to see whether the camera with the indicated id is present
+
+ignore any visionsim methods
+
+updateVisionField: adds detected apriltags to 2d field in shuffleboard
+
+camera.java: 
+    rotation, offset from center of robot ok
+
+getBestResult: get apriltag reading with the lowest ambiguity value out of the available readings
+getLatestResult: return latest apriltag reading from cameras if there
+getEstimatedGlobalPose: updates robot global pose after getting results on apriltag locations and so on
+updateUnreadResults: retrieve properties about the position of each camera
+updateEstimatedGlobalPose: use position readings along with photonlib's poseEstimator to update the robot's global pose --> figure out how to do without photonlib
