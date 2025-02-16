@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -38,34 +39,70 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
+
+
+
+
 
 
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken from
  * https://gitlab.com/ironclad_code/ironclad-2024/-/blob/master/src/main/java/frc/robot/vision/Vision.java?ref_type=heads
  */
-public class Vision
+
+public class Limelight extends SubsystemBase
 {
+  public static interface Controls {
+    int getLimelightPipeline();
+  }
+
+  private final NetworkTable networkTable = NetworkTableInstance.getDefault().getTable("limelight");
+    
+  private final NetworkTableEntry ntX = networkTable.getEntry("tx");
+  private final NetworkTableEntry ntY = networkTable.getEntry("ty");
+  private final NetworkTableEntry ntV = networkTable.getEntry("tv");
+  private final NetworkTableEntry ntA = networkTable.getEntry("ta");
+  private final NetworkTableEntry ntL = networkTable.getEntry("tl");
+  private final NetworkTableEntry ntcL = networkTable.getEntry("cl");
+  private final NetworkTableEntry ntBotPose = networkTable.getEntry("botpose_wpiblue");
+  private final NetworkTableEntry ntPipeline = networkTable.getEntry("pipeline");
+
+
+  private final Field2d aprilTagField = new Field2d();
+
 
   /**
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout                     = AprilTagFieldLayout.loadField(
       AprilTagFields.k2025Reefscape);
-  /**
-   * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
-   */
-  private final       double              maximumAmbiguity                = 0.25;
-  /**
-   * Photon Vision Simulation
-   */
-  public              VisionSystemSim     visionSim;
-  /**
-   * Count of times that the odom thinks we're more than 10meters away from the april tag.
-   */
-  private             double              longDistangePoseEstimationCount = 0;
+
+  private final Controls controls;
+
+  private boolean forceOff = true;
+
   /**
    * Current pose from the pose estimator using wheel odometry.
    */
@@ -73,7 +110,7 @@ public class Vision
   /**
    * Field from {@link swervelib.SwerveDrive#field}
    */
-  private             Field2d             field2d;
+  
 
 
   /**
@@ -82,12 +119,24 @@ public class Vision
    * @param currentPose Current pose supplier, should reference {@link SwerveDrive#getPose()}
    * @param field       Current field, should be {@link SwerveDrive#field}
    */
-  public Vision(Supplier<Pose2d> currentPose, Field2d field)
+  public Limelight(Controls controls, Supplier<Pose2d> currentPose )
   {
+    this.controls = controls;
     this.currentPose = currentPose;
-    this.field2d = field;
+    
+    setForceOff(false);
+    //undefined, it is a method, look at 2023
 
-    if (Robot.isSimulation())
+    ntDispTab("Limelight")
+      .add("Horizontal Angle", this::getHorizontalAngle)
+      .add("Vertical Angle", this::getVerticalAngle)
+      .add("Has Target", this::hasTarget);
+
+      SmartDashboard.putData("aprilTagField", aprilTagField);
+    
+    //what the heeeeeeeeeeeeeeeeeeeee
+/*
+      if (Robot.isSimulation())
     {
       visionSim = new VisionSystemSim("Vision");
       visionSim.addAprilTags(fieldLayout);
@@ -99,6 +148,69 @@ public class Vision
 
       openSimCameraViews();
     }
+
+    //hehehe
+*/
+
+  }
+
+  public int getPipeline() {
+    return controls.getLimelightPipeline();
+  }
+
+  public double getHorizontalAngle() {
+    return ntX.getDouble(0.0);
+  }
+
+  public double getTargetArea() {
+    return ntA.getDouble(0.0);
+  }
+
+  public double getVerticalAngle() {
+    return ntY.getDouble(0.0);
+  }
+
+  public boolean hasTarget(){
+    return ntV.getDouble(0.0) == 1.0;
+  }
+
+  public void setForceOff(boolean value) {
+    forceOff = value;
+  }
+
+/* this is what I've done so far. 
+If I have any erors, that is because they will be resolved 
+when a method is written later in the file. 
+These methods and other stuff are based on Robot-Code-2023, 
+they should have some stuff that can be used as reference.
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  public Pose3d getTargetPoseRobotSpace() {
+    double[] limelightBotPoseArray = networkTable.getEntry("targetpose_robotspace").getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+
+    if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) return null;
+
+    if (new double[] {0.0, 0.0, 0.0, 0.0, 0.0}.equals(Arrays.copyOf(limelightBotPoseArray, limelightBotPoseArray.length - 1)))
+      return null;
+    
+    return new Pose3d(new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]), new Rotation3d(Math.toRadians(limelightBotPoseArray[3]), Math.toRadians(limelightBotPoseArray[4]), Math.toRadians(limelightBotPoseArray[5])));
+
   }
 
   /**
@@ -429,7 +541,7 @@ public class Vision
       // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
-      poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
+      poseEstimator = new PhotonPoseEstimator(Limelight.fieldLayout,
                                               PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                                               robotToCamTransform);
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
