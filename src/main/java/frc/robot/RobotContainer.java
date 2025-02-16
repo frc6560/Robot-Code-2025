@@ -23,6 +23,7 @@ import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.GrabberCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.auto.*;
 
 import java.io.File;
 import swervelib.SwerveInputStream;
@@ -69,7 +70,8 @@ public class RobotContainer {
     elevator = new Elevator();
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
-
+    NamedCommands.registerCommand("elevatorL4", new DeployElevatorL4(elevator));
+    NamedCommands.registerCommand("wristL4", new DeployWristL4(wrist));
     configureBindings();
   }
 

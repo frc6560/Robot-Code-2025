@@ -33,6 +33,31 @@
           "data": {
             "pathName": "3p Auto Scoring"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3p Auto Gamepiece B"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3p Auto Scoring"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": null
+                }
+              }
+            ]
+          }
         }
       ]
     }
