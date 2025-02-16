@@ -92,7 +92,7 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("Test Auto");
+    return drivebase.getAutonomousCommand("Bad Auto");
   }
   
   public void setMotorBrake(boolean brake) {
