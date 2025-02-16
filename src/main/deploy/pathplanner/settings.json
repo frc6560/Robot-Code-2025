@@ -3,8 +3,9 @@
   "robotLength": 0.965,
   "holonomicMode": true,
   "pathFolders": [
-    "Defunct Test Autos",
-    "3p Auto Segments",
+    "1p Auto",
+    "Centered 1p Auto",
+    "Refl 1p Auto",
     "Test Autos"
   ],
   "autoFolders": [],
