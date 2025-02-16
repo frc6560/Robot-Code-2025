@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test Test Auto"
+            "pathName": "Test Auto Segment 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Test Auto Segment 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Test Auto Segment 3"
           }
         }
       ]

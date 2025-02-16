@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -78,7 +80,6 @@ public class Wrist extends SubsystemBase {
       this.fxConfig = new TalonFXConfiguration();
       // fxConfig.Feedback.FeedbackRemoteSensorID = m_relativeEncoder.getDeviceID();
       // fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-      // TODO: get the can coder to work
       fxConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       fxConfig.Feedback.RotorToSensorRatio = 108;
@@ -109,8 +110,6 @@ public class Wrist extends SubsystemBase {
       //       .add("Overshot bounds", this::getOvershoot)
       //       .add("State", ()-> {return this.state.toString();});
 
-      // TODO: FIX THIS DISP TAB
-
       
       ntAngle.setDouble(0.0);
       ntTargetPos.setDouble(this.targetPos);
@@ -126,17 +125,13 @@ public class Wrist extends SubsystemBase {
     // if (limitDown()){
     //   System.out.println("Limit down");
     // }
-
-    // TODO: get the limit switch to work
   }
 
-  // these won't be needed once ntdisp tab gets working 
   public void updateNTTable(){
       ntAngle.setDouble(getWristAngle());
       ntTargetPos.setDouble(this.targetPos);
       ntPosition.setDouble(m_WristMotor.getPosition().getValueAsDouble());
-  } 
-
+  }
   /** Checks if the wrist is down based on the limit switch. */
   private boolean limitDown(){
     return m_limitSwitch.get();
@@ -198,7 +193,9 @@ public class Wrist extends SubsystemBase {
       } else {
         this.state = State.MOVING;
       }
+
     }
+    
     return this.state;
   }
 
@@ -214,6 +211,9 @@ public class Wrist extends SubsystemBase {
     this.targetPos = position;
 
     double targetPos = (position) / 360 * 108; //hopefully this conversion factor is correct.
+
+    // 1 rot      5 rot        18                       
+    // 360        1 rot        1 rot
 
     final PositionVoltage m_request = new PositionVoltage(targetPos);
     m_WristMotor.setControl(m_request);
