@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import java.awt.Desktop;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -61,9 +62,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
-
-
-
 
 
 
@@ -178,7 +176,7 @@ public class Limelight extends SubsystemBase
     forceOff = value;
   }
 
-/* this is what I've done so far. 
+/* this is what I've done so far. -- Anish Kumar 
 If I have any erors, that is because they will be resolved 
 when a method is written later in the file. 
 These methods and other stuff are based on Robot-Code-2023, 
@@ -188,30 +186,24 @@ they should have some stuff that can be used as reference.
 
 
 
+public Pose3d getTargetPoseRobotSpace() {
+  // Get Limelight's NetworkTable
+  NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
+  // Retrieve the bot pose array from "targetpose_robotspace"
+  double[] botPoseArray = limelightTable.getEntry("targetpose_robotspace").getDoubleArray(new double[6]);
 
-
-
-
-
-
-
-
-
-
-
-
-  public Pose3d getTargetPoseRobotSpace() {
-    double[] limelightBotPoseArray = networkTable.getEntry("targetpose_robotspace").getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-
-    if (limelightBotPoseArray == null || limelightBotPoseArray.length < 6) return null;
-
-    if (new double[] {0.0, 0.0, 0.0, 0.0, 0.0}.equals(Arrays.copyOf(limelightBotPoseArray, limelightBotPoseArray.length - 1)))
+  // Ensure we received valid data
+  if (botPoseArray.length < 6 || Arrays.equals(Arrays.copyOf(botPoseArray, 5), new double[]{0.0, 0.0, 0.0, 0.0, 0.0})) {
       return null;
-    
-    return new Pose3d(new Translation3d(limelightBotPoseArray[0], limelightBotPoseArray[1], limelightBotPoseArray[2]), new Rotation3d(Math.toRadians(limelightBotPoseArray[3]), Math.toRadians(limelightBotPoseArray[4]), Math.toRadians(limelightBotPoseArray[5])));
-
   }
+
+  // Convert to WPILib Pose3d
+  return new Pose3d(
+      new Translation3d(botPoseArray[0], botPoseArray[1], botPoseArray[2]),
+      new Rotation3d(Math.toRadians(botPoseArray[3]), Math.toRadians(botPoseArray[4]), Math.toRadians(botPoseArray[5]))
+  );
+}
 
   /**
    * Calculates a target pose relative to an AprilTag on the field.
@@ -221,48 +213,64 @@ they should have some stuff that can be used as reference.
    *                    itself correctly.
    * @return The target pose of the AprilTag.
    */
-  public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
-  {
-    Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
-    if (aprilTagPose3d.isPresent())
-    {
-      return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
-    } else
-    {
-      throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + fieldLayout.toString());
+  public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset) {
+    // Get Limelight NetworkTable
+    NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+
+    // Retrieve the bot pose relative to the detected AprilTag
+    double[] tagPoseArray = limelightTable.getEntry("botpose_targetspace").getDoubleArray(new double[6]);
+
+    // Ensure valid data
+    if (tagPoseArray.length < 6) {
+        throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from Limelight.");
     }
 
-  }
+    // Convert Limelight pose data to WPILib Pose2d
+    Pose2d tagPose = new Pose2d(
+        tagPoseArray[0],  // X position (meters)
+        tagPoseArray[1],  // Y position (meters)
+        Rotation2d.fromDegrees(tagPoseArray[5]) // Rotation (degrees)
+    );
+
+    // Apply robot offset
+    return tagPose.transformBy(robotOffset);
+}
 
   /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the given poses.
    *
    * @param swerveDrive {@link SwerveDrive} instance.
    */
-  public void updatePoseEstimation(SwerveDrive swerveDrive)
-  {
-    if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent())
-    {
-      /*
-       * In the maple-sim, odometry is simulated using encoder values, accounting for factors like skidding and drifting.
-       * As a result, the odometry may not always be 100% accurate.
-       * However, the vision system should be able to provide a reasonably accurate pose estimation, even when odometry is incorrect.
-       * (This is why teams implement vision system to correct odometry.)
-       * Therefore, we must ensure that the actual robot pose is provided in the simulator when updating the vision simulation during the simulation.
-       */
-      visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
+  public void updatePoseEstimation(SwerveDrive swerveDrive) {
+    // Handle vision simulation in MapleSim or any other simulator
+    if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
+        visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
-    for (Cameras camera : Cameras.values())
-    {
-      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-      if (poseEst.isPresent())
-      {
-        var pose = poseEst.get();
-        swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-                                         pose.timestampSeconds,
-                                         camera.curStdDevs);
-      }
+
+    // Get Limelight NetworkTable
+    NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+
+    // Retrieve the bot pose in field space
+    double[] botPoseArray = limelightTable.getEntry("botpose").getDoubleArray(new double[6]);
+
+    // Ensure we received valid data
+    if (botPoseArray.length < 6) {
+        return;  // No valid pose data
     }
+
+    // Convert Limelight pose data to WPILib Pose2d
+    Pose2d estimatedPose = new Pose2d(
+        botPoseArray[0],  // X position (meters)
+        botPoseArray[1],  // Y position (meters)
+        Rotation2d.fromDegrees(botPoseArray[5]) // Rotation (Yaw, degrees)
+    );
+
+    // Get the current timestamp (in seconds)
+    double timestamp = Timer.getFPGATimestamp();
+
+    // Apply the vision pose update to the SwerveDrive system
+    swerveDrive.addVisionMeasurement(estimatedPose, timestamp);
+}
 
   }
 
@@ -747,3 +755,4 @@ they should have some stuff that can be used as reference.
   }
 
 }
+
