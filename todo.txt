@@ -1,0 +1,22 @@
+camera.java:
+
+rewrite class for limelight functionality while keeping methods the same
+
+- getEstimatedGlobalPose
+- updateUnreadResults
+- updateEstimatedGlobalPose
+
+how do single/multitag stdevs work?
+    3x1 vectors representing standard deviations for x, y, and theta
+
+    singleTag: single apriltag detected
+    multiTag: multiple apriltags detected
+
+    since we're only using one limelight singleTag is ok
+
+edit the resultslist parameter to actually work with limelight
+
+limelight.java:
+
+take methods from vision class
+

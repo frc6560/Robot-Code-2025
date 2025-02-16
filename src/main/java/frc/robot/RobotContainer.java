@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.Limelight;
 import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Wrist;
@@ -45,6 +46,8 @@ public class RobotContainer {
   private final Wrist wrist;
   private final Elevator elevator;
 
+  // private final Limelight limelight;
+
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
       () -> driverXbox.getLeftY() * -1,
@@ -69,24 +72,14 @@ public class RobotContainer {
     elevator = new Elevator();
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
+    // limelight = new Limelight();
 
     configureBindings();
   }
-
-  // configure drivetrain bullshit - do this with a normal XboxController if easier
   private void configureBindings() {
-
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-    // driverXbox.b().whileTrue(
-    //   drivebase.driveToPose(
-    //     new Pose2d(new Translatio n2d(4, 4), Rotation2d.fromDegrees(0))));
-    
-    //  driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
   }
   
   public Command getAutonomousCommand() {
