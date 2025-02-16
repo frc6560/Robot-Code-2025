@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 1.373763382523147,
-        "y": 6.787761863425926
+        "x": 1.316,
+        "y": 6.965
       },
       "prevControl": {
-        "x": 1.594639302646025,
-        "y": 6.670655809313118
+        "x": 1.536876037739222,
+        "y": 6.8478941677258485
       },
       "nextControl": null,
       "isLocked": false,
@@ -58,7 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 125.65452108099097
+    "rotation": -144.05857764560346
   },
   "reversed": false,
   "folder": "3p Auto Segments",
