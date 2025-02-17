@@ -49,12 +49,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "stow"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
