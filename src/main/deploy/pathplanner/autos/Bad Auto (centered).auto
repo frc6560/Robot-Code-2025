@@ -29,6 +29,12 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "dunk"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "score"
                 }
               }

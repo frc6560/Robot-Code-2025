@@ -33,6 +33,6 @@ public class Dunk extends Command{
     @Override
     public boolean isFinished(){
         final double tolerance = 0.1;
-        return Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4 + outtake * WristConstants.WristStates.L4Offset) < tolerance;
+        return Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4 - outtake * WristConstants.WristStates.L4Offset) < tolerance;
     }
 }
