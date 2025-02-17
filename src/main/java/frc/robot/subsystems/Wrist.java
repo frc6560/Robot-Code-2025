@@ -97,16 +97,6 @@ public class Wrist extends SubsystemBase {
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
-      ntDispTab("Wrist")
-            .add("Wrist angle", this::getWristAngle)
-            .add("Wrist angular velocity", this::getWristVelocity)
-            .add("Limit switch", this::limitDown)  
-            .add("Soft upper limit", this::getUpperBound)
-            .add("Soft bottom limit", this::getLowerBound)
-            .add("Overshot bounds", this::getOvershoot)
-            .add("State", ()-> {return this.state.toString();});
-
-      
       ntAngle.setDouble(0.0);
       ntTargetPos.setDouble(this.targetPos);
       ntPosition.setDouble(m_WristMotor.getPosition().getValueAsDouble());
@@ -220,19 +210,19 @@ public class Wrist extends SubsystemBase {
   }
 
   // all code below this point is for testing purposes only
-  public void turnOnMotor(){
-    m_WristMotor.set(0.1);
-  }
-
-  public void revMotor(){
-    m_WristMotor.set(-0.1);
-  }
-  
-  public void turnOnMotorWithPID(){
-    m_WristMotor.setControl(new VelocityVoltage(200));
-  }
-
-  public void testMotor(double output){
-    m_WristMotor.set(output);
-  }
+  // public void turnOnMotor(){
+  //   m_WristMotor.set(0.1);
+  // }
+// 
+  // public void revMotor(){
+  //   m_WristMotor.set(-0.1);
+  // }
+  // 
+  // public void turnOnMotorWithPID(){
+  //   m_WristMotor.setControl(new VelocityVoltage(200));
+  // }
+// 
+  // public void testMotor(double output){
+  //   m_WristMotor.set(output);
+  // }
 }

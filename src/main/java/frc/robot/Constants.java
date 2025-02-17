@@ -78,4 +78,23 @@ public final class Constants {
       public static final double PickupOffset = 0.0;
     }
   }
+
+  public static final class ClimbConstants {
+
+    public static final int MOTOR_1_ID = 20;
+    public static final int MOTOR_2_ID = 21;
+    public static final int CANCODER_ID = 22;
+    public static final double UPPER_SOFT_BOUND = 50; // change!
+    public static final double LOWER_SOFT_BOUND = 0; // change!
+    public static final double TOLERANCE = 2.5; // adjust 
+    public static final double GEAR_RATIO = 1.5; // rotations of abs encoder / rotations of subsystem
+
+    public class ClimbStates {
+
+      public static final double UP = 50.0;
+      public static final double DOWN = 0.0;
+
+    }
+
+  }
 }

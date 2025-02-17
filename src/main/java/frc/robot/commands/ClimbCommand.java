@@ -1,51 +1,53 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Climb.State;
 import frc.robot.ManualControls;
-
+import frc.robot.Constants.ClimbConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 public class ClimbCommand extends Command {
 
     private final Climb climb;
+    State targetState = State.UP;
     private final ManualControls controls;
-    private double test;
 
     public ClimbCommand(Climb climb, ManualControls controls) {
         this.climb = climb;
         this.controls = controls;
-        this.test = 0;
+
         addRequirements(climb);
-
-        ntDispTab("Climb Debug")
-            .add("Climb Test Value", this::getTest);
-    }
-
-    public double getTest() {
-        return test;
     }
 
     @Override
     public void initialize() {
-        climb.stop();
+        climb.setClimbPosition(ClimbConstants.ClimbStates.DOWN);
     }
 
     @Override
     public void execute() {
-        // double speed = -controls.getClimbSpeed(); // Inverted for correct joystick behavior
-        // test = speed; // Debugging value to track input
-        // climb.setClimbSpeed(); // Apply joystick input to climb
+        if (controls.getClimbUp()) {
+            targetState = State.UP;
+
+        } else if (controls.getClimbDown()) {
+            targetState = State.DOWN;
+
+        }
+
+        if (targetState == State.UP) {
+            climb.setClimbPosition(ClimbConstants.ClimbStates.UP);
+        } else if (targetState == State.DOWN) {
+            climb.setClimbPosition(ClimbConstants.ClimbStates.DOWN);
+        } else {}
     }
 
     @Override
     public void end(boolean interrupted) {
-        climb.stop();
+        climb.stopMotor();
     }
 
     @Override
     public boolean isFinished() {
-        return false; // Keep running until interrupted
+        return false; 
     }
 }

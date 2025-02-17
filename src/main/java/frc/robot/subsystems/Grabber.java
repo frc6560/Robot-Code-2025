@@ -46,9 +46,8 @@ public class Grabber extends SubsystemBase {
     }
 
     public boolean hasGamePiece() {
-        return !this.grabberMotor.getReverseLimitSwitch().isPressed();
-        // return false;
-        // return grabberMotor.getOutputCurrent() > CURRENT_LIMIT;
+        return this.grabberMotor.getReverseLimitSwitch().isPressed();
+        // with caleb inversion
     }
     public double getOutputCurrent() {
         return grabberMotor.getOutputCurrent();

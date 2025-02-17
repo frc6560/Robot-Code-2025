@@ -16,7 +16,6 @@ public class WristCommand extends Command{
     final ManualControls controls;
     DigitalInput LimitSwitch = new DigitalInput(WristConstants.LIMIT_SWITCH_PORT_ID);
 
-
     public WristCommand(Wrist wrist, ManualControls controls){
       this.wrist = wrist;
       this.controls = controls;
@@ -64,10 +63,11 @@ public class WristCommand extends Command{
         
 
       
-      if (Math.abs(controls.testWrist()) > 0.15){
-        wrist.testMotor(controls.testWrist());
-
-      } else if(targetState == State.STOW){
+      // if (Math.abs(controls.testWrist()) > 0.15){
+      //   wrist.testMotor(controls.testWrist());
+// 
+      // } else
+      if(targetState == State.STOW){
         wrist.setMotorPosition(WristConstants.WristStates.STOW + outtake * WristConstants.WristStates.StowOffset);
 
       } else if (targetState == State.PICKUP){

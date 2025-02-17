@@ -13,10 +13,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
-
-import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
-
-
 public class Elevator extends SubsystemBase {
 
     public enum State {
@@ -67,13 +63,6 @@ public class Elevator extends SubsystemBase {
 
         ntHeight.setDouble(0.0);
         ntTargetPos.setDouble(0.0);
-
-
-        ntDispTab("Elevator")
-            .add("Elevator Height", this::getElevatorHeight)
-            .add("Elevator angular velocity", this::getElevatorVelocity)
-            .add("Upper limit switch", this::topLimitSwitchDown)
-            .add("Bottom limit switch", this::bottomLimitSwitchDown);
     }
 
     @Override

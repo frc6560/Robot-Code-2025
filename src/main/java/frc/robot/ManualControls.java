@@ -35,17 +35,13 @@ public class ManualControls {
         
     }
 
-    public boolean getRunClimb() {
+    public boolean getClimbUp() {
       // retun secondXbox.get
         return secondXbox.getRightBumperButton(); // Returns true while held
     }
 
-    public boolean getDownClimb() {
+    public boolean getClimbDown() {
         return secondXbox.getLeftBumperButton(); // Returns true while held
-    }
-    
-    public double getClimbSpeed() {
-        return - modifyAxis(secondXbox.getLeftY());
     }
 
     public boolean goToL1(){
