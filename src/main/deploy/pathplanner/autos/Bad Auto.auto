@@ -11,13 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "3p Auto Initial"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "l4"
+                  "pathName": "Bad Auto Initial"
                 }
               }
             ]
@@ -39,6 +33,44 @@
           "type": "named",
           "data": {
             "name": "stow"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stow"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bad Auto Final"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": null
           }
         }
       ]

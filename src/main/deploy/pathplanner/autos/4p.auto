@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Initial"
+            "pathName": "Bad Auto Initial"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Gamepiece A"
+            "pathName": "placeholder 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Scoring"
+            "pathName": "placeholder 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Gamepiece B"
+            "pathName": "placeholder 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Scoring"
+            "pathName": "placeholder 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Gamepiece B"
+            "pathName": "placeholder 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3p Auto Scoring"
+            "pathName": "placeholder 3"
           }
         }
       ]

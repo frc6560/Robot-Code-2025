@@ -8,11 +8,11 @@ import frc.robot.Constants.ElevatorConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class L4 extends Command{
+public class L3 extends Command{
     private Wrist wrist;
     private Elevator elevator;
 
-    public L4(Wrist wrist, Elevator elevator){
+    public L3(Wrist wrist, Elevator elevator){
         this.wrist = wrist;
         this.elevator = elevator;
 
@@ -27,8 +27,8 @@ public class L4 extends Command{
 
     @Override
     public void execute(){
-        wrist.setMotorPosition(WristConstants.WristStates.L4);
-        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
+        wrist.setMotorPosition(WristConstants.WristStates.L2);
+        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L3);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class L4 extends Command{
     @Override
     public boolean isFinished(){
         final double tolerance = 0.3;
-        return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < tolerance) 
-        && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L4) < tolerance);
+        return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L2) < tolerance) 
+        && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L3) < tolerance);
     }
 }
