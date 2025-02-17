@@ -13,32 +13,7 @@
         {
           "type": "parallel",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "elevatorL4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "wristL4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "dunk"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "score"
-                }
-              }
-            ]
+            "commands": []
           }
         }
       ]

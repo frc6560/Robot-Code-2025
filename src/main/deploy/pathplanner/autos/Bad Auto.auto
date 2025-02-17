@@ -17,13 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "elevatorL4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "wristL4"
+                  "name": "l4"
                 }
               }
             ]
@@ -39,6 +33,12 @@
           "type": "named",
           "data": {
             "name": "score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stow"
           }
         }
       ]
