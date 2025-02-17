@@ -25,6 +25,12 @@
                 "data": {
                   "name": "wristL4"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "score"
+                }
               }
             ]
           }
