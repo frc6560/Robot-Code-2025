@@ -59,8 +59,9 @@ public final class Constants
     
     public static final class ElevatorStates{
       public static final double STOW = 0.4;
-      public static final double L3 = 6.3;
-      public static final double L4 = 20.0;
+      public static final double L2 = 1.5;
+      public static final double L3 = 7.8;
+      public static final double L4 = 17.3;
       public static final double BALL = 10.0; // placeholder value
     }
   }
@@ -81,13 +82,13 @@ public final class Constants
     public static final class WristStates{
       public static final double STOW = 90.0;
       public static final double PICKUP = 225.0;
-      public static final double L1 = 30.0;
-      public static final double L2 = 65.0;
-      public static final double L4 = 20.0;
+      public static final double L1 = 30.0; 
+      public static final double L2 = 69.0; // 39.0 raw also L3
+      public static final double L4 = 78.0; // 29
 
       public static final double L1Offset = 0.0;
       public static final double L2Offset = 30.0;
-      public static final double L4Offset = 30.0;
+      public static final double L4Offset = 45.0;
       public static final double StowOffset = 0.0;
       public static final double PickupOffset = 0.0;
     }

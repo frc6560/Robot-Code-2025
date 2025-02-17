@@ -62,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive         swerveDrive;
+  private final SwerveDrive swerveDrive;
   /**
    * AprilTag field layout.
    */
@@ -70,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean             visionDriveTest     = true;
+  private final boolean visionDriveTest = true;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -87,28 +87,26 @@ public class SwerveSubsystem extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
-                                                                  new Pose2d(new Translation2d(Meter.of(1),
-                                                                                               Meter.of(4)),
-                                                                             Rotation2d.fromDegrees(0)));
-      // Alternative method if you don't want to supply the conversion factor via JSON files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(
+        Constants.MAX_SPEED,
+        new Pose2d(
+          new Translation2d(Meter.of(1),
+          Meter.of(4)),
+        Rotation2d.fromDegrees(0)));
     } catch (Exception e)
     {
       throw new RuntimeException(e);
     }
-    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-    swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
+    swerveDrive.setHeadingCorrection(false); 
+    swerveDrive.setCosineCompensator(false);
     swerveDrive.setAngularVelocityCompensation(true,
                                                true,
-                                               0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+                                               0.1);
     swerveDrive.setModuleEncoderAutoSynchronize(false,
-                                                1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
-//    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
-    if (visionDriveTest)
-    {
+                                                1); 
+    swerveDrive.setMotorIdleMode(true);
+    if (visionDriveTest) {
       setupPhotonVision();
-      // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
@@ -122,19 +120,19 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
-    swerveDrive = new SwerveDrive(driveCfg,
-                                  controllerCfg,
-                                  Constants.MAX_SPEED,
-                                  new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
-                                             Rotation2d.fromDegrees(0)));
+    swerveDrive = new SwerveDrive(
+      driveCfg,
+      controllerCfg,
+      Constants.MAX_SPEED,
+      new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+        Rotation2d.fromDegrees(0)));
     setupPathPlanner();
   }
 
   /**
    * Setup the photon vision class.
    */
-  public void setupPhotonVision()
-  {
+  public void setupPhotonVision() {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
   }
 
@@ -142,8 +140,7 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     // When vision is enabled we must manually update odometry in SwerveDrive
-    if (visionDriveTest)
-    {
+    if (visionDriveTest) {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
@@ -244,10 +241,11 @@ public class SwerveSubsystem extends SubsystemBase
         var result = resultO.get();
         if (result.hasTargets())
         {
-          drive(getTargetSpeeds(0,
-                                0,
-                                Rotation2d.fromDegrees(result.getBestTarget()
-                                                             .getYaw()))); // Not sure if this will work, more math may be required.
+          drive(
+            getTargetSpeeds(0,
+            0,
+            Rotation2d.fromDegrees(result.getBestTarget()
+                                          .getYaw()))); 
         }
       }
     });
@@ -283,7 +281,7 @@ public class SwerveSubsystem extends SubsystemBase
         pose,
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     );
+    );
   }
 
   /**
@@ -607,7 +605,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void setMotorBrake(boolean brake)
   {
-    swerveDrive.setMotorIdleMode(brake);
+    // swerveDrive.setMotorIdleMode(brake);
   }
 
   /**

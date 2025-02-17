@@ -20,6 +20,7 @@ import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 public class Elevator extends SubsystemBase {
     public enum State{
         STOW,
+        L2,
         L3,
         L4,
         BALL
