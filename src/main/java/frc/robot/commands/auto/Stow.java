@@ -39,6 +39,7 @@ public class Stow extends Command{
     @Override
     public boolean isFinished(){
         final double tolerance = 0.3;
-        return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.STOW) < tolerance) && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < tolerance);
+        return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.STOW) < tolerance)
+        && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < tolerance);
     }
 }

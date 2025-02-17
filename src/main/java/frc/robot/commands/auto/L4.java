@@ -40,6 +40,7 @@ public class L4 extends Command{
     @Override
     public boolean isFinished(){
         final double tolerance = 0.3;
-        return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < tolerance) && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L4) < tolerance);
+        return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < tolerance) 
+        && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L4) < tolerance);
     }
 }
