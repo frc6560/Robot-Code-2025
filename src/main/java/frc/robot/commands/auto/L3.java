@@ -39,7 +39,7 @@ public class L3 extends Command{
 
     @Override
     public boolean isFinished(){
-        final double tolerance = 0.3;
+        final double tolerance = 0.5;
         return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L2) < tolerance) 
         && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L3) < tolerance);
     }
