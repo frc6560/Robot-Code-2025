@@ -13,6 +13,25 @@
                 "data": {
                   "pathName": "Bad Auto Initial"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "l3"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -65,12 +84,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
           }
         }
       ]
