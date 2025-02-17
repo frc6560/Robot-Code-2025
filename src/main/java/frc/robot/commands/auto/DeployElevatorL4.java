@@ -1,7 +1,6 @@
 package frc.robot.commands.auto;
 
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.State;
 import frc.robot.Constants.ElevatorConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;

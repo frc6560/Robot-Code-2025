@@ -1,7 +1,6 @@
 package frc.robot.commands.auto;
 
 import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.Wrist.State;
 import frc.robot.Constants.WristConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
