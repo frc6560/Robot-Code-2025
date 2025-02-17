@@ -73,6 +73,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("elevatorL4", new DeployElevatorL4(elevator));
     NamedCommands.registerCommand("wristL4", new DeployWristL4(wrist));
     NamedCommands.registerCommand("score", new Scoring(grabber));
+    NamedCommands.registerCommand("dunk", new Dunk(wrist));
     configureBindings();
   }
 
