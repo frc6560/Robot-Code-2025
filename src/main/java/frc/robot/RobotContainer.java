@@ -15,11 +15,11 @@ import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.Grabber;
-import frc.robot.subsystems.Climb;
+// import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Elevator;
 
-import frc.robot.commands.ClimbCommand;
+// import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.GrabberCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.ElevatorCommand;
@@ -38,8 +38,8 @@ public class RobotContainer {
 
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
-  private final Climb climb;
-  private final ClimbCommand climbCommand;
+  // private final Climb climb;
+  // private final ClimbCommand climbCommand;
   private final Grabber grabber;
   private final GrabberCommand grabberCommand;
 
@@ -57,8 +57,8 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    climb = new Climb(controls);
-    climbCommand = new ClimbCommand(climb, controls);
+    // climb = new Climb(controls);
+    // climbCommand = new ClimbCommand(climb, controls);
     // climb.setDefaultCommand(climbCommand);
 
     grabber = new Grabber();
