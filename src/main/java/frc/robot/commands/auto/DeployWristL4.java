@@ -1,7 +1,7 @@
 package frc.robot.commands.auto;
 
+// import frc.robot.subsystems.Wrist.State;
 import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.Wrist.State;
 import frc.robot.Constants.WristConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,7 +11,6 @@ public class DeployWristL4 extends Command{
 
     public DeployWristL4(Wrist wrist){
         this.wrist = wrist;
-
         addRequirements(wrist);
     }
 
@@ -32,7 +31,7 @@ public class DeployWristL4 extends Command{
 
     @Override
     public boolean isFinished(){
-        final double tolerance = 0.5;
+        final double tolerance = 0.5; // adjust later
         return Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < tolerance;
     }
 }

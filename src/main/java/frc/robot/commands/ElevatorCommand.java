@@ -11,8 +11,6 @@ public class ElevatorCommand extends Command {
     private final ManualControls controls;
     
     private State targetState;
-    
-
     public ElevatorCommand(Elevator elevator, ManualControls controls) {
         this.elevator = elevator;
         this.controls = controls;
@@ -27,10 +25,14 @@ public class ElevatorCommand extends Command {
 
     @Override
     public void execute() {
-        if(controls.goToL2() || controls.goToL1()
+        if(controls.goToL1()
             || controls.goToPickup()
             || controls.goToStow()){
             targetState = State.STOW;
+
+        }
+        else if(controls.goToL2()){
+            targetState = State.L2;
 
         } else if(controls.goToL3()){
             targetState = State.L3;
@@ -46,6 +48,9 @@ public class ElevatorCommand extends Command {
 
         if (targetState == State.STOW) {
             targetrotelev = ElevatorConstants.ElevatorStates.STOW;
+        }
+        else if (targetState == State.L2) {
+            targetrotelev = ElevatorConstants.ElevatorStates.L2;
         }
         else if (targetState == State.L3) {
             targetrotelev = ElevatorConstants.ElevatorStates.L3;

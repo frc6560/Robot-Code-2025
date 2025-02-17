@@ -25,9 +25,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static edu.wpi.first.units.Units.Degree;
 import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
-
-
-
 public class Wrist extends SubsystemBase {
 
   // motor
@@ -100,15 +97,14 @@ public class Wrist extends SubsystemBase {
 
       m_WristMotor.getConfigurator().apply(wristPIDController);
 
-      // Telemetry using shuffleboard's display tab. See NtValueDisplay.
-      // ntDispTab("Wrist")
-      //       .add("Wrist angle", this::getWristAngle)
-      //       .add("Wrist angular velocity", this::getWristVelocity)
-      //       .add("Limit switch", this::limitDown)  
-      //       .add("Soft upper limit", this::getUpperBound)
-      //       .add("Soft bottom limit", this::getLowerBound)
-      //       .add("Overshot bounds", this::getOvershoot)
-      //       .add("State", ()-> {return this.state.toString();});
+      ntDispTab("Wrist")
+            .add("Wrist angle", this::getWristAngle)
+            .add("Wrist angular velocity", this::getWristVelocity)
+            .add("Limit switch", this::limitDown)  
+            .add("Soft upper limit", this::getUpperBound)
+            .add("Soft bottom limit", this::getLowerBound)
+            .add("Overshot bounds", this::getOvershoot)
+            .add("State", ()-> {return this.state.toString();});
 
       
       ntAngle.setDouble(0.0);
@@ -222,7 +218,6 @@ public class Wrist extends SubsystemBase {
   public void stopMotor(){
     m_WristMotor.set(0);
   }
-
 
   // all code below this point is for testing purposes only
   public void turnOnMotor(){

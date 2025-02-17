@@ -5,7 +5,7 @@ import frc.robot.Constants.ElevatorConstants;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+// import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -18,8 +18,10 @@ import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 
 public class Elevator extends SubsystemBase {
-    public enum State{
+
+    public enum State {
         STOW,
+        L2,
         L3,
         L4,
         BALL
@@ -37,8 +39,6 @@ public class Elevator extends SubsystemBase {
     private final NetworkTableEntry ntHeight = ntTable.getEntry("Height");
     private final NetworkTableEntry ntTargetPos = ntTable.getEntry("Target height");
 
-
-
     public Elevator() {
         this.m_leftElev = new TalonFX(ElevatorConstants.ELEV_LEFT_ID, "Canivore");
         this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID, "Canivore");
@@ -46,6 +46,7 @@ public class Elevator extends SubsystemBase {
         this.topLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_UPPER_LIMIT_SWITCH_ID);
         this.bottomLimitSwitch = new DigitalInput(ElevatorConstants.ELEV_LOWER_LIMIT_SWITCH_ID);
 
+        // adjust pid for added grabber thing this is jank!!
         Slot0Configs elevatorPID = new Slot0Configs();
 
         elevatorPID.kS = 0;
@@ -68,11 +69,11 @@ public class Elevator extends SubsystemBase {
         ntTargetPos.setDouble(0.0);
 
 
-        // ntDispTab("Elevator")
-        //     .add("Elevator Height", this::getElevatorHeight)
-        //     .add("Elevator angular velocity", this::getElevatorVelocity)
-        //     .add("Upper limit switch", this::topLimitSwitchDown)
-        //     .add("Bottom limit switch", this::bottomLimitSwitchDown);
+        ntDispTab("Elevator")
+            .add("Elevator Height", this::getElevatorHeight)
+            .add("Elevator angular velocity", this::getElevatorVelocity)
+            .add("Upper limit switch", this::topLimitSwitchDown)
+            .add("Bottom limit switch", this::bottomLimitSwitchDown);
     }
 
     @Override
@@ -122,22 +123,22 @@ public class Elevator extends SubsystemBase {
     }
 
     // all code below this point is for testing purposes
-    public void turnOnMotors(){
-        m_leftElev.setControl(new VelocityVoltage(200));
-        m_rightElev.setControl(new VelocityVoltage(200));
-    }
-
-    public void turnOnMotorsNoPID(){
-        m_leftElev.set(0.1);
-        m_rightElev.set(0.1);
-    }
-    public void revMotorsNoPID(){
-        m_leftElev.set(-0.1);
-        m_rightElev.set(-0.1);
-    }
-
-    public void testMotor(double output){
-        m_leftElev.set(output);
-        m_rightElev.set(output);
-    }
+    // public void turnOnMotors(){
+    //     m_leftElev.setControl(new VelocityVoltage(200));
+    //     m_rightElev.setControl(new VelocityVoltage(200));
+    // }
+// 
+    // public void turnOnMotorsNoPID(){
+    //     m_leftElev.set(0.1);
+    //     m_rightElev.set(0.1);
+    // }
+    // public void revMotorsNoPID(){
+    //     m_leftElev.set(-0.1);
+    //     m_rightElev.set(-0.1);
+    // }
+// 
+    // public void testMotor(double output){
+    //     m_leftElev.set(output);
+    //     m_rightElev.set(output);
+    // }
 }

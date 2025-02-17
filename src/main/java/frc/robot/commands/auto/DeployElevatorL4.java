@@ -1,7 +1,7 @@
 package frc.robot.commands.auto;
 
+// import frc.robot.subsystems.Elevator.State;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.State;
 import frc.robot.Constants.ElevatorConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,7 +11,6 @@ public class DeployElevatorL4 extends Command{
 
     public DeployElevatorL4(Elevator elevator){
         this.elevator = elevator;
-
         addRequirements(elevator);
     }
 
@@ -32,7 +31,7 @@ public class DeployElevatorL4 extends Command{
 
     @Override
     public boolean isFinished(){
-        final double tolerance = 0.5;
+        final double tolerance = 0.5; // maybe adjust this later
         return Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L4) < tolerance;
     }
 

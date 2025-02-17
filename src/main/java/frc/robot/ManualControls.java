@@ -1,7 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Second;
-
 import edu.wpi.first.wpilibj.XboxController;
 
 public class ManualControls {
