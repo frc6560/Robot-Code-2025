@@ -9,21 +9,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "elevatorL4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "wristL4"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "3p Auto Initial (refl)"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "l4"
                 }
               }
             ]
@@ -39,6 +33,12 @@
           "type": "named",
           "data": {
             "name": "score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stow"
           }
         }
       ]
