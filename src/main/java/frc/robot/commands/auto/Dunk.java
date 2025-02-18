@@ -1,27 +1,28 @@
 package frc.robot.commands.auto;
 
-// import frc.robot.subsystems.Wrist.State;
 import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.Wrist.State;
 import frc.robot.Constants.WristConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class DeployWristL4 extends Command{
+public class Dunk extends Command{
     private Wrist wrist;
+    private int outtake = -1;
 
-    public DeployWristL4(Wrist wrist){
+    public Dunk(Wrist wrist){
         this.wrist = wrist;
+
         addRequirements(wrist);
     }
 
     @Override
     public void initialize(){
-        wrist.setMotorPosition(WristConstants.WristStates.STOW);
     }
 
     @Override
     public void execute(){
-        wrist.setMotorPosition(WristConstants.WristStates.L4);
+        wrist.setMotorPosition(WristConstants.WristStates.L2 + outtake * WristConstants.WristStates.L2Offset);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class DeployWristL4 extends Command{
 
     @Override
     public boolean isFinished(){
-        final double tolerance = 0.5; // adjust later
-        return Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < tolerance;
+        final double tolerance = 0.1;
+        return Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L2 - outtake * WristConstants.WristStates.L2Offset) < tolerance;
     }
 }
