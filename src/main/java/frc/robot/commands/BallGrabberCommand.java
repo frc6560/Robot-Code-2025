@@ -22,9 +22,9 @@ public class BallGrabberCommand extends Command {
     
     @Override
     public void execute() {
-        if (controls.runGrabberIntake()) {
+        if (controls.pipeGrabberIntake()) {
             ballGrabber.runIntake();
-        } else if (controls.runOuttake()) {
+        } else if (controls.pipeGrabberOuttake()) {
             ballGrabber.runOuttake();
         } else {
             ballGrabber.stop();

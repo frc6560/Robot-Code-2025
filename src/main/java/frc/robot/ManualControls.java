@@ -79,12 +79,22 @@ public class ManualControls {
 
     // pipe grabber 
 
-    public boolean runGrabberIntake(){
+    public boolean pipeGrabberIntake() {
       return secondXbox.getLeftTriggerAxis() > 0.25;
     }
 
-    public boolean runOuttake() {
+    public boolean pipeGrabberOuttake() {
       return firstXbox.getRightBumperButton();
+    }
+
+    // ball grabber
+
+    public boolean ballGrabberIntake() {
+      return firstXbox.getAButton();
+    }
+
+    public boolean ballGrabberOuttake() {
+      return firstXbox.getBButton();
     }
 
     public boolean goToPlacePos() {
