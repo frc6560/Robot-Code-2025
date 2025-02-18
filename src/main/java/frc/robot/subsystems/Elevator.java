@@ -46,10 +46,10 @@ public class Elevator extends SubsystemBase {
         Slot0Configs elevatorPID = new Slot0Configs();
 
         elevatorPID.kS = 0;
-        elevatorPID.kG = 0.4;
+        elevatorPID.kG = 0.25;
 
-        elevatorPID.kP = 0.7;
-        elevatorPID.kI = 0.01;
+        elevatorPID.kP = 0.965;
+        elevatorPID.kI = 0.010;
         elevatorPID.kD = 0;
 
         TalonFXConfiguration config = new TalonFXConfiguration();
