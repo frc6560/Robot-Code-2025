@@ -15,6 +15,30 @@
           "data": {
             "pathName": "Turning Reverse"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Turning Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Turning Reverse"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Turning Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Turning Reverse"
+          }
         }
       ]
     }

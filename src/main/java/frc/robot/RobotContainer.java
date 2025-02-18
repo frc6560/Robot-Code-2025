@@ -83,6 +83,7 @@ public class RobotContainer {
 
     autoChooser = new SendableChooser<Command>();
     autoChooser.addOption("Turning Simple", turningSimple());
+    autoChooser.addOption("Kian rec", kianRec());
     autoChooser.addOption("No Auto", null);
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -106,10 +107,13 @@ public class RobotContainer {
   public Command turningSimple() {
     return drivebase.getAutonomousCommand("Turning Simple");
   }
+
+  public Command kianRec() {
+    return drivebase.getAutonomousCommand("Kian Rec");
+  }
   
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return drivebase.getAutonomousCommand("Turning Simple");
+    return autoChooser.getSelected();
   }
   
   public void setMotorBrake(boolean brake) {
