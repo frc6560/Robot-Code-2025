@@ -8,19 +8,19 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Grabber extends SubsystemBase {
+public class BallGrabber extends SubsystemBase {
     
     private SparkMax grabberMotor;
 
-    private static final int GRABBER_MOTOR_ID = 17;
+    private static final int GRABBER_MOTOR_ID = 26; // change this!!!
 
     private static final double INTAKE_SPEED = -0.3;
     private static final double OUTTAKE_SPEED = 0.3;
 
-    public Grabber() {
+    public BallGrabber() {
         this.grabberMotor = new SparkMax(GRABBER_MOTOR_ID, MotorType.kBrushless);
-        ntDispTab("Grabber")
-            .add("Grabber Duty Cycle", this::getDutyCycle);
+        ntDispTab("Ball Grabber")
+            .add("Ball Grabber Duty Cycle", this::getDutyCycle);
     
     }
 
@@ -32,7 +32,7 @@ public class Grabber extends SubsystemBase {
         }
     }
 
-    public void runGrabberOuttake(){
+    public void runOuttake(){
         grabberMotor.set(OUTTAKE_SPEED);
     }
 

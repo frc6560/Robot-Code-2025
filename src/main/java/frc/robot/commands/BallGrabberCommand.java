@@ -1,41 +1,41 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.Grabber;
+import frc.robot.subsystems.BallGrabber;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Wrist.State;
 import frc.robot.ManualControls;
 
 import edu.wpi.first.wpilibj2.command.Command;
-public class GrabberCommand extends Command {
+public class BallGrabberCommand extends Command {
     
-    final Grabber grabber;
+    final BallGrabber ballGrabber;
     final ManualControls controls;
 
-    public GrabberCommand(Grabber grabber, ManualControls controls) {
-        this.grabber = grabber;
+    public BallGrabberCommand(BallGrabber grabber, ManualControls controls) {
+        this.ballGrabber = grabber;
         this.controls = controls;
         addRequirements(grabber);
     }
 
     @Override
     public void initialize() {
-        grabber.stop();
+        ballGrabber.stop();
     }
     
     @Override
     public void execute() {
         if (controls.runGrabberIntake()) {
-            grabber.runIntake();
+            ballGrabber.runIntake();
         } else if (controls.runOuttake()) {
-            grabber.runGrabberOuttake();
+            ballGrabber.runOuttake();
         } else {
-            grabber.stop();
+            ballGrabber.stop();
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        grabber.stop();
+        ballGrabber.stop();
     }
 
     @Override
@@ -43,4 +43,5 @@ public class GrabberCommand extends Command {
         return false;
     }
 }
+
 
