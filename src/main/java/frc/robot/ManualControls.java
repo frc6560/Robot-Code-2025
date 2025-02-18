@@ -35,6 +35,8 @@ public class ManualControls {
         
     }
 
+    // climb
+
     public boolean getClimbUp() {
         return secondXbox.getRightBumperButton(); // Returns true while held
     }
@@ -42,6 +44,8 @@ public class ManualControls {
     public boolean getClimbDown() {
         return secondXbox.getLeftBumperButton(); // Returns true while held
     }
+
+    // elevator
 
     public boolean goToL1(){
         return secondXbox.getAButton();
@@ -59,6 +63,8 @@ public class ManualControls {
         return secondXbox.getYButton();
     }
 
+    // wrist
+
     public boolean goToStow(){
         return secondXbox.getBackButton(); // TODO change to correct button
     }
@@ -71,6 +77,8 @@ public class ManualControls {
         return secondXbox.getStartButton(); // TODO change to correct button
     }
 
+    // pipe grabber 
+
     public boolean runGrabberIntake(){
       return secondXbox.getLeftTriggerAxis() > 0.25;
     }
@@ -82,6 +90,8 @@ public class ManualControls {
     public boolean goToPlacePos() {
       return secondXbox.getLeftBumperButton();
     }
+
+    // random tests ?? 
 
     public double testWrist(){
       return deadband(secondXbox.getRightX(), 0.1);
