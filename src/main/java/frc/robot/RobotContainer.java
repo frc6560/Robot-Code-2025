@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -46,6 +48,8 @@ public class RobotContainer {
   private final Wrist wrist;
   private final Elevator elevator;
 
+  private final SendableChooser<Command> autoChooser;
+
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
       () -> driverXbox.getLeftY() * -1,
@@ -76,6 +80,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("dunk", new Dunk(wrist));
     NamedCommands.registerCommand("stow", new Stow(wrist, elevator));
     configureBindings();
+
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.addOption("Turning Simple", turningSimple());
+    autoChooser.addOption("No Auto", null);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   // configure drivetrain bullshit - do this with a normal XboxController if easier
@@ -93,9 +102,14 @@ public class RobotContainer {
     
     //  driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
   }
+
+  public Command turningSimple() {
+    return drivebase.getAutonomousCommand("Turning Simple");
+  }
   
   public Command getAutonomousCommand() {
-    return drivebase.getAutonomousCommand("Bad Auto");
+    // return autoChooser.getSelected();
+    return drivebase.getAutonomousCommand("Turning Simple");
   }
   
   public void setMotorBrake(boolean brake) {
