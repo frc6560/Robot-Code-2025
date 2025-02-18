@@ -20,11 +20,13 @@ import frc.robot.subsystems.PipeGrabber;
 // import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.BallGrabber;
 
 // import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.PipeGrabberCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.BallGrabberCommand;
 import frc.robot.commands.auto.*;
 
 import java.io.File;
@@ -42,8 +44,11 @@ public class RobotContainer {
 
   // private final Climb climb;
   // private final ClimbCommand climbCommand;
-  private final PipeGrabber grabber;
-  private final PipeGrabberCommand grabberCommand;
+  private final PipeGrabber pipeGrabber;
+  private final PipeGrabberCommand pipeGrabberCommand;
+
+  private final BallGrabber ballGrabber;
+  private final BallGrabberCommand ballGrabberCommand;
 
   private final Wrist wrist;
   private final Elevator elevator;
@@ -65,9 +70,13 @@ public class RobotContainer {
     // climbCommand = new ClimbCommand(climb, controls);
     // climb.setDefaultCommand(climbCommand);
 
-    grabber = new PipeGrabber();
-    grabberCommand = new PipeGrabberCommand(grabber, controls);
-    grabber.setDefaultCommand(grabberCommand);
+    pipeGrabber = new PipeGrabber();
+    pipeGrabberCommand = new PipeGrabberCommand(pipeGrabber, controls);
+    pipeGrabber.setDefaultCommand(pipeGrabberCommand);
+
+    ballGrabber = new BallGrabber();
+    ballGrabberCommand = new BallGrabberCommand(ballGrabber, controls);
+    ballGrabber.setDefaultCommand(ballGrabberCommand);
 
     wrist = new Wrist();
     wrist.setDefaultCommand(new WristCommand(wrist, controls));
@@ -76,7 +85,7 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
     NamedCommands.registerCommand("l3", new L3(wrist, elevator));
-    NamedCommands.registerCommand("score", new Scoring(grabber));
+    NamedCommands.registerCommand("score", new Scoring(pipeGrabber));
     NamedCommands.registerCommand("dunk", new Dunk(wrist));
     NamedCommands.registerCommand("stow", new Stow(wrist, elevator));
     configureBindings();
