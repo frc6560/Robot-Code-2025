@@ -1,6 +1,6 @@
 package frc.robot.commands.auto;
 
-import frc.robot.subsystems.Grabber;
+import frc.robot.subsystems.PipeGrabber;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.Timer;
 
 
 public class Scoring extends Command{
-    private Grabber grabber;
+    private PipeGrabber grabber;
     private boolean finished = false;
     private Timer grabberTimer;
 
-    public Scoring(Grabber grabber){
+    public Scoring(PipeGrabber grabber){
         this.grabber = grabber;
     }
 
@@ -28,7 +28,7 @@ public class Scoring extends Command{
         if(grabberTimer.hasElapsed(1.0)){
             finished = true;
         }
-        grabber.runOuttake();
+        grabber.runGrabberOuttake();
     }
 
     @Override

@@ -57,8 +57,8 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    climb = new Climb(controls);
-    climbCommand = new ClimbCommand(climb, controls);
+    // climb = new Climb(controls);
+    // climbCommand = new ClimbCommand(climb, controls);
     // climb.setDefaultCommand(climbCommand);
 
     grabber = new PipeGrabber();
