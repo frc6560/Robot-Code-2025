@@ -36,7 +36,6 @@ public class ManualControls {
     }
 
     public boolean getClimbUp() {
-      // retun secondXbox.get
         return secondXbox.getRightBumperButton(); // Returns true while held
     }
 
@@ -72,7 +71,7 @@ public class ManualControls {
         return secondXbox.getStartButton(); // TODO change to correct button
     }
 
-    public boolean runIntake(){
+    public boolean runGrabberIntake(){
       return secondXbox.getLeftTriggerAxis() > 0.25;
     }
 

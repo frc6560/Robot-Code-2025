@@ -3,7 +3,7 @@ package frc.robot.commands;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Wrist.State;
 import frc.robot.Constants.WristConstants;
-import frc.robot.subsystems.Grabber;
+import frc.robot.subsystems.PipeGrabber;
 import frc.robot.ManualControls;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;

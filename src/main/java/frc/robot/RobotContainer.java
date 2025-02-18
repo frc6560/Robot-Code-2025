@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import frc.robot.subsystems.Grabber;
+import frc.robot.subsystems.PipeGrabber;
 // import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Elevator;
 
 // import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.GrabberCommand;
+import frc.robot.commands.PipeGrabberCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.auto.*;
@@ -40,8 +40,8 @@ public class RobotContainer {
 
   // private final Climb climb;
   // private final ClimbCommand climbCommand;
-  private final Grabber grabber;
-  private final GrabberCommand grabberCommand;
+  private final PipeGrabber grabber;
+  private final PipeGrabberCommand grabberCommand;
 
   private final Wrist wrist;
   private final Elevator elevator;
@@ -61,8 +61,8 @@ public class RobotContainer {
     // climbCommand = new ClimbCommand(climb, controls);
     // climb.setDefaultCommand(climbCommand);
 
-    grabber = new Grabber();
-    grabberCommand = new GrabberCommand(grabber, controls);
+    grabber = new PipeGrabber();
+    grabberCommand = new PipeGrabberCommand(grabber, controls);
     grabber.setDefaultCommand(grabberCommand);
 
     wrist = new Wrist();

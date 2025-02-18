@@ -5,7 +5,6 @@ import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BallGrabber extends SubsystemBase {

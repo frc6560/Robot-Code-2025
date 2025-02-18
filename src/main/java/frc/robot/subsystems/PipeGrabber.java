@@ -5,10 +5,9 @@ import static frc.robot.utility.NetworkTable.NtValueDisplay.ntDispTab;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Grabber extends SubsystemBase {
+public class PipeGrabber extends SubsystemBase {
     
     private SparkMax grabberMotor;
 
@@ -17,7 +16,7 @@ public class Grabber extends SubsystemBase {
     private static final double INTAKE_SPEED = -0.3;
     private static final double OUTTAKE_SPEED = 0.3;
 
-    public Grabber() {
+    public PipeGrabber() {
         this.grabberMotor = new SparkMax(GRABBER_MOTOR_ID, MotorType.kBrushless);
         ntDispTab("Grabber")
             .add("Grabber Duty Cycle", this::getDutyCycle);
