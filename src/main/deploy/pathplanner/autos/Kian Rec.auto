@@ -15,6 +15,18 @@
           "data": {
             "pathName": "Return"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "90 deg"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Return"
+          }
         }
       ]
     }
