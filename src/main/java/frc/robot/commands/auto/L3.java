@@ -28,7 +28,7 @@ public class L3 extends Command{
     @Override
     public void execute(){
         wrist.setMotorPosition(WristConstants.WristStates.L2);
-        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L3);
+        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L2);
     }
 
     @Override
@@ -41,6 +41,6 @@ public class L3 extends Command{
     public boolean isFinished(){
         final double tolerance = 0.5;
         return (Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L2) < tolerance) 
-        && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L3) < tolerance);
+        && (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L2) < tolerance);
     }
 }
