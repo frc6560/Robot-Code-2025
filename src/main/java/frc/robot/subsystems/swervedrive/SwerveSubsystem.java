@@ -26,9 +26,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.Matrix;
 // import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -53,14 +61,20 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
+import frc.robot.subsystems.swervedrive.LimelightHelper;
+
 public class SwerveSubsystem extends SubsystemBase
 {
+
+  private final boolean USE_LIMELIGHT = true;
 
   private final SwerveDrive swerveDrive;
 
   // private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-  private final boolean visionDriveTest = true; // don't actually need this but ok
+  // custom added rawdog
+  private SwerveDrivePoseEstimator poseEstimator;
+
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -87,9 +101,32 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
+
+    // mark lmk if this can be filled in better this is dogwater
+    Matrix<N3, N1> stateStdDevs = new Matrix<>(Nat.N3(), Nat.N1());
+    stateStdDevs.set(0, 0, 0.115);
+    stateStdDevs.set(1, 0, 0.115);
+    stateStdDevs.set(2, 0, 0.115);
+
+    Matrix<N3, N1> visionStdDevs = new Matrix<>(Nat.N3(), Nat.N1());
+    visionStdDevs.set(0, 0, 1.6);
+    visionStdDevs.set(1, 0, 1.6);
+    visionStdDevs.set(2, 0, 1.6);
+
+    poseEstimator = new SwerveDrivePoseEstimator(
+      getKinematics(), 
+      getHeading(), 
+      swerveDrive.getModulePositions(), 
+      getPose(), 
+      stateStdDevs,
+      visionStdDevs
+    );
+
     setMotorBrake(true);
     setupPathPlanner();
   }
+
+  // idt this next constructor ever actually gets called in our case
 
   /**
    * Construct the swerve drive.
@@ -294,7 +331,7 @@ public class SwerveSubsystem extends SubsystemBase
     return SwerveDriveTest.generateSysIdCommand(
         SwerveDriveTest.setDriveSysIdRoutine(
             new Config(),
-            this, swerveDrive, 12, visionDriveTest),
+            this, swerveDrive, 12, true), // removed some bs constant set to true
         3.0, 5.0, 3.0);
   }
 
@@ -479,9 +516,26 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return The robot's pose
    */
-  public Pose2d getPose()
-  {
-    return swerveDrive.getPose();
+  public Pose2d getPose() {
+
+    // lowkey just updated this method to use limelight
+
+    if (USE_LIMELIGHT) {
+
+      final Pose2d emptyPose = new Pose2d();
+      Pair<Pose2d, Double> limelightPose = LimelightHelper.getLimelightPose();
+
+      if (!limelightPose.getFirst().equals(emptyPose)) {
+        poseEstimator.addVisionMeasurement(limelightPose.getFirst(), limelightPose.getSecond());
+      }
+
+      return poseEstimator.getEstimatedPosition();
+
+    } else { // basic YAGSL odometry
+
+      return swerveDrive.getPose();
+
+    }
   }
 
   /**
