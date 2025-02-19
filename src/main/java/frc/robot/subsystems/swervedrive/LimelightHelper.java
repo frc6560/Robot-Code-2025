@@ -18,16 +18,29 @@ public class LimelightHelper {
     private static final NetworkTableEntry ntL = networkTable.getEntry("tl"); // latency
 
     public static Pair<Pose2d, Double> getLimelightPose() {
-  
+
+        // give latency feedback
+        double latencySeconds = (ntL.getDouble(0.0) + 11) / 1000.0; // 11ms recommended capture latency
+        double timestamp = Timer.getFPGATimestamp() - latencySeconds;
+
+        Pair<Pose2d, Double> emptyPose = new Pair<>(new Pose2d(), timestamp);
+
         // make sure pipeline is correct
-        if (ntPipeline.getInteger(0) != 0 && ntPipeline.getInteger(0) != 1) return null;
-        if (ntV.getDouble(0.0) == 0.0) return null;
+        if (ntPipeline.getInteger(0) != 0 && ntPipeline.getInteger(0) != 1) {
+            return emptyPose;
+        }
+        
+        if (ntV.getDouble(0.0) == 0.0) {
+            return emptyPose;
+        }
 
         // get bot pose
         double[] botPose = ntBotPose.getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
 
         // validate array
-        if (botPose.length < 6) return null;
+        if (botPose.length < 6) {
+            return emptyPose;
+        } 
 
         // extract coordinates
         double xMeters = botPose[0];  
@@ -36,10 +49,6 @@ public class LimelightHelper {
 
         // create pose
         Pose2d pose = new Pose2d(xMeters, yMeters, Rotation2d.fromDegrees(rotationDegrees));
-
-        // give latency feedback
-        double latencySeconds = (ntL.getDouble(0.0) + 11) / 1000.0; // 11ms recommended capture latency
-        double timestamp = Timer.getFPGATimestamp() - latencySeconds;
 
         return new Pair<>(pose, timestamp);
     }

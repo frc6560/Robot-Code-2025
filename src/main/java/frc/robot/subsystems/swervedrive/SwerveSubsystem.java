@@ -524,7 +524,7 @@ public class SwerveSubsystem extends SubsystemBase
 
       final Pose2d emptyPose = new Pose2d();
       Pair<Pose2d, Double> limelightPose = LimelightHelper.getLimelightPose();
-
+      
       if (!limelightPose.getFirst().equals(emptyPose)) {
         poseEstimator.addVisionMeasurement(limelightPose.getFirst(), limelightPose.getSecond());
       }
