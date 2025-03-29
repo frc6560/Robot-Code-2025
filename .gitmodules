@@ -1,0 +1,3 @@
+[submodule "src/main/java/com/frc3481"]
+	path = src/main/java/com/frc3481
+	url = https://github.com/frc6560/YAGSL

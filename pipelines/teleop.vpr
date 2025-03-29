@@ -1,0 +1,153 @@
+{
+  "area": {
+    "max": 100,
+    "min": 0.07233948159999996,
+    "similarity": 0
+  },
+  "aspect": {
+    "max": 20.0,
+    "min": 0.0
+  },
+  "black_level": 0,
+  "balance": {
+    "blue": 1458,
+    "red": 1131
+  },
+  "bot": {
+    "floor_snap": 1,
+    "length": 0.7112,
+    "width": 0.7112
+  },
+  "calibration_type": 0,
+  "classifier_conf": 0.1,
+  "contour": {
+    "grouping": 0,
+    "sort_final": 0
+  },
+  "convexity": {
+    "max": 100,
+    "min": 10
+  },
+  "corner_approx": 25,
+  "crop": {
+    "x": {
+      "max": 1,
+      "min": -1
+    },
+    "y": {
+      "max": 1,
+      "min": -1
+    }
+  },
+  "cross": {
+    "a": {
+      "a": 1,
+      "x": 0,
+      "y": 0
+    },
+    "b": {
+      "a": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "debugpipe": 0,
+  "desc": "teleop",
+  "desired_contour_region": 7,
+  "detector": {
+    "conf": 0.5,
+    "idfilters": []
+  },
+  "dilation_steps": 0,
+  "direction_filter": 0,
+  "dual_close_sort_origin": 0,
+  "erosion_steps": 0,
+  "exposure": 984,
+  "fiducial": {
+    "backend": "umich",
+    "decoder_strictness": "strict",
+    "denoise": 0.0,
+    "idfilters": [1,2,3,4,5,6,7,8],
+    "locfilters": [],
+    "method": "sqpnp",
+    "qualitythreshold": 9.5,
+    "refine": 1,
+    "resdiv": 4,
+    "size": 152.4,
+    "skip3d": 0,
+    "type": "aprilClassic16h5",
+    "vis_mode": "3dbotposefieldspace"
+  },
+  "flicker_correction": 0,
+  "force_convex": 0,
+  "hue": {
+    "max": 179,
+    "min": 0
+  },
+  "image": {
+    "flip": 1,
+    "source": 0
+  },
+  "img_to_show": 0,
+  "intersection_filter": 0,
+  "invert_hue": 0,
+  "lcgain": 19.6,
+  "multigroup": {
+    "max": 7,
+    "min": 1,
+    "rejector": 0
+  },
+  "pipeline": {
+    "led": {
+      "enabled": 0,
+      "power": 60
+    },
+    "res": 0,
+    "type": 0
+  },
+  "python_snapscript_name": "",
+  "roi": {
+    "x": 0.0,
+    "y": 0.0
+  },
+  "rs": {
+    "f": 0.165,
+    "pitch": -7,
+    "roll": 0,
+    "s": 0.254,
+    "u": 1.041,
+    "yaw": 0
+  },
+  "saturation": {
+    "max": 255,
+    "min": 0
+  },
+  "send": {
+    "corners": 0,
+    "raw_contours": 0
+  },
+  "solve3d": {
+    "enabled": 0,
+    "algo": 0,
+    "bindtarget": 0,
+    "conf": 0.99,
+    "error": 8,
+    "guess": 0,
+    "iterations": 50,
+    "precise": 0,
+    "zoffset": 0.0
+  },
+  "ts": {
+    "f": 0,
+    "s": 0,
+    "u": 0
+  },
+  "value": {
+    "max": 255,
+    "min": 0
+  },
+  "outlier_miqr": {
+    "x": 1.5,
+    "y": 1.5
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "robotWidth": 0.965,
+  "robotLength": 0.838,
+  "holonomicMode": true,
+  "pathFolders": [
+    "HueAuto2.5Top",
+    "HueAuto2.5Bottom"
+  ],
+  "autoFolders": [
+    "KianBottom"
+  ],
+  "defaultMaxVel": 3.0,
+  "defaultMaxAccel": 3.0,
+  "defaultMaxAngVel": 540.0,
+  "defaultMaxAngAccel": 720.0,
+  "defaultNominalVoltage": 12.0,
+  "robotMass": 62.142,
+  "robotMOI": 6.883,
+  "robotTrackwidth": 0.546,
+  "driveWheelRadius": 0.051,
+  "driveGearing": 5.142,
+  "maxDriveSpeed": 4.93,
+  "driveMotorType": "krakenX60",
+  "driveCurrentLimit": 120.0,
+  "wheelCOF": 1.3,
+  "flModuleX": 0.251,
+  "flModuleY": 0.251,
+  "frModuleX": 0.251,
+  "frModuleY": -0.251,
+  "blModuleX": -0.251,
+  "blModuleY": 0.251,
+  "brModuleX": -0.251,
+  "brModuleY": -0.251,
+  "bumperOffsetX": 0.0,
+  "bumperOffsetY": 0.064,
+  "robotFeatures": [
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.419,\"y\":0.306},\"end\":{\"x\":0.419,\"y\":0.306},\"strokeWidth\":0.02}}"
+  ]
+}

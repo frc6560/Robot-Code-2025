@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inv1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inv2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inv3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Inv4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "KianBottom",
+  "choreoAuto": false
+}

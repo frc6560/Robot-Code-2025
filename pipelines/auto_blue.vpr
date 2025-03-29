@@ -1,0 +1,153 @@
+{
+  "area": {
+    "max": 100,
+    "min": 0.0017850625000000004,
+    "similarity": 0
+  },
+  "aspect": {
+    "max": 20.0,
+    "min": 0.0
+  },
+  "black_level": 0,
+  "balance": {
+    "blue": 1402,
+    "red": 989
+  },
+  "bot": {
+    "floor_snap": 0,
+    "length": 0.7112,
+    "width": 0.7112
+  },
+  "calibration_type": 0,
+  "classifier_conf": 0.1,
+  "contour": {
+    "grouping": 0,
+    "sort_final": 0
+  },
+  "convexity": {
+    "max": 100,
+    "min": 10
+  },
+  "corner_approx": 5.0,
+  "crop": {
+    "x": {
+      "max": -0.16,
+      "min": -0.75
+    },
+    "y": {
+      "max": 0.77,
+      "min": 0.24
+    }
+  },
+  "cross": {
+    "a": {
+      "a": 1,
+      "x": 0,
+      "y": 0
+    },
+    "b": {
+      "a": 1,
+      "x": 0,
+      "y": 0
+    }
+  },
+  "debugpipe": 0,
+  "desc": "auto_blue",
+  "desired_contour_region": 0,
+  "detector": {
+    "conf": 0.5,
+    "idfilters": []
+  },
+  "dilation_steps": 0,
+  "direction_filter": 0,
+  "dual_close_sort_origin": 0,
+  "erosion_steps": 0,
+  "exposure": 875,
+  "fiducial": {
+    "backend": "umich",
+    "decoder_strictness": "strict",
+    "denoise": 0.0,
+    "idfilters": [],
+    "locfilters": [],
+    "method": "sqpnp",
+    "qualitythreshold": 2.0,
+    "refine": 1,
+    "resdiv": 2,
+    "size": 165.1,
+    "skip3d": 1,
+    "type": "aprilClassic36h11",
+    "vis_mode": "3dtargposebotspace"
+  },
+  "flicker_correction": 0,
+  "force_convex": 1,
+  "hue": {
+    "max": 85,
+    "min": 60
+  },
+  "image": {
+    "flip": 1,
+    "source": 0
+  },
+  "img_to_show": 0,
+  "intersection_filter": 0,
+  "invert_hue": 0,
+  "lcgain": 15.4,
+  "multigroup": {
+    "max": 7,
+    "min": 1,
+    "rejector": 0
+  },
+  "pipeline": {
+    "led": {
+      "enabled": 0,
+      "power": 60
+    },
+    "res": 3,
+    "type": 6
+  },
+  "python_snapscript_name": "",
+  "roi": {
+    "x": 0.0,
+    "y": 0.0
+  },
+  "rs": {
+    "f": 0,
+    "pitch": 0,
+    "roll": 0,
+    "s": 0,
+    "u": 0,
+    "yaw": 0
+  },
+  "saturation": {
+    "max": 255,
+    "min": 70
+  },
+  "send": {
+    "corners": 0,
+    "raw_contours": 0
+  },
+  "solve3d": {
+    "enabled": 0,
+    "algo": 0,
+    "bindtarget": 1,
+    "conf": 0.99,
+    "error": 8,
+    "guess": 0,
+    "iterations": 50,
+    "precise": 0,
+    "zoffset": 0.0
+  },
+  "ts": {
+    "f": 0,
+    "s": 0,
+    "u": 0
+  },
+  "value": {
+    "max": 255,
+    "min": 70
+  },
+  "outlier_miqr": {
+    "x": 1.5,
+    "y": 1.5
+  }
+}

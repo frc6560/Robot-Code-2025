@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestAutoSeg1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestAutoSeg2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestAutoSeg1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StationIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestAutoSeg2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
