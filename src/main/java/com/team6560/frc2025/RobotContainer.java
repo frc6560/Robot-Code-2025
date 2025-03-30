@@ -103,7 +103,10 @@ public class RobotContainer {
     autoChooser.addOption("HueAuto 2.5", getHue25Auto());
     autoChooser.addOption("Auto align test", getAutoAlignTestAuto());
     autoChooser.addOption("Score Auto Test", getScoreAutoTest());
-    autoChooser.addOption("Aero 3", getAero3PAuto());
+    autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
+    autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
+    autoChooser.addOption("Bump Auto", getAeroBumpAuto());
+
     autoChooser.setDefaultOption("1p Mid", get1PAuto());
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -155,6 +158,16 @@ public class RobotContainer {
       .andThen(new StationIntake(pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
+  }
+
+  public Command getAeroBumpAuto(){
+    return drivebase.getAutonomousCommand("Aero3pSeg1p")
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
+      .andThen(new StationIntake(pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
+      .andThen(drivebase.getAutonomousCommand("AeroBump-4"))
+      .andThen(drivebase.getAutonomousCommand("AeroBump-5"));
   }
 
   public void resetLLBeforeAuto() {
