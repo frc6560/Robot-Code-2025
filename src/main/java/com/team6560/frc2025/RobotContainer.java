@@ -144,6 +144,24 @@ public class RobotContainer {
       .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
   }
 
+  public Command getAero3pAutoNoProcessor(){
+    return drivebase.getAutonomousCommand("Aero3pSeg1p")
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
+      .andThen(new StationIntake(pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg4p"))
+      .andThen(new StationIntake(pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg5p"))
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
+  }
+
+  public void resetLLBeforeAuto() {
+    drivebase.resetOdometryToLimelight();
+  }
+
   public Command get1PAuto() {
     return drivebase.getAutonomousCommand("Taxi Auto")
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
