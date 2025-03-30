@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.15933277027027,
-        "y": 4.956
+        "x": 1.555796802662036,
+        "y": 0.7588219762731478
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.434479263910067,
-        "y": 4.8860232988876895
+        "x": 1.823008708581624,
+        "y": 0.9779725419377232
       },
       "isLocked": false,
-      "linkedName": "AeroStart"
+      "linkedName": "3pStationIntake"
     },
     {
       "anchor": {
-        "x": 5.538970588235294,
-        "y": 4.956
+        "x": 3.7104617862134996,
+        "y": 2.9667912899324427
       },
       "prevControl": {
-        "x": 6.763933043180666,
-        "y": 4.886492181106186
+        "x": 3.4008341771178587,
+        "y": 2.6613597850772805
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AeroP1"
+      "linkedName": "3pInv4"
     }
   ],
   "rotationTargets": [],
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 59.99999999999999
+    "velocity": 0.0,
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -125.30783401924836
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

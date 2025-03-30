@@ -17,8 +17,7 @@ public class StationIntake extends Command {
     private final Elevator elevator;
     private final PipeGrabber grabber;
     private final Timer timer = new Timer();
-    private final double armDuration = 0.7; 
-    private final double netDuration = 1.8;
+    private final double netDuration = 0.75; 
 
     public StationIntake(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
         this.wrist = wrist;
@@ -29,21 +28,15 @@ public class StationIntake extends Command {
 
     @Override
     public void initialize() {
-        wrist.setMotorPosition(WristConstants.WristStates.STOW);
-        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
+        // wrist.setMotorPosition(WristConstants.WristStates.STOW);
+        // elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
         timer.reset();
         timer.start();
     }
 
     @Override
     public void execute() {
-        if(timer.hasElapsed(armDuration)) {
-            grabber.runIntakeMaxSpeed();
-        }
-        else{
-            wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
-            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-        }
+        grabber.runIntakeMaxSpeed();
     }
 
     @Override

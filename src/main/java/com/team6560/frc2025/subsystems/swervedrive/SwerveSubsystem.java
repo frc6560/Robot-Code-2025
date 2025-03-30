@@ -84,7 +84,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   private final boolean visionDriveTest = true; // don't actually need this but ok
 
-  Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.1, 0.1, 1);
+  Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -125,7 +125,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
 
     // NOTE: These positions have basically zero offset
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.887,	5.329), Rotation2d.fromDegrees(120)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858,	5.303), Rotation2d.fromDegrees(120)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082,	4.865), Rotation2d.fromDegrees(60)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(13.807,	5.031), Rotation2d.fromDegrees(60)));
@@ -257,7 +257,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0), // 2.3 // 5.7 // kI was 0.06 but do not use
+              new PIDConstants(5.3, 0.0, 0.0), // 2.3 // 5.7 // kI was 0.06 but do not use
               // Translation PID constants
               new PIDConstants(4.0, 0.0, 0.0) 
               // Rotation PID constants

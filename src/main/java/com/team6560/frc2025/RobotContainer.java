@@ -130,7 +130,17 @@ public class RobotContainer {
   }
 
   public Command getAero3PAuto() {
-    return drivebase.getAutonomousCommand("Aero3Auto");
+    return drivebase.getAutonomousCommand("Aero3pSeg1p")
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
+      .andThen(new StationIntake(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg4p"))
+      .andThen(new StationIntake(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg5p"))
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+      .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
   }
 
   public Command get1PAuto() {

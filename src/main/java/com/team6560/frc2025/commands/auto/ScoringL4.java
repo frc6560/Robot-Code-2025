@@ -37,12 +37,11 @@ public class ScoringL4 extends SequentialCommandGroup{
                             ejectTimer.start();
                         },
                         () -> {
-                            if (ejectTimer.hasElapsed(0.15)) { // jank fix but wrist pos check doesn't work :(
+                            if (ejectTimer.hasElapsed(0.2)) { // jank fix but wrist pos check doesn't work :(
                                 grabber.runGrabberOuttakeMaxSpeed();
                             }
                             elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
                             wrist.setMotorPosition(wristAngleL4);
-                            
                         },
                         (interrupted) -> grabber.stop(), 
                         () -> ejectTimer.hasElapsed(0.4));
@@ -62,9 +61,9 @@ public class ScoringL4 extends SequentialCommandGroup{
                     elevator.stopMotors();
                     wrist.stopMotor();
                 }, 
-                () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0 && 
-                        Math.abs(wrist.getWristAngle() - WristConstants.WristStates.PICKUP) < 4.0));
-        
+                () -> Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.5
+                        // && Math.abs(wrist.getWristAngle() - WristConstants.WristStates.PICKUP) < 5.0));
+                );
         super.addCommands(mechanismUp, ejectPiece, mechanismDown);
         super.addRequirements(wrist, elevator, grabber);
     }
