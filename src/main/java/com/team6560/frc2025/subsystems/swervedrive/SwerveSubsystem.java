@@ -78,10 +78,6 @@ public class SwerveSubsystem extends SubsystemBase
   private ArrayList<Pose2d> targetPose2dsLeft = new ArrayList<Pose2d>();
   private ArrayList<Pose2d> targetPose2dsRight = new ArrayList<Pose2d>();
 
-  // private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-
-  // private final Field2d aprilTagField = new Field2d();
-
   private final boolean visionDriveTest = true; // don't actually need this but ok
 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
@@ -114,12 +110,6 @@ public class SwerveSubsystem extends SubsystemBase
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     setMotorBrake(true);
     setupPathPlanner();
-
-    // Shuffleboard.getTab("Field").add(aprilTagField);
-
-    // for (int i = 0; i < targetPose2ds.size(); i++) {
-    //   aprilTagField.getObject("TargetPosition+" + i).setPose(targetPose2ds.get(i));
-    // }
 
 
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
@@ -170,10 +160,6 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-  // static {
-
-  // }
-
 
   private Pose2d emptyPose = new Pose2d();
 
@@ -193,15 +179,11 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
     swerveDrive.field.setRobotPose(this.getPose());
 
-    // if(DriverStation.isTeleop() || limelightPoseEstimate.tagCount > 1){
-
-      double timestampSeconds = Timer.getFPGATimestamp() - latency;
+    double timestampSeconds = Timer.getFPGATimestamp() - latency;
       
-      if(timestampSeconds > 0){
-        swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
-      }
-
-    // }
+    if(timestampSeconds > 0){
+      swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
+    }
   }
 
   Pose2d getClosestTargetPoseLeft() {

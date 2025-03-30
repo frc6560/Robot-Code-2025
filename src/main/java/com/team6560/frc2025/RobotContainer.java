@@ -97,17 +97,11 @@ public class RobotContainer {
     configureBindings();
 
     autoChooser = new SendableChooser<Command>();
-    // autoChooser.addOption("1p Mid", get1PAuto());    
     autoChooser.addOption("No Auto", null);
-    autoChooser.addOption("Taxi Auto", getTaxiAuto());
-    autoChooser.addOption("HueAuto 2.5", getHue25Auto());
-    autoChooser.addOption("Auto align test", getAutoAlignTestAuto());
-    autoChooser.addOption("Score Auto Test", getScoreAutoTest());
     autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
     autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
     autoChooser.addOption("Bump Auto", getAeroBumpAuto());
-
-    autoChooser.setDefaultOption("1p Mid", get1PAuto());
+    autoChooser.setDefaultOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   private void configureBindings() { 
@@ -115,15 +109,8 @@ public class RobotContainer {
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
-
     driverXbox.b().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
-
-    // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-    // driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    
-    //  driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     // use auto align mechanism
     driverXbox.x().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseLeft().schedule(), drivebase));
@@ -172,37 +159,6 @@ public class RobotContainer {
 
   public void resetLLBeforeAuto() {
     drivebase.resetOdometryToLimelight();
-  }
-
-  public Command get1PAuto() {
-    return drivebase.getAutonomousCommand("Taxi Auto")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
-  }
-
-  public Command getTestAuto(){
-    return drivebase.getAutonomousCommand("TestAuto");
-  }
-
-  public Command getHue25Auto() {
-    return drivebase.getAutonomousCommand("HueAuto2.5");
-  }
-
-  public Command getTaxiAuto() {
-    return drivebase.getAutonomousCommand("Taxi Auto");
-  }
-
-  public Command getScoreAutoTest(){
-    return new ScoringL4(wrist, elevator, pipeGrabber);
-  }
-
-  public Command getAutoAlignTestAuto() {
-    return drivebase.getAutonomousCommand("Auto align test")
-      // .alongWith(new L3Travel(wrist, elevator, 2.78))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Auto align test 2"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Auto align test 3"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
   }
 
   public Command getAutonomousCommand() {
