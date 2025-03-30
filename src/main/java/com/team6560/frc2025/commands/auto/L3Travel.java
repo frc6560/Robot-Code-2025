@@ -1,5 +1,6 @@
 package com.team6560.frc2025.commands.auto;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
@@ -7,8 +8,6 @@ import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.Wrist;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.Timer;
 public class L3Travel extends Command {
     private final Wrist wrist;
     private final Elevator elevator;
