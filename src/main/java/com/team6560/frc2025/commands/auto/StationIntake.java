@@ -2,28 +2,19 @@ package com.team6560.frc2025.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-import com.team6560.frc2025.Constants.ElevatorConstants;
-import com.team6560.frc2025.Constants.WristConstants;
-import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
-import com.team6560.frc2025.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.Timer;
 
 /** Moves Wrist and Elevator to pickup, picks up piece */
 public class StationIntake extends Command {
-
-    private final Wrist wrist;
-    private final Elevator elevator;
     private final PipeGrabber grabber;
     private final Timer timer = new Timer();
     private final double netDuration = 0.75; 
 
-    public StationIntake(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
-        this.wrist = wrist;
-        this.elevator = elevator;
+    public StationIntake(PipeGrabber grabber) {
         this.grabber = grabber;
-        addRequirements(wrist, elevator, grabber);
+        addRequirements(grabber);
     }
 
     @Override
@@ -41,8 +32,6 @@ public class StationIntake extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        wrist.stopMotor();
-        elevator.stopMotors();
         grabber.stop();
         timer.stop();
     }

@@ -10,65 +10,34 @@ import com.team6560.frc2025.subsystems.Wrist;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
 public class L3Travel extends Command {
-    
     private final Wrist wrist;
     private final Elevator elevator;
-    private final Timer timer = new Timer();
 
-    private final SlewRateLimiter elevatorLimiter;
-    private final SlewRateLimiter wristLimiter;
-
-    private final double elevatorInitialHeight = ElevatorConstants.ElevatorStates.STOW;
-    private final double elevatorFinalHeight = 7.0;
-
-    private final double wristInitialPos = WristConstants.WristStates.PICKUP;
-    private final double wristFinalPos = 70.0;
-
-    private final double pathDuration;
-
-
-    public L3Travel(Wrist wrist, Elevator elevator, double pathDuration) {
+    public L3Travel(Wrist wrist, Elevator elevator){
         this.wrist = wrist;
-        this.elevator = elevator; 
-        this.elevatorLimiter = new SlewRateLimiter((Math.abs(elevatorFinalHeight - elevatorInitialHeight) / pathDuration) + 2);
-        this.wristLimiter = new SlewRateLimiter(((360-225)+70) / pathDuration); // avoid 360 deg thing
-        this.pathDuration = pathDuration;
-        addRequirements(wrist, elevator);
+        this.elevator = elevator;
     }
 
     @Override
     public void initialize() {
-
         wrist.setMotorPosition(WristConstants.WristStates.STOW);
         elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-
-        elevatorLimiter.reset(elevator.getElevatorHeight());
-        wristLimiter.reset(wrist.getWristPosition());
-
-        timer.reset();
-        timer.start();
-
     }
 
     @Override
-    public void execute() {
-
-        elevator.setElevatorPosition(elevatorLimiter.calculate(this.elevatorFinalHeight));
-        wrist.setMotorPosition(wristLimiter.calculate(this.wristFinalPos));
-
+    public void execute(){
+        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L3);
+        wrist.setMotorPosition(WristConstants.WristStates.STOW);
     }
 
     @Override
-    public void end(boolean interrupted) {
-
-        wrist.stopMotor();
+    public void end(boolean interrupted){
         elevator.stopMotors();
-        timer.stop();
-
+        wrist.stopMotor();
     }
 
     @Override
     public boolean isFinished() {
-        return timer.hasElapsed(pathDuration);
+        return Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L3) < 1.5;
     }
 }
