@@ -145,17 +145,16 @@ public class RobotContainer {
   }
 
   public Command getAero3pAutoNoProcessor(){
-    return drivebase.getAutonomousCommand("Aero3pSeg1p")
+    return drivebase.getAutonomousCommand("Aero3p-1")
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
+      .andThen(drivebase.getAutonomousCommand("Aero3p-2"))
       .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
+      .andThen(drivebase.getAutonomousCommand("Aero3p-3"))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg4p"))
+      .andThen(drivebase.getAutonomousCommand("Aero3p-4"))
       .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg5p"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
+      .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
+      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
   }
 
   public void resetLLBeforeAuto() {
