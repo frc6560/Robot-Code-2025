@@ -10,17 +10,16 @@ import edu.wpi.first.wpilibj.Timer;
 public class StationIntake extends Command {
     private final PipeGrabber grabber;
     private final Timer timer = new Timer();
-    private final double netDuration = 1; 
+    private final double netDuration; 
 
-    public StationIntake(PipeGrabber grabber) {
+    public StationIntake(PipeGrabber grabber, double duration) {
         this.grabber = grabber;
+        this.netDuration = duration;
         addRequirements(grabber);
     }
 
     @Override
     public void initialize() {
-        // wrist.setMotorPosition(WristConstants.WristStates.STOW);
-        // elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
         timer.reset();
         timer.start();
     }

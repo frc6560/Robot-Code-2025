@@ -5,29 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Aero3Part3"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "StationIntake"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "Aero3Part3"
           }
         }
       ]

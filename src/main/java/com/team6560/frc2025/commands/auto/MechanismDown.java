@@ -1,31 +1,36 @@
 package com.team6560.frc2025.commands.auto;
-
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj2.command.Command;
-
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.Wrist;
 
-public class L3Travel extends Command {
+import edu.wpi.first.wpilibj.Timer;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
+
+public class MechanismDown extends Command{
     private final Wrist wrist;
     private final Elevator elevator;
+    private final Timer timer = new Timer();
 
-    public L3Travel(Wrist wrist, Elevator elevator){
+    public MechanismDown(Elevator elevator, Wrist wrist){
         this.wrist = wrist;
         this.elevator = elevator;
     }
 
     @Override
     public void initialize() {
-        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
+        timer.reset();
+        timer.start();
     }
 
     @Override
     public void execute(){
-        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
-        wrist.setMotorPosition(WristConstants.WristStates.STOW);
+        wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
+        if(timer.hasElapsed(0.1)){
+            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
+        }
     }
 
     @Override
@@ -36,6 +41,6 @@ public class L3Travel extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L3) < 1.5;
+        return Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0;
     }
 }

@@ -13,25 +13,6 @@
                 "data": {
                   "pathName": "Aero3Part2"
                 }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 1.42
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "StationIntake"
-                      }
-                    }
-                  ]
-                }
               }
             ]
           }

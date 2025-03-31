@@ -92,8 +92,7 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
     NamedCommands.registerCommand("Scoring L4", new ScoringL4(wrist, elevator, pipeGrabber));
-    NamedCommands.registerCommand("Station Intake", new StationIntake(pipeGrabber));
-    NamedCommands.registerCommand("TravelingL3", new L3Travel(wrist, elevator));
+    // NamedCommands.registerCommand("TravelingL3", new L3Travel(wrist, elevator));
     configureBindings();
 
     autoChooser = new SendableChooser<Command>();
@@ -134,15 +133,15 @@ public class RobotContainer {
   }
 
   public Command getAero3PAuto() {
-    return drivebase.getAutonomousCommand("Aero3pSeg1p")
+    return Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg1p"), new L4Travel(elevator, wrist))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
+      .andThen(new StationIntake(pipeGrabber, 0.3))
+      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg3p"), new StationIntake(pipeGrabber, 1.8)))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3pSeg4p"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg5p"))
+      .andThen(new StationIntake(pipeGrabber, 0.3))
+      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg5p"), new StationIntake(pipeGrabber, 1.8)))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
   }
@@ -151,11 +150,11 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("Aero3p-1")
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3p-2"))
-      .andThen(new StationIntake(pipeGrabber))
+      .andThen(new StationIntake(pipeGrabber, 0.5))
       .andThen(drivebase.getAutonomousCommand("Aero3p-3"))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3p-4"))
-      .andThen(new StationIntake(pipeGrabber))
+      .andThen(new StationIntake(pipeGrabber, 0.5))
       .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
   }
@@ -164,7 +163,7 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("Aero3pSeg1p")
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
-      .andThen(new StationIntake(pipeGrabber))
+      .andThen(new StationIntake(pipeGrabber, 0.5))
       .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
       .andThen(drivebase.getAutonomousCommand("AeroBump-4"))
       .andThen(drivebase.getAutonomousCommand("AeroBump-5"));
@@ -200,7 +199,7 @@ public class RobotContainer {
       // .alongWith(new L3Travel(wrist, elevator, 2.78))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
       .andThen(drivebase.getAutonomousCommand("Auto align test 2"))
-      .andThen(new StationIntake(pipeGrabber))
+      .andThen(new StationIntake(pipeGrabber, 0.75))
       .andThen(drivebase.getAutonomousCommand("Auto align test 3"))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
   }

@@ -17,7 +17,6 @@ public class ScoringL4 extends SequentialCommandGroup{
     public ScoringL4(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
         double wristAngleL4 = 6.56;
         Timer ejectTimer = new Timer();
-        Timer downTimer = new Timer();
 
         final Command mechanismUp = new FunctionalCommand(
                     () -> {
@@ -46,25 +45,7 @@ public class ScoringL4 extends SequentialCommandGroup{
                         (interrupted) -> grabber.stop(), 
                         () -> ejectTimer.hasElapsed(0.4));
 
-        final Command mechanismDown = new FunctionalCommand(
-                () -> {
-                    downTimer.reset();
-                    downTimer.start();
-                },
-                () -> {
-                    wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
-                    if (downTimer.hasElapsed(0.25)) {
-                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-                    }
-                },
-                (interrupted) -> {
-                    elevator.stopMotors();
-                    wrist.stopMotor();
-                }, 
-                () -> Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.5
-                        // && Math.abs(wrist.getWristAngle() - WristConstants.WristStates.PICKUP) < 5.0));
-                );
-        super.addCommands(mechanismUp, ejectPiece, mechanismDown);
+        super.addCommands(mechanismUp, ejectPiece);
         super.addRequirements(wrist, elevator, grabber);
     }
 
