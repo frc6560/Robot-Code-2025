@@ -19,13 +19,12 @@ public class L3Travel extends Command {
 
     @Override
     public void initialize() {
-        wrist.setMotorPosition(WristConstants.WristStates.STOW);
         elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
     }
 
     @Override
     public void execute(){
-        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L3);
+        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
         wrist.setMotorPosition(WristConstants.WristStates.STOW);
     }
 

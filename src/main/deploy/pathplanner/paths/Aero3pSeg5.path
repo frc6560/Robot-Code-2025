@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.555796802662036,
-        "y": 0.7588219762731478
+        "x": 1.6516893974735194,
+        "y": 0.800869025180657
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.823008708581624,
-        "y": 0.9779725419377233
+        "x": 1.9189013033931075,
+        "y": 1.020019590845233
       },
       "isLocked": false,
       "linkedName": "3pStationIntake"
     },
     {
       "anchor": {
-        "x": 3.7104617862134996,
-        "y": 2.9667912899324427
+        "x": 3.7287074413139796,
+        "y": 2.997696615270539
       },
       "prevControl": {
-        "x": 3.4008341771178587,
-        "y": 2.6613597850772805
+        "x": 2.9549970587019203,
+        "y": 2.1773458820685785
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,40 +29,14 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 5.0,
-        "maxAcceleration": 1.5,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 540.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "TravelingL3",
-      "waypointRelativePos": 0.75,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "TravelingL3"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
-    "maxAcceleration": 4.0,
+    "maxAcceleration": 3.75,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 540.0,
+    "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

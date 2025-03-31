@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class StationIntake extends Command {
     private final PipeGrabber grabber;
     private final Timer timer = new Timer();
-    private final double netDuration = 0.75; 
+    private final double netDuration = 1; 
 
     public StationIntake(PipeGrabber grabber) {
         this.grabber = grabber;
