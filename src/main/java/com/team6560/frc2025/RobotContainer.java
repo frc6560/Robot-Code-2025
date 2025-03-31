@@ -135,11 +135,11 @@ public class RobotContainer {
   public Command getAero3PAuto() {
     return Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg1p"), new L4Travel(elevator, wrist))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
+      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg2p")), new MechanismDown(elevator, wrist))
       .andThen(new StationIntake(pipeGrabber, 0.3))
       .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg3p"), new StationIntake(pipeGrabber, 1.8)))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg4p"))
+      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg4p")), new MechanismDown(elevator, wrist))
       .andThen(new StationIntake(pipeGrabber, 0.3))
       .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg5p"), new StationIntake(pipeGrabber, 1.8)))
       .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
