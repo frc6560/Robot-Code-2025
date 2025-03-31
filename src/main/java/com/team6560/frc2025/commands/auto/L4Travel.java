@@ -19,8 +19,8 @@ public class L4Travel extends Command {
     public L4Travel(Elevator elevator, Wrist wrist){
         this.wrist = wrist;
         this.elevator = elevator;
-        this.slewratelimiterelev = new SlewRateLimiter((ElevatorConstants.ElevatorStates.L4-ElevatorConstants.ElevatorStates.STOW)/1.94);
-        this.slewratelimiterwrist = new SlewRateLimiter((WristConstants.WristStates.PICKUP - WristConstants.WristStates.L4) / 1.94);
+        this.slewratelimiterelev = new SlewRateLimiter((ElevatorConstants.ElevatorStates.L4-ElevatorConstants.ElevatorStates.STOW)/2.19);
+        this.slewratelimiterwrist = new SlewRateLimiter((WristConstants.WristStates.PICKUP - WristConstants.WristStates.L4) / 2.19);
     }
 
     @Override
