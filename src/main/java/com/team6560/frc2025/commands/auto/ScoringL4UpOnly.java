@@ -12,12 +12,12 @@ import com.team6560.frc2025.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class ScoringL4 extends SequentialCommandGroup{
+public class ScoringL4UpOnly extends SequentialCommandGroup{
 
-    public ScoringL4(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
+    public ScoringL4UpOnly(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
         double wristAngleL4 = 6.56;
         Timer ejectTimer = new Timer();
-        Timer downTimer = new Timer();
+        Timer wristTimer = new Timer();
 
         final Command mechanismUp = new FunctionalCommand(
                     () -> {
@@ -46,24 +46,19 @@ public class ScoringL4 extends SequentialCommandGroup{
                         (interrupted) -> grabber.stop(), 
                         () -> ejectTimer.hasElapsed(0.4));
 
-        final Command mechanismDown = new FunctionalCommand(
+        final Command wristToStow = new FunctionalCommand(
                         () -> {
-                            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-                            wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
-                            downTimer.reset();
-                            downTimer.start();
+                            wristTimer.reset();
+                            wristTimer.start();
                         },
                         () -> {
-                            wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
-                            if (downTimer.hasElapsed(0.7)) {
-                                elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-                            }
+                            wrist.setMotorPosition(WristConstants.WristStates.STOW);
                         },
-                        (interrupted) -> {},
-                        () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0)
-        );
+                        (interrupted) -> grabber.stop(), 
+                        () -> ejectTimer.hasElapsed(0.4));
 
-        super.addCommands(mechanismUp, ejectPiece, mechanismDown);
+
+        super.addCommands(mechanismUp, ejectPiece, wristToStow);
         super.addRequirements(wrist, elevator, grabber);
     }
 

@@ -92,21 +92,25 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
     NamedCommands.registerCommand("Scoring L4", new ScoringL4(wrist, elevator, pipeGrabber));
+    NamedCommands.registerCommand("Scoring L4 Up Only", new ScoringL4UpOnly(wrist, elevator, pipeGrabber));
+    NamedCommands.registerCommand("Scoring L4 Down Only", new ScoringL4DownOnly(wrist, elevator, pipeGrabber));
     // NamedCommands.registerCommand("TravelingL3", new L3Travel(wrist, elevator));
     configureBindings();
 
     autoChooser = new SendableChooser<Command>();
+
     // autoChooser.addOption("1p Mid", get1PAuto());    
+
     autoChooser.addOption("No Auto", null);
     autoChooser.addOption("Taxi Auto", getTaxiAuto());
-    autoChooser.addOption("HueAuto 2.5", getHue25Auto());
-    autoChooser.addOption("Auto align test", getAutoAlignTestAuto());
-    autoChooser.addOption("Score Auto Test", getScoreAutoTest());
-    autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
-    autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
-    autoChooser.addOption("Bump Auto", getAeroBumpAuto());
 
-    autoChooser.setDefaultOption("1p Mid", get1PAuto());
+    // autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
+    // autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
+    autoChooser.addOption("AeroSeg3Inv", getAeroSeg3Inv());
+    // autoChooser.addOption("Bump Auto", getAeroBumpAuto());
+
+    autoChooser.addOption("Test elevator collapse", testElevatorCollapse());
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
   private void configureBindings() { 
@@ -132,76 +136,73 @@ public class RobotContainer {
 
   }
 
-  public Command getAero3PAuto() {
-    return Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg1p"), new L4Travel(elevator, wrist))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg2p")), new MechanismDown(elevator, wrist))
-      .andThen(new StationIntake(pipeGrabber, 0.3))
-      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg3p"), new StationIntake(pipeGrabber, 1.8)))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg4p")), new MechanismDown(elevator, wrist))
-      .andThen(new StationIntake(pipeGrabber, 0.3))
-      .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg5p"), new StationIntake(pipeGrabber, 1.8)))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
-  }
-
-  public Command getAero3pAutoNoProcessor(){
-    return drivebase.getAutonomousCommand("Aero3p-1")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-2"))
-      .andThen(new StationIntake(pipeGrabber, 0.5))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-3"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-4"))
-      .andThen(new StationIntake(pipeGrabber, 0.5))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
-  }
-
-  public Command getAeroBumpAuto(){
-    return drivebase.getAutonomousCommand("Aero3pSeg1p")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
-      .andThen(new StationIntake(pipeGrabber, 0.5))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
-      .andThen(drivebase.getAutonomousCommand("AeroBump-4"))
-      .andThen(drivebase.getAutonomousCommand("AeroBump-5"));
-  }
-
   public void resetLLBeforeAuto() {
     drivebase.resetOdometryToLimelight();
   }
 
-  public Command get1PAuto() {
-    return drivebase.getAutonomousCommand("Taxi Auto")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
+  // public Command getAero3PAuto() {
+  //   return Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg1p"), new L4Travel(elevator, wrist))
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg2p")), new MechanismDown(elevator, wrist))
+  //     .andThen(new StationIntake(pipeGrabber, 0.3))
+  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg3p"), new StationIntake(pipeGrabber, 1.8)))
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg4p")), new MechanismDown(elevator, wrist))
+  //     .andThen(new StationIntake(pipeGrabber, 0.3))
+  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg5p"), new StationIntake(pipeGrabber, 1.8)))
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
+  // }
+
+  public Command getAeroSeg3Inv() {
+    return drivebase.getAutonomousCommand("Aero3Part1")
+    .alongWith(new L4Travel(elevator, wrist, 2.1))
+    .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+    .andThen(drivebase.getAutonomousCommand("Aero3Part2"))
+    .andThen((drivebase.getAutonomousCommand("Aero3Part3"))
+    .alongWith(new StationIntake(pipeGrabber, 1.5)))
+    .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+    .andThen(drivebase.getAutonomousCommand("Aero3Part4"))
+    .andThen((drivebase.getAutonomousCommand("Aero3Part5"))
+    .alongWith(new StationIntake(pipeGrabber, 1.5)))
+    .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+    .andThen(drivebase.getAutonomousCommand("Aero3Part6"));
   }
 
-  public Command getTestAuto(){
-    return drivebase.getAutonomousCommand("TestAuto");
+  public Command testElevatorCollapse() {
+    return new ScoringL4(wrist, elevator, pipeGrabber)
+    .andThen(new WaitCommand(0.5));
   }
 
-  public Command getHue25Auto() {
-    return drivebase.getAutonomousCommand("HueAuto2.5");
-  }
+  // public Command getAero3pAutoNoProcessor(){
+  //   return drivebase.getAutonomousCommand("Aero3p-1")
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3p-2"))
+  //     .andThen(new StationIntake(pipeGrabber, 0.5))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3p-3"))
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3p-4"))
+  //     .andThen(new StationIntake(pipeGrabber, 0.5))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
+  // }
+
+  // public Command getAeroBumpAuto(){
+  //   return drivebase.getAutonomousCommand("Aero3pSeg1p")
+  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
+  //     .andThen(new StationIntake(pipeGrabber, 0.5))
+  //     .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
+  //     .andThen(drivebase.getAutonomousCommand("AeroBump-4"))
+  //     .andThen(drivebase.getAutonomousCommand("AeroBump-5"));
+  // }
+
+  // public Command getTestAuto(){
+  //   return drivebase.getAutonomousCommand("TestAuto");
+  // }
 
   public Command getTaxiAuto() {
     return drivebase.getAutonomousCommand("Taxi Auto");
-  }
-
-  public Command getScoreAutoTest(){
-    return new ScoringL4(wrist, elevator, pipeGrabber);
-  }
-
-  public Command getAutoAlignTestAuto() {
-    return drivebase.getAutonomousCommand("Auto align test")
-      // .alongWith(new L3Travel(wrist, elevator, 2.78))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Auto align test 2"))
-      .andThen(new StationIntake(pipeGrabber, 0.75))
-      .andThen(drivebase.getAutonomousCommand("Auto align test 3"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
   }
 
   public Command getAutonomousCommand() {

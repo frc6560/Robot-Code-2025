@@ -16,11 +16,11 @@ public class L4Travel extends Command {
     private final SlewRateLimiter slewratelimiterelev;
     private final SlewRateLimiter slewratelimiterwrist;
 
-    public L4Travel(Elevator elevator, Wrist wrist){
+    public L4Travel(Elevator elevator, Wrist wrist, double time){
         this.wrist = wrist;
         this.elevator = elevator;
-        this.slewratelimiterelev = new SlewRateLimiter((ElevatorConstants.ElevatorStates.L4-ElevatorConstants.ElevatorStates.STOW)/2.19);
-        this.slewratelimiterwrist = new SlewRateLimiter((WristConstants.WristStates.PICKUP - WristConstants.WristStates.L4) / 2.19);
+        this.slewratelimiterelev = new SlewRateLimiter((ElevatorConstants.ElevatorStates.L4-ElevatorConstants.ElevatorStates.STOW) / time);
+        this.slewratelimiterwrist = new SlewRateLimiter((WristConstants.WristStates.PICKUP - WristConstants.WristStates.L4) / time);
     }
 
     @Override
