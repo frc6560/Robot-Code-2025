@@ -137,9 +137,9 @@ public class RobotContainer {
 
   }
 
-  public void elevL4BeginTele() {
-    elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
-    wrist.setMotorPosition(WristConstants.WristStates.L4);
+  public void elevL4BeginTele() { // values for auto (don't touch!)
+    elevator.setElevatorPosition(17.65);
+    wrist.setMotorPosition(40.0);
   }
 
   public void resetLLBeforeAuto() {
