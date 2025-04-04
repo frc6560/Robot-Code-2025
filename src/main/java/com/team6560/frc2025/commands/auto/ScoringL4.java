@@ -16,6 +16,7 @@ public class ScoringL4 extends SequentialCommandGroup{
 
     public ScoringL4(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
         double wristAngleL4 = 6.56;
+        double elevStateL4 = 17.65;
         Timer ejectTimer = new Timer();
         Timer downTimer = new Timer();
 
@@ -23,12 +24,11 @@ public class ScoringL4 extends SequentialCommandGroup{
                     () -> {
                     },
                     () -> {
-                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
+                        elevator.setElevatorPosition(elevStateL4);
                         wrist.setMotorPosition(wristAngleL4);
                     },
                     (interrupted) -> {},
-                    () -> Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L4) < 1.0 
-                          // && Math.abs(wrist.getWristAngle() - wristAngleL4) < 40.0
+                    () -> Math.abs(elevator.getElevatorHeight() - elevStateL4) < 1.0 
                     );
 
         final Command ejectPiece = new FunctionalCommand(
@@ -40,7 +40,7 @@ public class ScoringL4 extends SequentialCommandGroup{
                             if (ejectTimer.hasElapsed(0.2)) { // jank fix but wrist pos check doesn't work :(
                                 grabber.runGrabberOuttakeMaxSpeed();
                             }
-                            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
+                            elevator.setElevatorPosition(elevStateL4);
                             wrist.setMotorPosition(wristAngleL4);
                         },
                         (interrupted) -> grabber.stop(), 

@@ -16,11 +16,14 @@ public class L4Travel extends Command {
     private final SlewRateLimiter slewratelimiterelev;
     private final SlewRateLimiter slewratelimiterwrist;
 
+    private final double wristStateL4 = 40.0;
+    private final double elevStateL4 = 17.65;
+
     public L4Travel(Elevator elevator, Wrist wrist, double time){
         this.wrist = wrist;
         this.elevator = elevator;
-        this.slewratelimiterelev = new SlewRateLimiter((ElevatorConstants.ElevatorStates.L4-ElevatorConstants.ElevatorStates.STOW) / time);
-        this.slewratelimiterwrist = new SlewRateLimiter((WristConstants.WristStates.PICKUP - WristConstants.WristStates.L4) / time);
+        this.slewratelimiterelev = new SlewRateLimiter((elevStateL4 - ElevatorConstants.ElevatorStates.STOW) / time);
+        this.slewratelimiterwrist = new SlewRateLimiter((WristConstants.WristStates.PICKUP - wristStateL4) / time);
     }
 
     @Override
@@ -31,8 +34,8 @@ public class L4Travel extends Command {
 
     @Override
     public void execute(){
-        elevator.setElevatorPosition(slewratelimiterelev.calculate(ElevatorConstants.ElevatorStates.L4));
-        wrist.setMotorPosition(slewratelimiterwrist.calculate(WristConstants.WristStates.L4));
+        elevator.setElevatorPosition(slewratelimiterelev.calculate(elevStateL4));
+        wrist.setMotorPosition(slewratelimiterwrist.calculate(wristStateL4));
     }
 
     @Override
@@ -42,6 +45,6 @@ public class L4Travel extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.L4) < 1.5;
+        return Math.abs(elevator.getElevatorHeight() - elevStateL4) < 1.5;
     }
 }
