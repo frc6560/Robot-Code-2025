@@ -27,6 +27,8 @@ public class PipeGrabberCommand extends Command {
                 grabber.runIntake();
             } else if (controls.runGrabberOuttake()) {
                 grabber.runGrabberOuttake();
+            } else if (controls.runGrabberOuttakeL1()) {
+                grabber.runGrabberOuttakeL1();
             } else {
                 grabber.stop();
             }

@@ -124,7 +124,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
 
-    // NOTE: These positions have basically zero offset
+    // Old positions (8cm off)
     targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858,	5.303), Rotation2d.fromDegrees(120)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082,	4.865), Rotation2d.fromDegrees(60)));
@@ -150,6 +150,33 @@ public class SwerveSubsystem extends SubsystemBase
     targetPose2dsRight.add(new Pose2d(new Translation2d(12.337 - 8.577,	3.029), Rotation2d.fromDegrees(240)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850 - 8.577,	4.478), Rotation2d.fromDegrees(180)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
+
+    // New values (ajusted)
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.818,	5.382), Rotation2d.fromDegrees(120)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.549,	5.193), Rotation2d.fromDegrees(120)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.122,	4.934), Rotation2d.fromDegrees(60)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.847,	5.100), Rotation2d.fromDegrees(60)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.38,	3.549), Rotation2d.fromDegrees(0)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.38,	3.892), Rotation2d.fromDegrees(0)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.306,	2.672), Rotation2d.fromDegrees(300)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.593,	2.833), Rotation2d.fromDegrees(300)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.024,	3.135), Rotation2d.fromDegrees(240)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.297,	2.960), Rotation2d.fromDegrees(240)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.77,	4.478), Rotation2d.fromDegrees(180)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.736,	4.143), Rotation2d.fromDegrees(180)));
+
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.818  - 8.577,	5.382), Rotation2d.fromDegrees(120)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.549 - 8.577,	5.193), Rotation2d.fromDegrees(120)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.122  - 8.577,	4.934), Rotation2d.fromDegrees(60)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.847 - 8.577,	5.100), Rotation2d.fromDegrees(60)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.38   - 8.577,	3.549), Rotation2d.fromDegrees(0)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.38  - 8.577,	3.892), Rotation2d.fromDegrees(0)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.306  - 8.577,	2.672), Rotation2d.fromDegrees(300)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.593 - 8.577,	2.833), Rotation2d.fromDegrees(300)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.024  - 8.577,	3.135), Rotation2d.fromDegrees(240)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.297 - 8.577,	2.960), Rotation2d.fromDegrees(240)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.77   - 8.577,	4.478), Rotation2d.fromDegrees(180)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.736 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
   }
 
   /**
@@ -316,8 +343,8 @@ public class SwerveSubsystem extends SubsystemBase
     System.out.println("Driving to pose: " + pose);
 
   // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        1, 1.5,
+    PathConstraints constraints = new PathConstraints( // used to be 1, 1.5
+        2.5, 2.25,
         Units.degreesToRadians(200), Units.degreesToRadians(200));
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands

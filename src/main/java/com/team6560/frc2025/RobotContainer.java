@@ -3,6 +3,7 @@ package com.team6560.frc2025;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.OperatorConstants;
+import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
@@ -73,7 +74,7 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    CameraServer.startAutomaticCapture(0);
+    // CameraServer.startAutomaticCapture(0);
 
     climb = new Climb(controls);
     climbCommand = new ClimbCommand(climb, controls);
@@ -101,15 +102,15 @@ public class RobotContainer {
 
     // autoChooser.addOption("1p Mid", get1PAuto());    
 
-    autoChooser.addOption("No Auto", null);
-    autoChooser.addOption("Taxi Auto", getTaxiAuto());
+    // autoChooser.addOption("No Auto", null);
+    // autoChooser.addOption("Taxi Auto", getTaxiAuto());
 
     // autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
     // autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
-    autoChooser.addOption("AeroSeg3Inv", getAeroSeg3Inv());
+    autoChooser.setDefaultOption("AeroSeg3Inv", getAeroSeg3Inv());
     // autoChooser.addOption("Bump Auto", getAeroBumpAuto());
 
-    autoChooser.addOption("Test elevator collapse", testElevatorCollapse());
+    // autoChooser.addOption("Test elevator collapse", testElevatorCollapse());
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -121,7 +122,7 @@ public class RobotContainer {
 
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
 
-    driverXbox.b().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
+    driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
     // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
     // driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
@@ -131,9 +132,14 @@ public class RobotContainer {
     // use auto align mechanism
     driverXbox.x().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseLeft().schedule(), drivebase));
 
-    driverXbox.a().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseRight().schedule(), drivebase));
+    driverXbox.b().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseRight().schedule(), drivebase));
 
 
+  }
+
+  public void elevL4BeginTele() {
+    elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
+    wrist.setMotorPosition(WristConstants.WristStates.L4);
   }
 
   public void resetLLBeforeAuto() {
@@ -160,11 +166,11 @@ public class RobotContainer {
     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
     .andThen(drivebase.getAutonomousCommand("Aero3Part2"))
     .andThen((drivebase.getAutonomousCommand("Aero3Part3"))
-    .alongWith(new StationIntake(pipeGrabber, 1.5)))
+      .raceWith(new StationIntake(pipeGrabber, 3)))
     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
     .andThen(drivebase.getAutonomousCommand("Aero3Part4"))
     .andThen((drivebase.getAutonomousCommand("Aero3Part5"))
-    .alongWith(new StationIntake(pipeGrabber, 1.5)))
+      .raceWith(new StationIntake(pipeGrabber, 3)))
     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
     .andThen(drivebase.getAutonomousCommand("Aero3Part6"));
   }

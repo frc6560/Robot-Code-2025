@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3,
-        "y": 0.58
+        "x": 1.4432565789473681,
+        "y": 0.8594572368421052
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2079754128131155,
-        "y": 2.8409554884148394
+        "x": 3.351231991760484,
+        "y": 3.1204127252569442
       },
       "isLocked": false,
       "linkedName": "3pStationIntake"

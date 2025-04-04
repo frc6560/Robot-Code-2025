@@ -18,6 +18,8 @@ public class PipeGrabber extends SubsystemBase {
     private static final double INTAKE_SPEED = 0.5;
     private static final double OUTTAKE_SPEED = -0.3;
 
+    private static final double OUTTAKE_SPEED_L1 = -0.2;
+
     public PipeGrabber() {
         this.grabberMotor = new SparkFlex(GRABBER_MOTOR_ID, MotorType.kBrushless);
         ntDispTab("Grabber")
@@ -44,6 +46,10 @@ public class PipeGrabber extends SubsystemBase {
     public void runGrabberOuttake(){
         grabberMotor.set(OUTTAKE_SPEED);
         // System.out.println("Worked");
+    }
+
+    public void runGrabberOuttakeL1() {
+        grabberMotor.set(OUTTAKE_SPEED_L1);
     }
 
     public void runGrabberOuttakeMaxSpeed() {

@@ -95,6 +95,10 @@ public class ManualControls {
     public boolean runGrabberOuttake() {
       return firstXbox.getRightBumper(); // change if inconvenient
     }
+    public boolean runGrabberOuttakeL1() {
+      return firstXbox.getLeftBumperButton();
+    }
+
     public boolean goToPlacePos() {
       return secondXbox.getLeftBumperButton();
     }

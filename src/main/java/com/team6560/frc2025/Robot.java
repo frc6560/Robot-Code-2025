@@ -25,6 +25,8 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
 
+  private Timer teleTimer;
+
   public Robot()
   {
     instance = this;
@@ -132,6 +134,7 @@ public class Robot extends TimedRobot
       CommandScheduler.getInstance().cancelAll();
     }
 
+    m_robotContainer.elevL4BeginTele();
     this.m_robotContainer.resetHeading();
   }
 
