@@ -125,58 +125,58 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
 
     // Old positions (8cm off)
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858,	5.303), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082,	4.865), Rotation2d.fromDegrees(60)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.807,	5.031), Rotation2d.fromDegrees(60)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3,	3.549), Rotation2d.fromDegrees(0)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3,	3.892), Rotation2d.fromDegrees(0)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266,	2.741), Rotation2d.fromDegrees(300)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.553,	2.903), Rotation2d.fromDegrees(300)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064,	3.204), Rotation2d.fromDegrees(240)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.337,	3.029), Rotation2d.fromDegrees(240)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850,	4.478), Rotation2d.fromDegrees(180)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816,	4.143), Rotation2d.fromDegrees(180)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858,	5.303), Rotation2d.fromDegrees(120)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082,	4.865), Rotation2d.fromDegrees(60)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.807,	5.031), Rotation2d.fromDegrees(60)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3,	3.549), Rotation2d.fromDegrees(0)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.3,	3.892), Rotation2d.fromDegrees(0)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266,	2.741), Rotation2d.fromDegrees(300)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.553,	2.903), Rotation2d.fromDegrees(300)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064,	3.204), Rotation2d.fromDegrees(240)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.337,	3.029), Rotation2d.fromDegrees(240)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850,	4.478), Rotation2d.fromDegrees(180)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.816,	4.143), Rotation2d.fromDegrees(180)));
 
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.887 - 8.577,	5.329), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.589 - 8.577,	5.124), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082 - 8.577,	4.865), Rotation2d.fromDegrees(60)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.807 - 8.577,	5.031), Rotation2d.fromDegrees(60)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.549), Rotation2d.fromDegrees(0)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.892), Rotation2d.fromDegrees(0)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266 - 8.577,	2.741), Rotation2d.fromDegrees(300)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.553 - 8.577,	2.903), Rotation2d.fromDegrees(300)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064 - 8.577,	3.204), Rotation2d.fromDegrees(240)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.337 - 8.577,	3.029), Rotation2d.fromDegrees(240)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850 - 8.577,	4.478), Rotation2d.fromDegrees(180)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.887 - 8.577,	5.329), Rotation2d.fromDegrees(120)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.589 - 8.577,	5.124), Rotation2d.fromDegrees(120)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082 - 8.577,	4.865), Rotation2d.fromDegrees(60)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.807 - 8.577,	5.031), Rotation2d.fromDegrees(60)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.549), Rotation2d.fromDegrees(0)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.892), Rotation2d.fromDegrees(0)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266 - 8.577,	2.741), Rotation2d.fromDegrees(300)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.553 - 8.577,	2.903), Rotation2d.fromDegrees(300)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064 - 8.577,	3.204), Rotation2d.fromDegrees(240)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.337 - 8.577,	3.029), Rotation2d.fromDegrees(240)));
+    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850 - 8.577,	4.478), Rotation2d.fromDegrees(180)));
+    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
 
-    // New values (ajusted)
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.818,	5.382), Rotation2d.fromDegrees(120)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.549,	5.193), Rotation2d.fromDegrees(120)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.122,	4.934), Rotation2d.fromDegrees(60)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.847,	5.100), Rotation2d.fromDegrees(60)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.38,	3.549), Rotation2d.fromDegrees(0)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.38,	3.892), Rotation2d.fromDegrees(0)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.306,	2.672), Rotation2d.fromDegrees(300)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.593,	2.833), Rotation2d.fromDegrees(300)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.024,	3.135), Rotation2d.fromDegrees(240)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.297,	2.960), Rotation2d.fromDegrees(240)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.77,	4.478), Rotation2d.fromDegrees(180)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.736,	4.143), Rotation2d.fromDegrees(180)));
+    // New values (ajusted left 5 cm)
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.901 ,	5.328), Rotation2d.fromDegrees(120)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(12.632,	5.149), Rotation2d.fromDegrees(120)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125 ,	4.84), Rotation2d.fromDegrees(60)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(13.850,	5.006), Rotation2d.fromDegrees(60)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3   ,	3.499), Rotation2d.fromDegrees(0)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3  ,	3.842), Rotation2d.fromDegrees(0)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.222 ,	2.716), Rotation2d.fromDegrees(300)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(13.509,	2.878), Rotation2d.fromDegrees(300)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.020 ,	3.229), Rotation2d.fromDegrees(240)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(12.294,	3.054), Rotation2d.fromDegrees(240)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.85  ,	4.528), Rotation2d.fromDegrees(180)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816,	4.193), Rotation2d.fromDegrees(180)));
 
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.818  - 8.577,	5.382), Rotation2d.fromDegrees(120)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.549 - 8.577,	5.193), Rotation2d.fromDegrees(120)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.122  - 8.577,	4.934), Rotation2d.fromDegrees(60)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.847 - 8.577,	5.100), Rotation2d.fromDegrees(60)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.38   - 8.577,	3.549), Rotation2d.fromDegrees(0)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.38  - 8.577,	3.892), Rotation2d.fromDegrees(0)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.306  - 8.577,	2.672), Rotation2d.fromDegrees(300)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.593 - 8.577,	2.833), Rotation2d.fromDegrees(300)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.024  - 8.577,	3.135), Rotation2d.fromDegrees(240)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.297 - 8.577,	2.960), Rotation2d.fromDegrees(240)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.77   - 8.577,	4.478), Rotation2d.fromDegrees(180)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.736 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.901  - 8.577,	5.328), Rotation2d.fromDegrees(120)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(12.632 - 8.577,	5.149), Rotation2d.fromDegrees(120)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125  - 8.577,	4.84), Rotation2d.fromDegrees(60)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(13.850 - 8.577,	5.006), Rotation2d.fromDegrees(60)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3    - 8.577,	3.499), Rotation2d.fromDegrees(0)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3   - 8.577,	3.842), Rotation2d.fromDegrees(0)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.222  - 8.577,	2.716), Rotation2d.fromDegrees(300)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(13.509 - 8.577,	2.878), Rotation2d.fromDegrees(300)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.020  - 8.577,	3.229), Rotation2d.fromDegrees(240)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(12.294 - 8.577,	3.054), Rotation2d.fromDegrees(240)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.85   - 8.577,	4.528), Rotation2d.fromDegrees(180)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.193), Rotation2d.fromDegrees(180)));
   }
 
   /**
