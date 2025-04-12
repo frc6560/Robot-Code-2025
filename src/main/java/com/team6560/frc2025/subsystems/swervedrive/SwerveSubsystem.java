@@ -83,6 +83,8 @@ public class SwerveSubsystem extends SubsystemBase
   // private final Field2d aprilTagField = new Field2d();
 
   private final boolean visionDriveTest = true; // don't actually need this but ok
+  private boolean autoalignToggle = false;
+  private Pose2d targetAutoalignPose = new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120));
 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
 
@@ -152,7 +154,7 @@ public class SwerveSubsystem extends SubsystemBase
     // targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
 
     // New values (ajusted left 5 cm)
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.901 ,	5.328), Rotation2d.fromDegrees(120)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(12.632,	5.149), Rotation2d.fromDegrees(120)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125 ,	4.84), Rotation2d.fromDegrees(60)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(13.850,	5.006), Rotation2d.fromDegrees(60)));
@@ -197,11 +199,6 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-  // static {
-
-  // }
-
-
   private Pose2d emptyPose = new Pose2d();
 
   @Override
@@ -219,15 +216,17 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
     swerveDrive.field.setRobotPose(this.getPose());
 
-    // if(DriverStation.isTeleop() || limelightPoseEstimate.tagCount > 1){
-
       double timestampSeconds = Timer.getFPGATimestamp() - latency;
       
-      if(timestampSeconds > 0){
-        swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
-      }
+    if(timestampSeconds > 0){
+      swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
+    }
 
-    // }
+    if(autoalignToggle){
+      if(getPose().getTranslation().getDistance(targetAutoalignPose.getTranslation()) < 2){
+        driveToPose(targetAutoalignPose).schedule();
+      }
+    }
   }
 
   Pose2d getClosestTargetPoseLeft() {
@@ -354,9 +353,12 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
+  /** Toggles the auto align state */
+  public void toggleAutoAlign(){
+    autoalignToggle = !autoalignToggle;
+  }
 
-
-
+  
   public Command driveToNearestPoseLeft() {
     return driveToPose(getClosestTargetPoseLeft());
   }

@@ -120,7 +120,7 @@ public class RobotContainer {
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-    driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
+    driverXbox.start().onTrue(Commands.runOnce(drivebase::zeroNoAprilTagsGyro));
 
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
