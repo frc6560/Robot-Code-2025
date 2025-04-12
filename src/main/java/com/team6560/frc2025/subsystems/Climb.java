@@ -70,17 +70,6 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
         ntPos.setDouble(this.getEncoderPos());
-        // System.out.println(this.state);
-        // System.out.println(this.getEncoderPos());
-        // if (this.state == State.STATIC) {
-        //     stop();
-        // } else if (this.state == State.UP) {
-        //     up();
-        // } else if (this.state == State.DOWN) {
-        //     down();
-        // } else {
-        //     stop();
-        // }
     }
 
     public void resetEncoderPos() {

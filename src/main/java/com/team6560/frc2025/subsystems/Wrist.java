@@ -209,10 +209,6 @@ public class Wrist extends SubsystemBase {
     this.targetPos = position;
 
     double targetPos = (position) / 360 * 108; //hopefully this conversion factor is correct.
-
-    // 1 rot      5 rot        18                       
-    // 360        1 rot        1 rot
-
     final PositionVoltage m_request = new PositionVoltage(targetPos);
     m_WristMotor.setControl(m_request);
   }
@@ -220,21 +216,4 @@ public class Wrist extends SubsystemBase {
   public void stopMotor(){
     m_WristMotor.set(0);
   }
-
-  // all code below this point is for testing purposes only
-  // public void turnOnMotor(){
-  //   m_WristMotor.set(0.1);
-  // }
-// 
-  // public void revMotor(){
-  //   m_WristMotor.set(-0.1);
-  // }
-  // 
-  // public void turnOnMotorWithPID(){
-  //   m_WristMotor.setControl(new VelocityVoltage(200));
-  // }
-// 
-  // public void testMotor(double output){
-  //   m_WristMotor.set(output);
-  // }
 }

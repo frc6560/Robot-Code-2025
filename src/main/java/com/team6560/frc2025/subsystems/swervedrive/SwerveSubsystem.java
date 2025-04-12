@@ -205,8 +205,7 @@ public class SwerveSubsystem extends SubsystemBase
   private Pose2d emptyPose = new Pose2d();
 
   @Override
-  public void periodic()
-  {
+  public void periodic(){
     LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getOdometryHeading().getDegrees(),0,0,0,0,0);
     PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     if (limelightPoseEstimate == null) return;
