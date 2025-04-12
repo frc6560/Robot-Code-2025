@@ -152,8 +152,8 @@ public class SwerveSubsystem extends SubsystemBase
     // targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
 
     // New values (ajusted left 5 cm)
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.901 ,	5.328), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.632,	5.149), Rotation2d.fromDegrees(120)));
+    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(12.572,	5.158), Rotation2d.fromDegrees(120)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125 ,	4.84), Rotation2d.fromDegrees(60)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(13.850,	5.006), Rotation2d.fromDegrees(60)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3   ,	3.499), Rotation2d.fromDegrees(0)));
