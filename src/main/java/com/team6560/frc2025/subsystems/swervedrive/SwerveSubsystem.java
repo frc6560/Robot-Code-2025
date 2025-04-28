@@ -23,6 +23,8 @@ import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 // import edu.wpi.first.apriltag.AprilTagFieldLayout;
 // import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -35,6 +37,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 // import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -78,13 +81,13 @@ public class SwerveSubsystem extends SubsystemBase
   private ArrayList<Pose2d> targetPose2dsLeft = new ArrayList<Pose2d>();
   private ArrayList<Pose2d> targetPose2dsRight = new ArrayList<Pose2d>();
 
-  // private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-
-  // private final Field2d aprilTagField = new Field2d();
-
   private final boolean visionDriveTest = true; // don't actually need this but ok
 
+  // Values to tune later
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
+  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // TODO: values to tune
+  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
+  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -123,33 +126,6 @@ public class SwerveSubsystem extends SubsystemBase
 
 
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
-
-    // Old positions (8cm off)
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858,	5.303), Rotation2d.fromDegrees(120)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082,	4.865), Rotation2d.fromDegrees(60)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.807,	5.031), Rotation2d.fromDegrees(60)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3,	3.549), Rotation2d.fromDegrees(0)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.3,	3.892), Rotation2d.fromDegrees(0)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266,	2.741), Rotation2d.fromDegrees(300)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.553,	2.903), Rotation2d.fromDegrees(300)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064,	3.204), Rotation2d.fromDegrees(240)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.337,	3.029), Rotation2d.fromDegrees(240)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850,	4.478), Rotation2d.fromDegrees(180)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.816,	4.143), Rotation2d.fromDegrees(180)));
-
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.887 - 8.577,	5.329), Rotation2d.fromDegrees(120)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.589 - 8.577,	5.124), Rotation2d.fromDegrees(120)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082 - 8.577,	4.865), Rotation2d.fromDegrees(60)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.807 - 8.577,	5.031), Rotation2d.fromDegrees(60)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.549), Rotation2d.fromDegrees(0)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.892), Rotation2d.fromDegrees(0)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266 - 8.577,	2.741), Rotation2d.fromDegrees(300)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(13.553 - 8.577,	2.903), Rotation2d.fromDegrees(300)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064 - 8.577,	3.204), Rotation2d.fromDegrees(240)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(12.337 - 8.577,	3.029), Rotation2d.fromDegrees(240)));
-    // targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850 - 8.577,	4.478), Rotation2d.fromDegrees(180)));
-    // targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
 
     // New values (ajusted left 5 cm)
     targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120)));
@@ -354,6 +330,34 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
+  /** Drives to the specified Pose2d using profiled PID*/
+  public Command driveToPoseWithPID(Supplier<Pose2d> poseSupplier){
+    return this.run(
+      () -> {
+        Pose2d targetPose = poseSupplier.get();
+        m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+        Pose2d currentPose = swerveDrive.getPose();
+
+        ChassisSpeeds targetSpeeds = new ChassisSpeeds(
+          m_pidControllerX.calculate(currentPose.getX(), targetPose.getX()),
+          m_pidControllerY.calculate(currentPose.getY(), targetPose.getY()),
+          m_pidControllerTheta.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians())
+        );
+        swerveDrive.drive(targetSpeeds);
+      });
+  }
+
+
+  /** Drives to the specified Pose2d using a trapezoidal physics model (Based off of team 6995)*/
+  public Command driveToPoseWithPhysics(Supplier<Pose2d> poseSupplier){
+    var startTime = Timer.getFPGATimestamp();
+
+    Command autoAlignCommand = runOnce(
+      () -> {
+      });
+
+    return autoAlignCommand;
+  }
 
 
 
