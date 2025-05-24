@@ -83,11 +83,11 @@ public class SwerveSubsystem extends SubsystemBase
 
   private final boolean visionDriveTest = true; // don't actually need this but ok
 
-  // Values to tune later
+  // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // TODO: values to tune
-  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
-  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
+  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(5.3, 0, 0, new TrapezoidProfile.Constraints(2.5, 2.0)); // TODO: values to tune
+  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(5.3, 0, 0, new TrapezoidProfile.Constraints(2.5, 2.0));
+  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(4.0, 0, 0, new TrapezoidProfile.Constraints(720, 540));
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -331,7 +331,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /** Drives to the specified Pose2d using profiled PID*/
-  public Command driveToPoseWithPID(Supplier<Pose2d> poseSupplier){
+  public Command driveToPoseSupplierWithPID(Supplier<Pose2d> poseSupplier){
     return this.run(
       () -> {
         Pose2d targetPose = poseSupplier.get();
@@ -347,11 +347,16 @@ public class SwerveSubsystem extends SubsystemBase
       });
   }
 
+  public Command driveToPoseWithPID(Pose2d Pose){
+    return driveToPoseSupplierWithPID(() -> Pose);
+  }
+
 
   /** Drives to the specified Pose2d using a trapezoidal physics model (Based off of team 6995)*/
   public Command driveToPoseWithPhysics(Supplier<Pose2d> poseSupplier){
     var startTime = Timer.getFPGATimestamp();
 
+    // TODO: write this 
     Command autoAlignCommand = runOnce(
       () -> {
       });
