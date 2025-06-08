@@ -88,9 +88,9 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(0.0, 0, 0, new TrapezoidProfile.Constraints(2.5, 1.5)); // TODO: values to tune
-  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(0.0, 0, 0, new TrapezoidProfile.Constraints(2.5, 1.5));
-  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(0.0, 0, 0, new TrapezoidProfile.Constraints(720, 540));
+  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // TODO: values to tune
+  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
+  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -338,41 +338,26 @@ public class SwerveSubsystem extends SubsystemBase
 
   public Command driveToPoseSupplierWithPID(Supplier<Pose2d> poseSupplier){
     System.out.println("Running auto-align!");
-    final Command AutoAlignCommand = new FunctionalCommand(
-      () -> {
-        m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
-        m_pidControllerX.reset(swerveDrive.getPose().getX());
-        m_pidControllerY.reset(swerveDrive.getPose().getY());
-        m_pidControllerTheta.reset(swerveDrive.getPose().getRotation().getRadians());
-      },
-      () -> {
-        Pose2d targetPose = poseSupplier.get();
-        Pose2d currentPose = swerveDrive.getPose();
+    return this.run( () -> {
+      m_pidControllerX.reset(swerveDrive.getPose().getX(), swerveDrive.getRobotVelocity().vxMetersPerSecond);
+      m_pidControllerY.reset(swerveDrive.getPose().getY(), swerveDrive.getRobotVelocity().vyMetersPerSecond);
+      m_pidControllerTheta.reset(swerveDrive.getPose().getRotation().getRadians(), swerveDrive.getRobotVelocity().omegaRadiansPerSecond);
+      
+      // No mod 360 wrapping
+      m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
 
-        ChassisSpeeds targetSpeeds = new ChassisSpeeds(
-          m_pidControllerX.calculate(currentPose.getX(), targetPose.getX()),
-          m_pidControllerY.calculate(currentPose.getY(), targetPose.getY()),
-          m_pidControllerTheta.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians())
-        );
+      Pose2d targetPose = poseSupplier.get();
+      Pose2d currentPose = swerveDrive.getPose();
 
-        swerveDrive.drive(targetSpeeds);
-      },
-      (interrupted) -> {
-        ChassisSpeeds targetSpeeds = new ChassisSpeeds(
-          0,
-          0,
-          0
-        );
-        System.out.println("Driving to pose!");
-        swerveDrive.drive(targetSpeeds);
-      },
-      () -> {
-        System.out.println("Command terminated.");
-        return (swerveDrive.getPose().getTranslation().getDistance(poseSupplier.get().getTranslation()) < 0.07 
-                && Math.abs(swerveDrive.getPose().getRotation().getDegrees() - poseSupplier.get().getRotation().getDegrees()) < 2);
-      }
-    );
-    return AutoAlignCommand;
+      ChassisSpeeds targetSpeeds = new ChassisSpeeds(
+        m_pidControllerX.calculate(currentPose.getX(), targetPose.getX()),
+        m_pidControllerY.calculate(currentPose.getY(), targetPose.getY()),
+        m_pidControllerTheta.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians())
+      );
+
+      swerveDrive.drive(targetSpeeds);
+    });
+
   }
 
   public Command driveToPoseWithPID(Pose2d Pose){
