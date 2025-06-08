@@ -42,11 +42,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 // import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
@@ -85,9 +88,9 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(5.3, 0, 0, new TrapezoidProfile.Constraints(2.5, 2.0)); // TODO: values to tune
-  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(5.3, 0, 0, new TrapezoidProfile.Constraints(2.5, 2.0));
-  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(4.0, 0, 0, new TrapezoidProfile.Constraints(720, 540));
+  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(0.0, 0, 0, new TrapezoidProfile.Constraints(2.5, 1.5)); // TODO: values to tune
+  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(0.0, 0, 0, new TrapezoidProfile.Constraints(2.5, 1.5));
+  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(0.0, 0, 0, new TrapezoidProfile.Constraints(720, 540));
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -127,7 +130,6 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
 
-    // New values (ajusted left 5 cm)
     targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120)));
     targetPose2dsRight.add(new Pose2d(new Translation2d(12.572,	5.158), Rotation2d.fromDegrees(120)));
     targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125 ,	4.84), Rotation2d.fromDegrees(60)));
@@ -182,27 +184,25 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
-    LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getOdometryHeading().getDegrees(),0,0,0,0,0);
-    PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (limelightPoseEstimate == null) return;
+    String[] limelightNames = {"limelight", "limelight2", "limelight3"};
+    // Vision setup
+    for( String limelightName : limelightNames) {
+      LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
+      PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
-    Pose2d limelightPose = limelightPoseEstimate.pose;
-    if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
+      if(limelightPoseEstimate == null) return;
+      Pose2d limelightPose = limelightPoseEstimate.pose;
+      if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
 
-    double latency = limelightPoseEstimate.latency / 1000;
+      double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
+      if(adjustedTime > 0){
+        swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
+      }
+    }
 
     swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
     swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
     swerveDrive.field.setRobotPose(this.getPose());
-
-    // if(DriverStation.isTeleop() || limelightPoseEstimate.tagCount > 1){
-
-      double timestampSeconds = Timer.getFPGATimestamp() - latency;
-      
-      if(timestampSeconds > 0){
-        swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
-      }
-
     // }
   }
 
@@ -330,12 +330,23 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
-  /** Drives to the specified Pose2d using profiled PID*/
+  /** Drives to the specified Pose2d using profiled PI
+   * 
+   * @param pose Target {@link Pose2d} to go to
+   * @return Command to drive to pose
+   * */
+
   public Command driveToPoseSupplierWithPID(Supplier<Pose2d> poseSupplier){
-    return this.run(
+    System.out.println("Running auto-align!");
+    final Command AutoAlignCommand = new FunctionalCommand(
+      () -> {
+        m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+        m_pidControllerX.reset(swerveDrive.getPose().getX());
+        m_pidControllerY.reset(swerveDrive.getPose().getY());
+        m_pidControllerTheta.reset(swerveDrive.getPose().getRotation().getRadians());
+      },
       () -> {
         Pose2d targetPose = poseSupplier.get();
-        m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
         Pose2d currentPose = swerveDrive.getPose();
 
         ChassisSpeeds targetSpeeds = new ChassisSpeeds(
@@ -343,8 +354,25 @@ public class SwerveSubsystem extends SubsystemBase
           m_pidControllerY.calculate(currentPose.getY(), targetPose.getY()),
           m_pidControllerTheta.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians())
         );
+
         swerveDrive.drive(targetSpeeds);
-      });
+      },
+      (interrupted) -> {
+        ChassisSpeeds targetSpeeds = new ChassisSpeeds(
+          0,
+          0,
+          0
+        );
+        System.out.println("Driving to pose!");
+        swerveDrive.drive(targetSpeeds);
+      },
+      () -> {
+        System.out.println("Command terminated.");
+        return (swerveDrive.getPose().getTranslation().getDistance(poseSupplier.get().getTranslation()) < 0.07 
+                && Math.abs(swerveDrive.getPose().getRotation().getDegrees() - poseSupplier.get().getRotation().getDegrees()) < 2);
+      }
+    );
+    return AutoAlignCommand;
   }
 
   public Command driveToPoseWithPID(Pose2d Pose){
@@ -365,9 +393,8 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-
   public Command driveToNearestPoseLeft() {
-    return driveToPose(getClosestTargetPoseLeft());
+    return driveToPoseWithPID(getClosestTargetPoseLeft());
   }
 
   public Command driveToNearestPoseRight(){
