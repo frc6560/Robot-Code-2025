@@ -184,7 +184,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
-    String[] limelightNames = {"limelight", "limelight2", "limelight3"};
+    String[] limelightNames = {"limelight", "limelight-top", "limelight-left"};
     // Vision setup
     for( String limelightName : limelightNames) {
       LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
