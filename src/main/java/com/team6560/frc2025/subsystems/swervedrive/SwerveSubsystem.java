@@ -332,7 +332,7 @@ public class SwerveSubsystem extends SubsystemBase
     TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
     TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
 
-    // Timing
+    // Timing for telemetry
     double startTime = Timer.getFPGATimestamp();
     Command followPathCommand = runOnce(
       () -> {
@@ -414,7 +414,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param pose Target {@link Pose2d} to go to.
    * @return PathFinding command
    */
-  public Command driveToPose(Pose2d pose)
+  public Command driveToPoseWithPathPlanner(Pose2d pose)
   {
 
   // Create the constraints to use while pathfinding
@@ -430,66 +430,29 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
-  /** Drives to the specified Pose2d using PID
-   * 
-   * @param pose Target {@link Pose2d} to go to
-   * @return Command to drive to pose
-   * */
-
-  public Command driveToPoseSupplierWithPID(Supplier<Pose2d> poseSupplier){
-    return this.run( () -> {
-      System.out.println("Driving to pose: " + poseSupplier.get());
-      // No mod 360 wrapping
-      m_profiledPidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
-
-      Pose2d targetPose = poseSupplier.get();
-      Pose2d currentPose = swerveDrive.getPose();
-
-      ChassisSpeeds targetSpeeds = m_driveController.calculate(
-        currentPose,
-        targetPose,
-        0.0, 
-        targetPose.getRotation()
-      );
-
-      swerveDrive.drive(targetSpeeds);
-    }).beforeStarting(() -> {
-      // Setup stuff
-      m_profiledPidControllerTheta.reset(swerveDrive.getPose().getRotation().getRadians());
-  }).until(() -> {
-    // End condition
-      Pose2d currentPose = swerveDrive.getPose();
-      Pose2d targetPose = poseSupplier.get();
-      return currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.1 &&
-             Math.abs(currentPose.getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1;
-    });
-
-  }
-
-  public Command driveToPoseWithPID(Pose2d Pose){
-    return driveToPoseSupplierWithPID(() -> Pose);
-  }
-
-
-  /** Drives to the specified Pose2d using a trapezoidal physics model (Based off of team 6995)*/
+  /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information */
   public Command driveToPose(Supplier<Pose2d> poseSupplier){
-    var startTime = Timer.getFPGATimestamp();
+    Path alignPath = new Path(
+        poseSupplier.get(),
+        swerveDrive.getPose(),
+        2.0, 
+        2.5, 
+        3.14, 
+        6.28); 
+    return followPath(alignPath);
+  }
 
-    // TODO: write this 
-    Command autoAlignCommand = runOnce(
-      () -> {
-      });
-
-    return autoAlignCommand;
+  public Command driveToPose(Pose2d pose) {
+    return driveToPose(() -> pose);
   }
 
 
   public Command driveToNearestPoseLeft() {
-    return driveToPoseWithPID(getClosestTargetPoseLeft());
+    return driveToPose(getClosestTargetPoseLeft());
   }
 
   public Command driveToNearestPoseRight(){
-    return driveToPoseWithPID(getClosestTargetPoseRight());
+    return driveToPose(getClosestTargetPoseRight());
   }
 
   /**
