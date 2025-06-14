@@ -378,11 +378,12 @@ public class SwerveSubsystem extends SubsystemBase
             else {
               m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
               Pose2d pose = swerveDrive.getPose();
-              ChassisSpeeds currentVelocity = swerveDrive.getRobotVelocity();
-              currentVelocity.vxMetersPerSecond += translationalState.velocity * Math.cos(rotationalState.position);
-              currentVelocity.vyMetersPerSecond += translationalState.velocity * Math.sin(rotationalState.position);
-              currentVelocity.omegaRadiansPerSecond += rotationalState.velocity;
-              swerveDrive.drive(currentVelocity);
+              ChassisSpeeds targetSpeeds = swerveDrive.getRobotVelocity();
+              targetSpeeds.vxMetersPerSecond += m_pidControllerX.calculate(pose.getX(), interpolatedTranslation.getX());
+              targetSpeeds.vyMetersPerSecond += m_pidControllerY.calculate(pose.getY(), interpolatedTranslation.getY());
+              targetSpeeds.omegaRadiansPerSecond += m_pidControllerTheta.calculate(pose.getRotation().getRadians(), rotationalState.position);
+
+              swerveDrive.drive(targetSpeeds);
             }
 
             // swerveDrive.drive(robotRelativeSpeeds);
