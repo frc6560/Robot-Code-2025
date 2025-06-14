@@ -21,8 +21,10 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
+import com.team6560.frc2025.utility.Path;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 // import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -44,6 +46,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,6 +56,9 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,9 +94,19 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final ProfiledPIDController m_pidControllerX = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(0, 0)); // TODO: values to tune
-  private final ProfiledPIDController m_pidControllerY = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
-  private final ProfiledPIDController m_pidControllerTheta = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(0, 0));
+  private final PIDController m_pidControllerX = new PIDController(0.3, 0.001, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(0.3, 0.001, 0);
+  private final ProfiledPIDController m_profiledPidControllerTheta = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(3.14, 3.14));
+
+  private final HolonomicDriveController m_driveController = new HolonomicDriveController(
+    m_pidControllerX,
+    m_pidControllerY,
+    m_profiledPidControllerTheta
+  );
+
+  private final PIDController m_pidControllerDisplacement = new PIDController(0, 0, 0);
+  private final PIDController m_pidControllerTheta = new PIDController(0, 0, 0);
+
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -184,7 +200,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
-    String[] limelightNames = {"limelight", "limelight-top", "limelight-left"};
+    String[] limelightNames = {"limelight-bottom"};
     // Vision setup
     for( String limelightName : limelightNames) {
       LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
@@ -295,6 +311,90 @@ public class SwerveSubsystem extends SubsystemBase
     PathfindingCommand.warmupCommand().schedule();
   }
 
+
+  TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
+  TrapezoidProfile.State rotationalState = new TrapezoidProfile.State(0, 0);
+
+  TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
+  TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
+
+  /** Follows a linear path with a trapezoidal profile. Used for auto align.
+   * 
+   * @param path Path object to follow.
+   * @return Command to follow the path.
+  */
+  public Command followPath(Path path){
+    // Set up profiles
+    TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
+    TrapezoidProfile.Constraints rotationConstraints = new Constraints(
+      Units.degreesToRadians(path.maxAngularVelocity),
+      Units.degreesToRadians(path.maxAngularAcceleration));
+    TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
+    TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
+
+    // Timing
+    double startTime = Timer.getFPGATimestamp();
+    Command followPathCommand = runOnce(
+      () -> {
+        // Compute current relative states for translation and rotation, with (0, 0) being target for translation.
+        translationalState.position = path.getDisplacement().getNorm();
+        translationalState.velocity = MathUtil.clamp(Math.sqrt(Math.pow(getRobotVelocity().vxMetersPerSecond, 2) + Math.pow(getRobotVelocity().vyMetersPerSecond, 2)),
+                                                    -path.maxVelocity,
+                                                    0);
+        
+        targetRotationalState.position = path.endPose.getRotation().getRadians();
+        rotationalState.position = getPose().getRotation().getRadians();
+
+      }).andThen( 
+        run(
+          () -> {
+            // Compute the next translation state for the robot to target (t+0.02s).
+            State translationSetpoint = translationProfile.calculate(0.02, translationalState, targetTranslationalState);
+            translationalState.position = translationSetpoint.position;
+            translationalState.velocity = translationSetpoint.velocity;
+
+            // no mod 360 shenanigans
+            double rotationalPose = swerveDrive.getPose().getRotation().getRadians();
+            double errorToGoal = MathUtil.angleModulus(targetRotationalState.position - rotationalPose);
+            double errorToSetpoint = MathUtil.angleModulus(rotationalState.position - rotationalPose);
+
+            // feeds target (and current) poses without mod 360 shenanigans. also for feedback :)
+            targetRotationalState.position = rotationalPose + errorToGoal;
+            rotationalState.position = rotationalPose + errorToSetpoint;
+
+            // Computes the next rotation state for the robot to target.
+            State rotationalSetpoint = rotationProfile.calculate(0.02, rotationalState, targetRotationalState);
+            rotationalState.position = rotationalSetpoint.position;
+            rotationalState.velocity = rotationalSetpoint.velocity;
+
+            // i have no idea how this bit works but it does
+            // interpolates the pose, makes it robot relative
+            Translation2d interpolatedTranslation = path.endPose.getTranslation().interpolate(path.startPose.getTranslation(), 
+                                                                                              translationSetpoint.position / path.getDisplacement().getNorm());
+
+            if( translationalState.position < 0.1 && Math.abs(rotationalState.position) < 0.1){
+              swerveDrive.drive(new ChassisSpeeds(0, 0, 0));
+            }
+            else {
+              m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+              Pose2d pose = swerveDrive.getPose();
+              ChassisSpeeds currentVelocity = swerveDrive.getRobotVelocity();
+              currentVelocity.vxMetersPerSecond += translationalState.velocity * Math.cos(rotationalState.position);
+              currentVelocity.vyMetersPerSecond += translationalState.velocity * Math.sin(rotationalState.position);
+              currentVelocity.omegaRadiansPerSecond += rotationalState.velocity;
+              swerveDrive.drive(currentVelocity);
+            }
+
+            // swerveDrive.drive(robotRelativeSpeeds);
+          }));
+
+    double endTime = Timer.getFPGATimestamp();
+
+    return followPathCommand;
+  }
+
+
+
   /**
    * Get the path follower with events.
    *
@@ -315,7 +415,6 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Command driveToPose(Pose2d pose)
   {
-    System.out.println("Driving to pose: " + pose);
 
   // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints( // used to be 1, 1.5
@@ -330,32 +429,38 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
-  /** Drives to the specified Pose2d using profiled PI
+  /** Drives to the specified Pose2d using PID
    * 
    * @param pose Target {@link Pose2d} to go to
    * @return Command to drive to pose
    * */
 
   public Command driveToPoseSupplierWithPID(Supplier<Pose2d> poseSupplier){
-    System.out.println("Running auto-align!");
     return this.run( () -> {
-      m_pidControllerX.reset(swerveDrive.getPose().getX(), swerveDrive.getRobotVelocity().vxMetersPerSecond);
-      m_pidControllerY.reset(swerveDrive.getPose().getY(), swerveDrive.getRobotVelocity().vyMetersPerSecond);
-      m_pidControllerTheta.reset(swerveDrive.getPose().getRotation().getRadians(), swerveDrive.getRobotVelocity().omegaRadiansPerSecond);
-      
+      System.out.println("Driving to pose: " + poseSupplier.get());
       // No mod 360 wrapping
-      m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+      m_profiledPidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
 
       Pose2d targetPose = poseSupplier.get();
       Pose2d currentPose = swerveDrive.getPose();
 
-      ChassisSpeeds targetSpeeds = new ChassisSpeeds(
-        m_pidControllerX.calculate(currentPose.getX(), targetPose.getX()),
-        m_pidControllerY.calculate(currentPose.getY(), targetPose.getY()),
-        m_pidControllerTheta.calculate(currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians())
+      ChassisSpeeds targetSpeeds = m_driveController.calculate(
+        currentPose,
+        targetPose,
+        0.0, 
+        targetPose.getRotation()
       );
 
       swerveDrive.drive(targetSpeeds);
+    }).beforeStarting(() -> {
+      // Setup stuff
+      m_profiledPidControllerTheta.reset(swerveDrive.getPose().getRotation().getRadians());
+  }).until(() -> {
+    // End condition
+      Pose2d currentPose = swerveDrive.getPose();
+      Pose2d targetPose = poseSupplier.get();
+      return currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.1 &&
+             Math.abs(currentPose.getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1;
     });
 
   }
@@ -366,7 +471,7 @@ public class SwerveSubsystem extends SubsystemBase
 
 
   /** Drives to the specified Pose2d using a trapezoidal physics model (Based off of team 6995)*/
-  public Command driveToPoseWithPhysics(Supplier<Pose2d> poseSupplier){
+  public Command driveToPose(Supplier<Pose2d> poseSupplier){
     var startTime = Timer.getFPGATimestamp();
 
     // TODO: write this 
@@ -383,7 +488,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public Command driveToNearestPoseRight(){
-    return driveToPose(getClosestTargetPoseRight());
+    return driveToPoseWithPID(getClosestTargetPoseRight());
   }
 
   /**
@@ -634,7 +739,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void resetOdometryToLimelight() {
-    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-bottom");
     if (poseEstimate == null) return;
     
     Pose2d pose = poseEstimate.pose;
