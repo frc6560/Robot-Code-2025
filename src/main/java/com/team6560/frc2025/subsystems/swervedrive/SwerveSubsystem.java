@@ -23,6 +23,8 @@ import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 import com.team6560.frc2025.utility.Path;
 
+import choreo.trajectory.SwerveSample;
+
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -69,6 +71,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
+
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.frc3481.swervelib.SwerveController;
 import com.frc3481.swervelib.SwerveDrive;
 import com.frc3481.swervelib.SwerveDriveTest;
@@ -94,18 +98,11 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(0.3, 0.001, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(0.3, 0.001, 0);
-  private final ProfiledPIDController m_profiledPidControllerTheta = new ProfiledPIDController(2.0, 0, 0, new TrapezoidProfile.Constraints(3.14, 3.14));
+  private final PIDController m_pidControllerX = new PIDController(0.3, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(0.3, 0, 0);
+  private final PIDController m_pidControllerTheta = new PIDController(0.5, 0, 0);
 
-  private final HolonomicDriveController m_driveController = new HolonomicDriveController(
-    m_pidControllerX,
-    m_pidControllerY,
-    m_profiledPidControllerTheta
-  );
-
-  private final PIDController m_pidControllerDisplacement = new PIDController(0, 0, 0);
-  private final PIDController m_pidControllerTheta = new PIDController(0, 0, 0);
+  private final SwerveRequest.ApplyFieldSpeeds m_applyFieldSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
 
   /**
@@ -305,10 +302,18 @@ public class SwerveSubsystem extends SubsystemBase
       e.printStackTrace();
     }
 
-    //Preload PathPlanner Path finding
-    // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
-
     PathfindingCommand.warmupCommand().schedule();
+  }
+
+  public void followSegment(SwerveSample sample) {
+    m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+    Pose2d pose = swerveDrive.getPose();
+    ChassisSpeeds targetSpeeds = sample.getChassisSpeeds();
+    targetSpeeds.vxMetersPerSecond += m_pidControllerX.calculate(pose.getX(), sample.x);
+    targetSpeeds.vyMetersPerSecond += m_pidControllerY.calculate(pose.getY(), sample.y);
+    targetSpeeds.omegaRadiansPerSecond += m_pidControllerTheta.calculate(pose.getRotation().getRadians(), sample.heading);
+
+    swerveDrive.driveFieldOriented(targetSpeeds);
   }
 
 
@@ -332,8 +337,6 @@ public class SwerveSubsystem extends SubsystemBase
     TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
     TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
 
-    // Timing for telemetry
-    double startTime = Timer.getFPGATimestamp();
     Command followPathCommand = runOnce(
       () -> {
         // Compute current relative states for translation and rotation, with (0, 0) being target for translation.
@@ -344,6 +347,7 @@ public class SwerveSubsystem extends SubsystemBase
         
         targetRotationalState.position = path.endPose.getRotation().getRadians();
         rotationalState.position = getPose().getRotation().getRadians();
+        rotationalState.velocity = getRobotVelocity().omegaRadiansPerSecond;
 
       }).andThen( 
         run(
@@ -376,20 +380,24 @@ public class SwerveSubsystem extends SubsystemBase
               swerveDrive.drive(new ChassisSpeeds(0, 0, 0));
             }
             else {
-              m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
-              Pose2d pose = swerveDrive.getPose();
-              ChassisSpeeds targetSpeeds = swerveDrive.getRobotVelocity();
-              targetSpeeds.vxMetersPerSecond += m_pidControllerX.calculate(pose.getX(), interpolatedTranslation.getX());
-              targetSpeeds.vyMetersPerSecond += m_pidControllerY.calculate(pose.getY(), interpolatedTranslation.getY());
-              targetSpeeds.omegaRadiansPerSecond += m_pidControllerTheta.calculate(pose.getRotation().getRadians(), rotationalState.position);
-
-              swerveDrive.drive(targetSpeeds);
+              followSegment(new SwerveSample(
+                0,
+                interpolatedTranslation.getX(),
+                interpolatedTranslation.getY(),
+                rotationalState.position,
+                path.getDisplacement().getX() * -translationSetpoint.velocity,
+                path.getDisplacement().getY() * -translationSetpoint.velocity,
+                rotationalState.velocity,
+                0,
+                0,
+                0,
+                new double[4],
+                new double[4]
+                ));
             }
 
             // swerveDrive.drive(robotRelativeSpeeds);
           }));
-
-    double endTime = Timer.getFPGATimestamp();
 
     return followPathCommand;
   }
@@ -435,8 +443,8 @@ public class SwerveSubsystem extends SubsystemBase
     Path alignPath = new Path(
         poseSupplier.get(),
         swerveDrive.getPose(),
-        2.0, 
-        2.5, 
+        1.0, 
+        1.5, 
         3.14, 
         6.28); 
     return followPath(alignPath);
