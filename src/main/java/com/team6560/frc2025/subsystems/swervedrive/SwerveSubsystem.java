@@ -144,30 +144,8 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
 
     targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.572,	5.158), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125 ,	4.84), Rotation2d.fromDegrees(60)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.850,	5.006), Rotation2d.fromDegrees(60)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3   ,	3.499), Rotation2d.fromDegrees(0)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3  ,	3.842), Rotation2d.fromDegrees(0)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.222 ,	2.716), Rotation2d.fromDegrees(300)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.509,	2.878), Rotation2d.fromDegrees(300)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.020 ,	3.229), Rotation2d.fromDegrees(240)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.294,	3.054), Rotation2d.fromDegrees(240)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.85  ,	4.528), Rotation2d.fromDegrees(180)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816,	4.193), Rotation2d.fromDegrees(180)));
-
     targetPose2dsLeft.add(new Pose2d(new Translation2d(12.901  - 8.577,	5.328), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.632 - 8.577,	5.149), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.125  - 8.577,	4.84), Rotation2d.fromDegrees(60)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.850 - 8.577,	5.006), Rotation2d.fromDegrees(60)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3    - 8.577,	3.499), Rotation2d.fromDegrees(0)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3   - 8.577,	3.842), Rotation2d.fromDegrees(0)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.222  - 8.577,	2.716), Rotation2d.fromDegrees(300)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.509 - 8.577,	2.878), Rotation2d.fromDegrees(300)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.020  - 8.577,	3.229), Rotation2d.fromDegrees(240)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.294 - 8.577,	3.054), Rotation2d.fromDegrees(240)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.85   - 8.577,	4.528), Rotation2d.fromDegrees(180)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.193), Rotation2d.fromDegrees(180)));
+    targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
   }
 
   /**
@@ -329,6 +307,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @return Command to follow the path.
   */
   public Command followPath(Path path){
+    System.out.println("Following path to:" + path.endPose);
     // Set up profiles
     TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
     TrapezoidProfile.Constraints rotationConstraints = new Constraints(
@@ -441,8 +420,8 @@ public class SwerveSubsystem extends SubsystemBase
   /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information */
   public Command driveToPose(Supplier<Pose2d> poseSupplier){
     Path alignPath = new Path(
-        poseSupplier.get(),
         swerveDrive.getPose(),
+        poseSupplier.get(),
         1.0, 
         1.5, 
         3.14, 
