@@ -34,71 +34,14 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
-
-    public static int ELEV_LEFT_ID = 14;
-    public static int ELEV_RIGHT_ID = 15;
-    public static int ELEV_UPPER_LIMIT_SWITCH_ID = 28;
-    public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
-
-    public static double ELEV_GEAR_RATIO = 2.66;
-    public static final class ElevatorStates {
-
-      public static final double STOW = 0.4;
-      public static final double L2 = 0.583; // used to be 1.0
-      public static final double L3 = 6.5;
-      public static final double L4 = 17.65; // 17.3
-
-      public static final double S_STOW = 0.4;
-      public static final double S_L2 = 1.51; // 2.58
-       public static final double S_L3 = 7.65;  // 8.15
-      public static final double S_L4 = 20.8; // should be 21.28 but needs very good PID to not kill spring
     }
   }
 
   public static final class WristConstants {
-
-    public static final int M_ID = 16;
-    public static final int SWITCH_ID = 22;  
-    public static final int CANCODER_ID = 17; 
-
-    public static final double GEAR_RATIO = 108;
-
-    public static final double UPPER_SOFT_BOUND = 254.0; 
-    public static final double LOWER_SOFT_BOUND = -5.0;
-
-    public static final int LIMIT_SWITCH_PORT_ID = 19;
-    public static final class WristStates {
-
-      // constant + offset = pos
-
-      // C + 35.0 = -215.6 + 360
-
-      public static final double STOW = 90.0;
-      public static final double PICKUP = 225;  
-      public static final double L1 = 200; 
-      public static final double L2 = 80.0; // -215.6, -223 dunk
-      public static final double L4 = 40.0; // good
-
-      public static final double S_STOW = 208.5; // same as normal pickup position
-      public static final double S_L2 = 148.5; // assuming no offset, also L3 33.76 
-      public static final double S_L4 = 250; 
-
-      public static final double L1Offset = 0.0;
-      public static final double L2Offset = 35.0;
-      public static final double L4Offset = 30.0;
-      public static final double StowOffset = 0.0;
-      public static final double PickupOffset = 0.0;
-    }
   }
 
   public static final class ClimbConstants {
 
-    public static final int MOTOR_1_ID = 20;
-    public static final int MOTOR_2_ID = 21;
-    public static final int CANCODER_ID = 22;
-    public static final double UPPER_SOFT_BOUND = 0.198; // assuming reset at hard limit 
-    public static final double LOWER_SOFT_BOUND = -0.162; // abs encoder
-    public static final double GEAR_RATIO = 1.5; 
 
   }
 }
