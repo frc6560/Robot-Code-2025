@@ -130,7 +130,7 @@ public class RobotContainer {
     
     //  driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
-    // use auto align mechanism
+    // Use (new!) auto align mechanism
     driverXbox.x().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseLeft().schedule(), drivebase));
 
     driverXbox.b().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseRight().schedule(), drivebase));

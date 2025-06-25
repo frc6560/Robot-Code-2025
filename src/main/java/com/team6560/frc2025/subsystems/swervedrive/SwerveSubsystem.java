@@ -22,18 +22,12 @@ import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 import com.team6560.frc2025.utility.Path;
-
-import choreo.trajectory.SwerveSample;
+import com.team6560.frc2025.utility.Setpoint;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-// import edu.wpi.first.apriltag.AprilTagFieldLayout;
-// import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -44,27 +38,18 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-// import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
@@ -72,7 +57,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.frc3481.swervelib.SwerveController;
 import com.frc3481.swervelib.SwerveDrive;
 import com.frc3481.swervelib.SwerveDriveTest;
@@ -82,7 +66,6 @@ import com.frc3481.swervelib.parser.SwerveDriveConfiguration;
 import com.frc3481.swervelib.parser.SwerveParser;
 import com.frc3481.swervelib.telemetry.SwerveDriveTelemetry;
 import com.frc3481.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import java.util.Set;
 
@@ -98,11 +81,10 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(0.3, 0, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(0.3, 0, 0);
-  private final PIDController m_pidControllerTheta = new PIDController(0.5, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(0, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(0, 0, 0);
+  private final PIDController m_pidControllerTheta = new PIDController(0, 0, 0);
 
-  private final SwerveRequest.ApplyFieldSpeeds m_applyFieldSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
 
   /**
@@ -194,6 +176,9 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
     swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
     swerveDrive.field.setRobotPose(this.getPose());
+    if(getFieldVelocity().vxMetersPerSecond != 0 && getFieldVelocity().vyMetersPerSecond != 0){
+      System.out.println("vel: " + getFieldVelocity());
+    }
     // }
   }
 
@@ -283,13 +268,23 @@ public class SwerveSubsystem extends SubsystemBase
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  public void followSegment(SwerveSample sample) {
+  public void followSegment(Setpoint setpoint) {
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
-    Pose2d pose = swerveDrive.getPose();
-    ChassisSpeeds targetSpeeds = sample.getChassisSpeeds();
-    targetSpeeds.vxMetersPerSecond += m_pidControllerX.calculate(pose.getX(), sample.x);
-    targetSpeeds.vyMetersPerSecond += m_pidControllerY.calculate(pose.getY(), sample.y);
-    targetSpeeds.omegaRadiansPerSecond += m_pidControllerTheta.calculate(pose.getRotation().getRadians(), sample.heading);
+    Pose2d pose = getPose();
+
+    // // telemetry
+    // swerveDrive.field.getObject("targetPose").setPose(new Pose2d(setpoint.x, setpoint.y, new Rotation2d(setpoint.theta)));
+
+    ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
+      setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
+      setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
+      setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta)
+    );
+
+    // more telemetry
+    Pose2d expectedPose = new Pose2d(getPose().getX() + targetSpeeds.vxMetersPerSecond, getPose().getY() + targetSpeeds.vyMetersPerSecond, 
+                                      new Rotation2d(getPose().getRotation().getRadians() + targetSpeeds.omegaRadiansPerSecond));
+    swerveDrive.field.getObject("expectedPose").setPose(expectedPose);
 
     swerveDrive.driveFieldOriented(targetSpeeds);
   }
@@ -307,7 +302,6 @@ public class SwerveSubsystem extends SubsystemBase
    * @return Command to follow the path.
   */
   public Command followPath(Path path){
-    System.out.println("Following path to:" + path.endPose);
     // Set up profiles
     TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
     TrapezoidProfile.Constraints rotationConstraints = new Constraints(
@@ -320,9 +314,10 @@ public class SwerveSubsystem extends SubsystemBase
       () -> {
         // Compute current relative states for translation and rotation, with (0, 0) being target for translation.
         translationalState.position = path.getDisplacement().getNorm();
-        translationalState.velocity = MathUtil.clamp(Math.sqrt(Math.pow(getRobotVelocity().vxMetersPerSecond, 2) + Math.pow(getRobotVelocity().vyMetersPerSecond, 2)),
+        translationalState.velocity = MathUtil.clamp(Math.sqrt(Math.pow(getFieldVelocity().vxMetersPerSecond, 2) + Math.pow(getFieldVelocity().vyMetersPerSecond, 2)),
                                                     -path.maxVelocity,
                                                     0);
+
         
         targetRotationalState.position = path.endPose.getRotation().getRadians();
         rotationalState.position = getPose().getRotation().getRadians();
@@ -350,32 +345,26 @@ public class SwerveSubsystem extends SubsystemBase
             rotationalState.position = rotationalSetpoint.position;
             rotationalState.velocity = rotationalSetpoint.velocity;
 
-            // i have no idea how this bit works but it does
-            // interpolates the pose, makes it robot relative
-            Translation2d interpolatedTranslation = path.endPose.getTranslation().interpolate(path.startPose.getTranslation(), 
-                                                                                              translationSetpoint.position / path.getDisplacement().getNorm());
+            // converts our state to a field relative pose to target.
+            Translation2d interpolatedTranslation = path.endPose
+              .getTranslation()
+              .interpolate(path.startPose.getTranslation(), 
+                          translationSetpoint.position / path.getDisplacement().getNorm());
+            
 
             if( translationalState.position < 0.1 && Math.abs(rotationalState.position) < 0.1){
               swerveDrive.drive(new ChassisSpeeds(0, 0, 0));
             }
             else {
-              followSegment(new SwerveSample(
-                0,
+              followSegment(new Setpoint(
                 interpolatedTranslation.getX(),
                 interpolatedTranslation.getY(),
                 rotationalState.position,
-                path.getDisplacement().getX() * -translationSetpoint.velocity,
-                path.getDisplacement().getY() * -translationSetpoint.velocity,
-                rotationalState.velocity,
-                0,
-                0,
-                0,
-                new double[4],
-                new double[4]
+                path.getNormalizedDisplacement().getX() * -translationSetpoint.velocity, // the problem is DEFINITELY here
+                path.getNormalizedDisplacement().getY() * -translationSetpoint.velocity,
+                rotationalState.velocity
                 ));
             }
-
-            // swerveDrive.drive(robotRelativeSpeeds);
           }));
 
     return followPathCommand;
@@ -422,10 +411,10 @@ public class SwerveSubsystem extends SubsystemBase
     Path alignPath = new Path(
         swerveDrive.getPose(),
         poseSupplier.get(),
-        1.0, 
-        1.5, 
-        3.14, 
-        6.28); 
+        0.6, 
+        0.5, 
+        1.57, 
+        3.14); 
     return followPath(alignPath);
   }
 
@@ -435,7 +424,7 @@ public class SwerveSubsystem extends SubsystemBase
 
 
   public Command driveToNearestPoseLeft() {
-    return driveToPose(getClosestTargetPoseLeft());
+    return driveToPoseWithPathPlanner(getClosestTargetPoseLeft());
   }
 
   public Command driveToNearestPoseRight(){

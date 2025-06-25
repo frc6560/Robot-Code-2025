@@ -1,7 +1,6 @@
 package com.team6560.frc2025.utility;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** A stub, currently only implements a linear path. Enough for my purposes for now*/
@@ -25,7 +24,13 @@ public class Path {
     }
 
     public Translation2d getDisplacement() {
-        return startPose.getTranslation().minus(endPose.getTranslation());
+        return endPose.getTranslation().minus(startPose.getTranslation());
+    }
+    
+    public Translation2d getNormalizedDisplacement() {
+        Translation2d displacement = getDisplacement();
+        double length = displacement.getNorm();
+        return length == 0 ? new Translation2d(0, 0) : displacement.div(length + 0.001);
     }
 
     public double getRotationError() {
