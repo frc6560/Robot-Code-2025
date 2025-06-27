@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
+import com.team6560.frc2025.utility.CurvedPath;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 import com.team6560.frc2025.utility.Path;
@@ -416,6 +417,28 @@ public class SwerveSubsystem extends SubsystemBase
         1.57, 
         3.14); 
     return followPath(alignPath);
+  }
+
+  /** Experimental only: drive a full path similar to pathplanner*/
+  public Command pathfindToPose(Pose2d pose, Pose2d initialControlHeading, Pose2d finalControlHeading) {
+    double[] t = {0.0};
+    CurvedPath path = new CurvedPath(
+          swerveDrive.getPose(),
+          pose,
+          initialControlHeading,
+          finalControlHeading, // THESE NEED TO BE ADDED. TODO: turn into hermite form.
+          1.5, // max velocity
+          1.5, // max tangential acceleration
+          0.5 // max centripetal acceleration
+    );
+    Command pathfindCommand = run(
+      () -> {
+        Setpoint setpoint = path.calculate(t[0], getPose().getRotation().getRadians());
+        t[0] += 0.02; 
+        followSegment(setpoint);
+      }
+    );
+    return pathfindCommand;
   }
 
   public Command driveToPose(Pose2d pose) {
