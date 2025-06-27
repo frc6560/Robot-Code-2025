@@ -1,14 +1,10 @@
 package com.team6560.frc2025.subsystems;
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
-
 import com.revrobotics.spark.SparkFlex;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-// This is a climb subsystem.
+
 public class PipeGrabber extends SubsystemBase {
     // Initializes all the motors you'll need, along with some constants. 
     private SparkFlex grabberMotor; // This is the motor
