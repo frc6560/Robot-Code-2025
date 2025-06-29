@@ -58,73 +58,34 @@ public class CurvedPath {
         this.endPose = endPose;
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
-        
-        generateBezierCurve(startPose, endPose, startControlHeading, endControlHeading);
 
-        // sets up the trapezoidal profile start and end states...
-        this.startState = new TrapezoidProfile.State(0, 0);
-        this.endState = new TrapezoidProfile.State(getArcLength(), 0);
-
-        // ...and the profiles themselves
-        this.MAX_VELOCITY = maxVelocity;
-        this.MAX_AC = maxAc;
-        this.MAX_AT = maxAt;
-
-        this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, MAX_AT));
-
-        // finally generates a lookup table for reference.
-        generateLookupTable();
-    }
-
-    /** An alternative initialization with something similar to a Hermite spline 
-     * @param startHeading Start heading, vector from start pose
-     * @param endHeading End heading, vector from end pose.
-    */
-    public CurvedPath(Pose2d startPose, Pose2d endPose, Translation2d startHeading, Translation2d endHeading,
-                        double maxVelocity, double maxAt, double maxAc){
-            Pose2d startControlHeading = new Pose2d(startPose.getTranslation().plus(startHeading), new Rotation2d(0));
-            Pose2d endControlHeading = new Pose2d(endPose.getTranslation().plus(endHeading), new Rotation2d(0));
-
-            generateBezierCurve(startPose, endPose, startControlHeading, endControlHeading);
-
-            this.startPose = startPose;
-        this.endPose = endPose;
-        this.startControlHeading = startControlHeading;
-        this.endControlHeading = endControlHeading;
-        
-        generateBezierCurve(startPose, endPose, startControlHeading, endControlHeading);
-
-        // sets up the trapezoidal profile start and end states...
-        this.startState = new TrapezoidProfile.State(0, 0);
-        this.endState = new TrapezoidProfile.State(getArcLength(), 0);
-
-        // ...and the profiles themselves
-        this.MAX_VELOCITY = maxVelocity;
-        this.MAX_AC = maxAc;
-        this.MAX_AT = maxAt;
-
-        this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, MAX_AT));
-
-        // finally generates a lookup table for reference.
-        generateLookupTable();
-    }
-
-    /** A method for generating a Bezier curve
-     * @param
-     */
-    public void generateBezierCurve(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading){
         // defines x component for the cubic Bézier curve
         this.x3 = -startPose.getX() + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.getX();
         this.x2 = 3 * startPose.getX() - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
         this.x1 = -3 * startPose.getX() + 3 * startControlHeading.getX();
         this.x0 = startPose.getX();
- 
+
         // defines y components as well.
         this.y3 = -startPose.getY() + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.getY();
         this.y2 = 3 * startPose.getY() - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
         this.y1 = -3 * startPose.getY() + 3 * startControlHeading.getY();
         this.y0 = startPose.getY();
+
+        // sets up the trapezoidal profile start and end states...
+        this.startState = new TrapezoidProfile.State(0, 0);
+        this.endState = new TrapezoidProfile.State(getArcLength(), 0);
+
+        // ...and the profiles themselves
+        this.MAX_VELOCITY = maxVelocity;
+        this.MAX_AC = maxAc;
+        this.MAX_AT = maxAt;
+
+        this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, MAX_AT));
+
+        // finally generates a lookup table for reference.
+        generateLookupTable();
     }
+
 
     /** Getter methods*/
 
