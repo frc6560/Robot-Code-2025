@@ -17,4 +17,6 @@ public class Setpoint {
         this.vy = vy;
         this.omega = omega;
     }
+
+    
 }

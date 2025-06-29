@@ -87,7 +87,6 @@ public class SwerveSubsystem extends SubsystemBase
   private final PIDController m_pidControllerTheta = new PIDController(0, 0, 0);
 
 
-
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -273,16 +272,16 @@ public class SwerveSubsystem extends SubsystemBase
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
 
-    // // telemetry
-    // swerveDrive.field.getObject("targetPose").setPose(new Pose2d(setpoint.x, setpoint.y, new Rotation2d(setpoint.theta)));
+    // telemetry
+    swerveDrive.field.getObject("targetPose").setPose(new Pose2d(setpoint.x, setpoint.y, new Rotation2d(setpoint.theta)));
 
+    // Something is very wrong here
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
-      setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
+      (-1) * (setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x)), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
       setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta)
     );
-
-    // more telemetry
+    
     Pose2d expectedPose = new Pose2d(getPose().getX() + targetSpeeds.vxMetersPerSecond, getPose().getY() + targetSpeeds.vyMetersPerSecond, 
                                       new Rotation2d(getPose().getRotation().getRadians() + targetSpeeds.omegaRadiansPerSecond));
     swerveDrive.field.getObject("expectedPose").setPose(expectedPose);
@@ -414,8 +413,8 @@ public class SwerveSubsystem extends SubsystemBase
         poseSupplier.get(),
         0.6, 
         0.5, 
-        1.57, 
-        3.14); 
+        180, 
+        360); 
     return followPath(alignPath);
   }
 

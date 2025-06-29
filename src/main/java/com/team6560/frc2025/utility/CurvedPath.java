@@ -2,11 +2,13 @@ package com.team6560.frc2025.utility;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
-/** A class to simulate a curved path in 2D space, with params for max velocity and acceleration. */
+/** A class to simulate a curved path in 2D space, with params for max velocity and acceleration. 
+*/
 public class CurvedPath {
     // These should NOT be modified.
     private final Pose2d startPose;
@@ -37,12 +39,18 @@ public class CurvedPath {
     private double y1 = 0.0;
     private double y0 = 0.0;
 
+    // preset two positions around the reef. first heading from current position is standard (1 or something). second one is also standard, but is pre-baked.
+    // you can do this approach with pretty much any game
+
 
     /** Defines a {@link CurvedPath} in 2 dimensions. Translation is handled via a Bézier curve and trapezoidal profile. Rotation is handled linearly.
      * @param startPose The start pose
      * @param endPose The end pose
      * @param startControlHeading The control point for the start of the curve, which defines the initial heading.
      * @param endControlHeading The control point for the end of the curve, which defines the final heading.
+     * @param maxVelocity Maximum velocity
+     * @param maxAt Max tangential accel
+     * @param maxAc Max centripetal accel
      */
     public CurvedPath(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
                         double maxVelocity, double maxAt, double maxAc) {
@@ -50,18 +58,8 @@ public class CurvedPath {
         this.endPose = endPose;
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
-
-        // defines x component for the cubic Bézier curve
-        this.x3 = -startPose.getX() + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.getX();
-        this.x2 = 3 * startPose.getX() - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
-        this.x1 = -3 * startPose.getX() + 3 * startControlHeading.getX();
-        this.x0 = startPose.getX();
-
-        // defines y components as well.
-        this.y3 = -startPose.getY() + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.getY();
-        this.y2 = 3 * startPose.getY() - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
-        this.y1 = -3 * startPose.getY() + 3 * startControlHeading.getY();
-        this.y0 = startPose.getY();
+        
+        generateBezierCurve(startPose, endPose, startControlHeading, endControlHeading);
 
         // sets up the trapezoidal profile start and end states...
         this.startState = new TrapezoidProfile.State(0, 0);
@@ -78,6 +76,55 @@ public class CurvedPath {
         generateLookupTable();
     }
 
+    /** An alternative initialization with something similar to a Hermite spline 
+     * @param startHeading Start heading, vector from start pose
+     * @param endHeading End heading, vector from end pose.
+    */
+    public CurvedPath(Pose2d startPose, Pose2d endPose, Translation2d startHeading, Translation2d endHeading,
+                        double maxVelocity, double maxAt, double maxAc){
+            Pose2d startControlHeading = new Pose2d(startPose.getTranslation().plus(startHeading), new Rotation2d(0));
+            Pose2d endControlHeading = new Pose2d(endPose.getTranslation().plus(endHeading), new Rotation2d(0));
+
+            generateBezierCurve(startPose, endPose, startControlHeading, endControlHeading);
+
+            this.startPose = startPose;
+        this.endPose = endPose;
+        this.startControlHeading = startControlHeading;
+        this.endControlHeading = endControlHeading;
+        
+        generateBezierCurve(startPose, endPose, startControlHeading, endControlHeading);
+
+        // sets up the trapezoidal profile start and end states...
+        this.startState = new TrapezoidProfile.State(0, 0);
+        this.endState = new TrapezoidProfile.State(getArcLength(), 0);
+
+        // ...and the profiles themselves
+        this.MAX_VELOCITY = maxVelocity;
+        this.MAX_AC = maxAc;
+        this.MAX_AT = maxAt;
+
+        this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, MAX_AT));
+
+        // finally generates a lookup table for reference.
+        generateLookupTable();
+    }
+
+    /** A method for generating a Bezier curve
+     * @param
+     */
+    public void generateBezierCurve(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading){
+        // defines x component for the cubic Bézier curve
+        this.x3 = -startPose.getX() + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.getX();
+        this.x2 = 3 * startPose.getX() - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
+        this.x1 = -3 * startPose.getX() + 3 * startControlHeading.getX();
+        this.x0 = startPose.getX();
+ 
+        // defines y components as well.
+        this.y3 = -startPose.getY() + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.getY();
+        this.y2 = 3 * startPose.getY() - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
+        this.y1 = -3 * startPose.getY() + 3 * startControlHeading.getY();
+        this.y0 = startPose.getY();
+    }
 
     /** Getter methods*/
 
