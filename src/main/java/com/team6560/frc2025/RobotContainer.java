@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.OperatorConstants;
 // This WILL be broken. Good luck!
+import com.team6560.frc2025.subsystems.Elevator; //to fix this you just need to make a class constructor - look at ELevator for how
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
@@ -12,7 +13,6 @@ import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.commands.auto.*;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
-import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;

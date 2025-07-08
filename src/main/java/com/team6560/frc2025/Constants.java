@@ -34,7 +34,14 @@ public final class Constants {
   }
 
   public static final class ElevatorConstants {
-    }
+    
+    //placeholders
+    public static int ElevLeftCanID = 1;
+    public static int ElevRightCanID = 1;
+    public static int ElevLeftEncID = 1;
+    public static double ElevSpeed = 0.2;
+    
+
   }
 
   public static final class WristConstants {
