@@ -19,10 +19,10 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
-import com.team6560.frc2025.utility.CurvedPath;
+import com.team6560.frc2025.utility.Path;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
-import com.team6560.frc2025.utility.Path;
+import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.Setpoint;
 
 import edu.wpi.first.math.VecBuilder;
@@ -301,7 +301,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param path Path object to follow.
    * @return Command to follow the path.
   */
-  public Command followPath(Path path){
+  public Command followPath(AutoAlignPath path){
     // Set up profiles
     TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
     TrapezoidProfile.Constraints rotationConstraints = new Constraints(
@@ -408,7 +408,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information */
   public Command driveToPose(Supplier<Pose2d> poseSupplier){
-    Path alignPath = new Path(
+    AutoAlignPath alignPath = new AutoAlignPath(
         swerveDrive.getPose(),
         poseSupplier.get(),
         0.6, 
@@ -421,7 +421,7 @@ public class SwerveSubsystem extends SubsystemBase
   /** Experimental only: drive a full path similar to pathplanner*/
   public Command pathfindToPose(Pose2d pose, Pose2d initialControlHeading, Pose2d finalControlHeading) {
     double[] t = {0.0};
-    CurvedPath path = new CurvedPath(
+    Path path = new Path(
           swerveDrive.getPose(),
           pose,
           initialControlHeading,

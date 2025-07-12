@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** A stub, currently only implements a linear path. Enough for my purposes for now*/
-public class Path {
+public class AutoAlignPath {
     public final Pose2d startPose;
     public final Pose2d endPose;
     public final double maxVelocity;
@@ -13,7 +13,7 @@ public class Path {
     public final double maxAngularVelocity;
     public final double maxAngularAcceleration;
 
-    public Path( Pose2d startPose,Pose2d endPose, double maxVelocity,double maxAcceleration, 
+    public AutoAlignPath( Pose2d startPose,Pose2d endPose, double maxVelocity,double maxAcceleration, 
                  double maxAngularVelocity, double maxAngularAcceleration) {
         this.startPose = startPose;
         this.endPose = endPose;

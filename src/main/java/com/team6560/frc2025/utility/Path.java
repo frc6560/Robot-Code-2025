@@ -27,6 +27,7 @@ public class Path {
 
     private final double MAX_VELOCITY;
     private final double MAX_AT;
+    private final double MAX_A;
     private final double MAX_AC;
 
     private double x3 = 0.0;
@@ -50,10 +51,9 @@ public class Path {
      * @param endControlHeading The control point for the end of the curve, which defines the final heading.
      * @param maxVelocity Maximum velocity
      * @param maxAt Max tangential accel
-     * @param maxAc Max centripetal accel
      */
     public Path(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
-                        double maxVelocity, double maxAt, double maxAc) {
+                        double maxVelocity, double maxAt, double staticCof) {
         this.startPose = startPose;
         this.endPose = endPose;
         this.startControlHeading = startControlHeading;
@@ -77,13 +77,22 @@ public class Path {
 
         // ...and the profiles themselves
         this.MAX_VELOCITY = maxVelocity;
-        this.MAX_AC = maxAc;
         this.MAX_AT = maxAt;
+        // this.MAX_AC = 0;
+        // this.MAX_A = 0;
 
         this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, MAX_AT));
 
         // finally generates a lookup table for reference.
         generateLookupTable();
+
+        // and calculates the maximum acceleration values.
+        MAX_A = staticCof * 9.81;
+        MAX_AC = Math.sqrt(Math.pow(MAX_A, 2) - Math.pow(MAX_AT, 2)); // centripetal acceleration
+
+        if(MAX_AT > MAX_A)  {
+            throw new IllegalArgumentException("you're chopped (max tangential acceleration cannot be greater than max acceleration).");
+        }
     }
 
 
