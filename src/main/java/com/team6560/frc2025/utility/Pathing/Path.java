@@ -1,16 +1,13 @@
-package com.team6560.frc2025.utility;
+package com.team6560.frc2025.utility.Pathing;
+
+import com.team6560.frc2025.utility.Setpoint;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
-/** A class to simulate a curved path in 2D space, with params for max velocity and acceleration. 
-*/
 public class Path {
-    // These should NOT be modified.
     private final Pose2d startPose;
     private final Pose2d endPose;
 
@@ -30,25 +27,11 @@ public class Path {
     private final double MAX_A;
     private final double MAX_AC;
 
-    private double x3 = 0.0;
-    private double x2 = 0.0;
-    private double x1 = 0.0;
-    private double x0 = 0.0;
-
-    private double y3 = 0.0;
-    private double y2 = 0.0;
-    private double y1 = 0.0;
-    private double y0 = 0.0;
-
-    // preset six positions around the reef. first heading from current position is standard (1 or something). second one is also standard, but is pre-baked.
-    // you can do this approach with pretty much any game
-
-
     /** Defines a {@link Path} in 2 dimensions. Translation is handled via a Bézier curve and trapezoidal profile. Rotation is handled linearly.
      * @param startPose The start pose
      * @param endPose The end pose
-     * @param startControlHeading The control point for the start of the curve, which defines the initial heading.
-     * @param endControlHeading The control point for the end of the curve, which defines the final heading.
+     * @param startControlHeading The control point for the start of the curve, which defines the initial heading. Quintic bezier curves have an additional two control points.
+     * @param endControlHeading The control point for the end of the curve, which defines the final heading. 
      * @param maxVelocity Maximum velocity
      * @param maxAt Max tangential accel
      */
@@ -58,18 +41,6 @@ public class Path {
         this.endPose = endPose;
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
-
-        // defines x component for the cubic Bézier curve
-        this.x3 = -startPose.getX() + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.getX();
-        this.x2 = 3 * startPose.getX() - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
-        this.x1 = -3 * startPose.getX() + 3 * startControlHeading.getX();
-        this.x0 = startPose.getX();
-
-        // defines y components as well.
-        this.y3 = -startPose.getY() + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.getY();
-        this.y2 = 3 * startPose.getY() - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
-        this.y1 = -3 * startPose.getY() + 3 * startControlHeading.getY();
-        this.y0 = startPose.getY();
 
         // sets up the trapezoidal profile start and end states...
         this.startState = new TrapezoidProfile.State(0, 0);
@@ -95,7 +66,6 @@ public class Path {
         }
     }
 
-
     /** Getter methods*/
 
     /** Gets start pose */
@@ -118,25 +88,26 @@ public class Path {
         return endControlHeading;
     }
 
-    /** Calculation stuff */
-
-    /** calculates position of curve with time interval t */
-    public Translation2d calculatePosition(double t){
-        if(t < 0 || t > 1){
-            throw new IllegalArgumentException("you're chopped. (t in 0, 1)");
-        }
-        double x = x3 * Math.pow(t, 3) + x2 * Math.pow(t, 2) + x1 * t + x0;
-        double y = y3 * Math.pow(t, 3) + y2 * Math.pow(t, 2) + y1 * t + y0;
-
-        return new Translation2d(x, y);
-    }
-
 
     /** This is a helper method to obtain the net arc length of the curve. Uses a discrete approximation of numerical integration. See below for more information!
      * @return The arc length of the path
      */
     public double getArcLength(){
         return arcLengthChart[LOOKUP_RES];
+    }
+
+
+    /** Stubs to be overridden. */
+    public Translation2d calculatePosition(double t){
+        return new Translation2d();
+    }
+
+    public Translation2d calculateFirstDerivative(double t){
+        return new Translation2d();
+    }
+
+    public Translation2d calculateSecondDerivative(double t){
+        return new Translation2d();
     }
 
 
@@ -152,36 +123,6 @@ public class Path {
             arcLengthChart[i] = arcLengthChart[i - 1] + p0.getDistance(p1);
             p0 = p1;
         }
-    }
-
-    /** Calculates the curvature of our path at time t, for better velocity control when turning. 
-     * @param t the time parameter
-     * @return The curvature of the path at time t.
-     */
-    public double getCurvature(double t){
-        if(t < 0 || t > 1){
-            throw new IllegalArgumentException("you're chopped. (t in 0, 1)");
-        }
-        Translation2d firstDerivative = new Translation2d(3 * x3 * Math.pow(t, 2) + 2 * x2 * t + x1, 
-                                                        3 * y3 * Math.pow(t, 2) + 2 * y2 * t + y1);
-        Translation2d secondDerivative = new Translation2d(6 * x3 * t + 2 * x2, 
-                                                        6 * y3 * t + 2 * y2);
-        return (firstDerivative.getX() * secondDerivative.getY() - firstDerivative.getY() * secondDerivative.getX()) 
-                / Math.pow(firstDerivative.getNorm(), 3);
-    }
-
-
-    /** This is another helper method to compute the normalized velocity vector T(t). 
-     * @param t the time parameter
-     * @return A normalized vector representing the direction of the path at time t.
-     */
-    public Translation2d getNormalizedVelocityVector(double t) {
-        if(t < 0 || t > 1){
-            throw new IllegalArgumentException("you're chopped. (t in 0, 1)");
-        }
-        Translation2d tangentVector = new Translation2d(3 * x3 * Math.pow(t, 2) + 2 * x2 * t + x1, 
-                                                        3 * y3 * Math.pow(t, 2) + 2 * y2 * t + y1);
-        return tangentVector.div(tangentVector.getNorm() + 0.001); 
     }
 
 
@@ -209,8 +150,37 @@ public class Path {
     }
 
 
+    /** Calculates the curvature of our path at time t, for better velocity control when turning. 
+     * @param t the time parameter
+     * @return The curvature of the path at time t.
+     */
+    public double getCurvature(double t){
+        if(t < 0 || t > 1){
+            throw new IllegalArgumentException("you're chopped. (t in 0, 1)");
+        }
+        Translation2d firstDerivative = calculateFirstDerivative(t);
+        Translation2d secondDerivative = calculateSecondDerivative(t);
+        return (firstDerivative.getX() * secondDerivative.getY() - firstDerivative.getY() * secondDerivative.getX()) 
+                / Math.pow(firstDerivative.getNorm(), 3);
+    }
+
+
+    /** This is another helper method to compute the normalized velocity vector T(t). 
+     * @param t the time parameter
+     * @return A normalized vector representing the direction of the path at time t.
+     */
+    public Translation2d getNormalizedVelocityVector(double t) {
+        if(t < 0 || t > 1){
+            throw new IllegalArgumentException("you're chopped. (t in 0, 1)");
+        }
+        Translation2d tangentVector = calculateFirstDerivative(t);
+        return tangentVector.div(tangentVector.getNorm() + 0.001); 
+    }
+
+    
     /** Calculates the next position of the path for the robot to target. Returns as a Setpoint object.
-     * @params 
+     * @param t the time parameter, currentRotation the current rotation of the robot
+     * @param currentRotation the current rotation of the robot
      */
     public Setpoint calculate(double t, double currentRotation){
         // Translation
