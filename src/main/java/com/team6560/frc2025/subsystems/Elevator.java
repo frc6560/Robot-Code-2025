@@ -40,7 +40,6 @@ public class Elevator extends SubsystemBase {
     private final NetworkTableEntry ntTargetPos = ntTable.getEntry("Target height");
 
     public Elevator() {
-
         this.m_leftElev = new TalonFX(ElevatorConstants.ELEV_LEFT_ID, "Canivore");
         this.m_rightElev = new TalonFX(ElevatorConstants.ELEV_RIGHT_ID, "Canivore");
 
@@ -53,8 +52,8 @@ public class Elevator extends SubsystemBase {
         elevatorPID.kG = 0.4; // 0.4
 
         elevatorPID.kP = 0.7; // 0.7
-        elevatorPID.kI = 0.01;
-        elevatorPID.kD = 0;
+        elevatorPID.kI = 0.01; // this is the integral term, which is used to eliminate steady-state error
+        elevatorPID.kD = 0; 
 
         TalonFXConfiguration config = new TalonFXConfiguration();
 
