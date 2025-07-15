@@ -20,14 +20,23 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class PathCalculator {
     public Path path;
 
+    public Pose2d startPose;
+    public Pose2d endPose;
+
     public double startFinalControlLength;
     public double waypointFinalControlLength;
     public double waypointInitialControlLength;
     public double endInitialControlLength;
 
+    public final Pose2d BLUE_REEF_CENTER = new Pose2d(4.48, 4, new Rotation2d(0));
+    public final Pose2d RED_REEF_CENTER = new Pose2d(13.05, 4, new Rotation2d(0));
+
     public boolean useQuintic;
 
     public PathCalculator(Pose2d currentPose, Pose2d finalPose){
+        this.startPose = currentPose;
+        this.endPose = finalPose;
+
         if(Math.abs(getRegion(currentPose) - getRegion(finalPose)) > 1){
             useQuintic = true;
         } else {
@@ -51,10 +60,10 @@ public class PathCalculator {
     public int getRegion(Pose2d pose){
         Pose2d reefCenter;
         if(DriverStation.getAlliance().get() == Alliance.Blue){
-            reefCenter = new Pose2d(4.48, 4, new Rotation2d(0));
+            reefCenter = BLUE_REEF_CENTER;
         }
         else {
-            reefCenter = new Pose2d(13.05, 4, new Rotation2d(0));
+            reefCenter = RED_REEF_CENTER;
         }
         Translation2d displacement = pose.getTranslation().minus(reefCenter.getTranslation());
         double poseAngle = Rotation2d.fromRadians(Math.atan2(displacement.getY(), displacement.getX())).getDegrees();
@@ -74,5 +83,26 @@ public class PathCalculator {
         return new Pose2d[] {firstControlHeading, secondControlHeading};
     }
 
-    /** Gets */
+    
+    public boolean getUseQuintic() {
+        return useQuintic;
+    }
+
+    /** Obtains a cubic path from the start pose to the end pose, with a waypoint in between. Only use if {@link #getUseQuintic()} is false.
+     * @param waypoint The waypoint to use
+     * @return A path from the start pose to the end pose, with a waypoint in between
+     */
+    public Path generateCubicPath(){
+        if(useQuintic){
+            DriverStation.reportError("You cannot generate a cubic path with a quintic path calculator!", false);
+            return null;
+        }
+        Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, 
+                startPose.getRotation().getRadians() + Math.PI);
+        Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, 
+                endPose.getRotation().getRadians());
+
+        return new CubicPath(startPose, endPose, startControlHeading, endControlHeading, 
+                path.getMaxVelocity(), path.getMaxAt(), path.getStaticCof());
+    }
 }
