@@ -432,8 +432,8 @@ public class SwerveSubsystem extends SubsystemBase
     );
     Command pathfindCommand = run(
       () -> {
-        Setpoint setpoint = path.calculate(t[0], getPose().getRotation().getRadians());
         t[0] += 0.02; 
+        Setpoint setpoint = path.calculate(t[0], getPose().getRotation().getRadians());
         followSegment(setpoint);
       }
     );

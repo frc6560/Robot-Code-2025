@@ -23,9 +23,9 @@ public class Path {
     private double[] arcLengthChart = new double[LOOKUP_RES + 1];
 
     private final double MAX_VELOCITY;
-    private final double MAX_AT;
+    private double AT;
     private final double MAX_A;
-    private final double MAX_AC;
+    private double MAX_AC;
 
     /** Defines a {@link Path} in 2 dimensions. Translation is handled via a Bézier curve and trapezoidal profile. Rotation is handled linearly.
      * @param startPose The start pose
@@ -48,22 +48,17 @@ public class Path {
 
         // ...and the profiles themselves
         this.MAX_VELOCITY = maxVelocity;
-        this.MAX_AT = maxAt;
-        // this.MAX_AC = 0;
-        // this.MAX_A = 0;
 
-        this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, MAX_AT));
+
+        this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAt));
 
         // finally generates a lookup table for reference.
         generateLookupTable();
 
         // and calculates the maximum acceleration values.
         MAX_A = staticCof * 9.81;
-        MAX_AC = Math.sqrt(Math.pow(MAX_A, 2) - Math.pow(MAX_AT, 2)); // centripetal acceleration
-
-        if(MAX_AT > MAX_A)  {
-            throw new IllegalArgumentException("you're chopped (max tangential acceleration cannot be greater than max acceleration).");
-        }
+        AT = 0;
+        MAX_AC = Math.sqrt(Math.pow(MAX_A, 2) - Math.pow(AT, 2)); // centripetal acceleration
     }
 
     /** Getter methods*/
@@ -108,6 +103,14 @@ public class Path {
 
     public Translation2d calculateSecondDerivative(double t){
         return new Translation2d();
+    }
+
+    /** This calculates the maximum possible centripetal acceleration at any given point. */
+    public void calculateMaxAc(){
+        if(AT > MAX_A)  {
+            throw new IllegalArgumentException("you're chopped (max tangential acceleration cannot be greater than max acceleration).");
+        }
+        MAX_AC = Math.sqrt(Math.pow(MAX_A, 2) - Math.pow(AT, 2)); // centripetal acceleration
     }
 
 
@@ -178,19 +181,25 @@ public class Path {
     }
 
     
-    /** Calculates the next position of the path for the robot to target. Returns as a Setpoint object.
+    /** Calculates the next position of the path for the robot to target. Returns as a Setpoint object. 
      * @param t the time parameter, currentRotation the current rotation of the robot
      * @param currentRotation the current rotation of the robot
      */
     public Setpoint calculate(double t, double currentRotation){
         // Translation
         TrapezoidProfile.State translationalSetpoint = translationProfile.calculate(t, startState, endState);
+        TrapezoidProfile.State previousState = translationProfile.calculate(t - 0.02, startState, endState);
 
         double timeParam = getTimeForArcLength(translationalSetpoint.position);
         Translation2d translationalTarget = calculatePosition(timeParam);
 
-        double velocityMultiplier = Math.min(translationalSetpoint.velocity, Math.sqrt(MAX_AC / getCurvature(t) + 1E-6));
+        // Calculates max ac based upon at and takes the maximum velocity possible.
+        AT = (translationalSetpoint.velocity - previousState.velocity) / 0.02; // change in velocity over time
+        AT = MathUtil.clamp(AT, -MAX_A, MAX_A); // clamps to max acceleration
+        calculateMaxAc();
+        double velocityMultiplier = Math.min(translationalSetpoint.velocity, Math.sqrt(MAX_AC / getCurvature(timeParam) + 1E-6));
 
+        // Rotation
         double thetaTarget = MathUtil.interpolate(currentRotation, 
                                                 endPose.getRotation().getRadians(), timeParam);
 
