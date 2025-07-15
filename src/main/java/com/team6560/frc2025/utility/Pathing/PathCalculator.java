@@ -109,4 +109,49 @@ public class PathCalculator {
                         3.0, 3.0,
                         Constants.WHEEL_COF);
     }
+
+    // From here on out, denote our start point as A, our end point as B
+
+    /** Gets the two intersections of AB with the circle circumscribed around the reef*/
+    public Translation2d getCircleIntersections(){
+        // TODO: please please complete
+        return new Translation2d();
+    }
+
+    /** Gets the midpoint of two points (rotation doesn't even matter) */
+    public Pose2d getMidpoint(Translation2d a, Translation2d b) {
+        double x = (a.getX() + b.getX()) / 2.0;
+        double y = (a.getY() + b.getY()) / 2.0;
+        return new Pose2d(x, y, Rotation2d.fromDegrees(0));
+    }
+
+    /** Gets the normal vector to AB */
+    public Translation2d getNormalVector(Translation2d a, Translation2d b) {
+        double dx = b.getX() - a.getX();
+        double dy = b.getY() - a.getY();
+        Translation2d normal = new Translation2d(-dy, dx); 
+        return normal.div(normal.getNorm() + 1E-6); // Normal vector is perpendicular to AB
+    }
+
+    public QuinticPath getQuinticWaypoint(){
+        // This is WRONG.
+        if(!useQuintic){
+            DriverStation.reportError("You cannot generate a quintic waypoint right now!", false);
+            return null;
+        }
+
+        // Gets the control points for the start and end poses.
+        Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, 
+                startPose.getRotation().getRadians() + Math.PI);
+        Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, 
+                endPose.getRotation().getRadians());
+
+        // Gets the control points for the waypoint.
+        Pose2d[] controlPoints = getControlPoints(getMidpoint(startPose.getTranslation(), endPose.getTranslation()));
+
+        return new QuinticPath(startPose, endPose, startControlHeading, endControlHeading, 
+                        3.0, 3.0,
+                        Constants.WHEEL_COF,
+                        controlPoints[0], controlPoints[1]);
+    }
 }
