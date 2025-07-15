@@ -18,6 +18,17 @@ public class QuinticPath extends Path{
     private double y1 = 0.0;
     private double y0 = 0.0;
 
+    /** Creates a quintic path, with a similar implementation to our cubic path.
+     * @param startPose The start pose
+     * @param endPose The end pose
+     * @param startControlHeading The control point for the start of the curve, which defines the initial heading.
+     * @param endControlHeading The control point for the end of the curve, which defines the final heading.
+     * @param maxVelocity Maximum velocity
+     * @param maxAt Max tangential accel
+     * @param staticCof Static coefficient of friction, used to calculate maximum acceleration
+     * @param secondControlHeading The first control point for our waypoint, which defines the curvature at the start.
+     * @param thirdControlHeading The second cp for our waypoint.
+     */
     public QuinticPath(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
                         double maxVelocity, double maxAt, double staticCof, Pose2d secondControlHeading, Pose2d thirdControlHeading) {
         super(startPose, endPose, startControlHeading, endControlHeading, maxVelocity, maxAt, staticCof);

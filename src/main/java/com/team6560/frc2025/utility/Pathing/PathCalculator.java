@@ -105,7 +105,7 @@ public class PathCalculator {
         Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, angle);
         Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, angle + Math.PI);
 
-        return new Path(startPose, endPose, startControlHeading, endControlHeading, 
+        return new CubicPath(startPose, endPose, startControlHeading, endControlHeading, 
                         3.0, 3.0,
                         Constants.WHEEL_COF);
     }
@@ -133,7 +133,7 @@ public class PathCalculator {
         return normal.div(normal.getNorm() + 1E-6); // Normal vector is perpendicular to AB
     }
 
-    public QuinticPath getQuinticWaypoint(){
+    public QuinticPath generateQuinticPath(){
         // This is WRONG.
         if(!useQuintic){
             DriverStation.reportError("You cannot generate a quintic waypoint right now!", false);
