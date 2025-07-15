@@ -99,7 +99,7 @@ public class PathCalculator {
         }
         // Calculates the angle bisector between our two poses. 
         double angle = startPose.getRotation().getRadians() 
-                        + MathUtil.inputModulus((endPose.getRotation().getRadians() - startPose.getRotation().getDegrees()), 0,  90) / 2.0;
+                        + MathUtil.inputModulus((endPose.getRotation().getDegrees() - startPose.getRotation().getDegrees()), 0,  90) / 2.0;
 
         // Gets the control points for the start and end poses.
         Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, angle);
