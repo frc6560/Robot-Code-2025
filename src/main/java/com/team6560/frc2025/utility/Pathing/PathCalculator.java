@@ -1,16 +1,16 @@
 package com.team6560.frc2025.utility.Pathing;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import com.team6560.frc2025.Constants;
+
 // TODO LIST:
-// no hardbaking
 // write generation algorithm for a waypoint.
-// use our regions 1-6 method still. cubic for no obstacle quintic for obstacle.
-// for no obstacle angle bisector works fine
 // for obstacle get the segment intersecting circle, find perpendicular bisector, and go a tunable distance!
 // generate path
 // equalize headings
@@ -94,15 +94,19 @@ public class PathCalculator {
      */
     public Path generateCubicPath(){
         if(useQuintic){
-            DriverStation.reportError("You cannot generate a cubic path with a quintic path calculator!", false);
+            DriverStation.reportError("You cannot generate a quintic path right now!", false);
             return null;
         }
-        Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, 
-                startPose.getRotation().getRadians() + Math.PI);
-        Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, 
-                endPose.getRotation().getRadians());
+        // Calculates the angle bisector between our two poses. 
+        double angle = startPose.getRotation().getRadians() 
+                        + MathUtil.inputModulus((endPose.getRotation().getRadians() - startPose.getRotation().getDegrees()), 0,  90) / 2.0;
 
-        return new CubicPath(startPose, endPose, startControlHeading, endControlHeading, 
-                path.getMaxVelocity(), path.getMaxAt(), path.getStaticCof());
+        // Gets the control points for the start and end poses.
+        Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, angle);
+        Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, angle + Math.PI);
+
+        return new Path(startPose, endPose, startControlHeading, endControlHeading, 
+                        3.0, 3.0,
+                        Constants.WHEEL_COF);
     }
 }
