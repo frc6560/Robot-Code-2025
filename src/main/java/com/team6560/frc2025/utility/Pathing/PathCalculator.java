@@ -133,25 +133,25 @@ public class PathCalculator {
         return normal.div(normal.getNorm() + 1E-6); // Normal vector is perpendicular to AB
     }
 
-    public PathGroup generateQuinticPath(){
-        // This is WRONG.
-        if(!useQuintic){
-            DriverStation.reportError("You cannot generate a quintic waypoint right now!", false);
-            return null;
-        }
+    // public PathGroup generateQuinticPath(){
+    //     // This is WRONG.
+    //     if(!useQuintic){
+    //         DriverStation.reportError("You cannot generate a quintic waypoint right now!", false);
+    //         return null;
+    //     }
 
-        // Gets the control points for the start and end poses.
-        Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, 
-                startPose.getRotation().getRadians() + Math.PI);
-        Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, 
-                endPose.getRotation().getRadians());
+    //     // Gets the control points for the start and end poses.
+    //     Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, 
+    //             startPose.getRotation().getRadians() + Math.PI);
+    //     Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, 
+    //             endPose.getRotation().getRadians());
 
-        // Gets the control points for the waypoint.
-        Pose2d[] controlPoints = getControlPoints(getMidpoint(startPose.getTranslation(), endPose.getTranslation()));
+    //     // Gets the control points for the waypoint.
+    //     Pose2d[] controlPoints = getControlPoints(getMidpoint(startPose.getTranslation(), endPose.getTranslation()));
 
-        return new PathGroup(startPose, endPose, startControlHeading, endControlHeading, 
-                        3.0, 3.0,
-                        Constants.WHEEL_COF,
-                        controlPoints[0], controlPoints[1]);
-    }
+    //     return new PathGroup(startPose, endPose, startControlHeading, endControlHeading, 
+    //                     3.0, 3.0,
+    //                     Constants.WHEEL_COF,
+    //                     controlPoints[0], controlPoints[1]);
+    // }
 }
