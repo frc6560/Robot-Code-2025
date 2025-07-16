@@ -21,7 +21,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
-import com.team6560.frc2025.utility.Pathing.CubicPath;
+import com.team6560.frc2025.utility.Pathing.Path;
 import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.Setpoint;
 
@@ -421,7 +421,7 @@ public class SwerveSubsystem extends SubsystemBase
   /** Experimental only: drive a full path similar to pathplanner*/
   public Command pathfindToPose(Pose2d pose, Pose2d initialControlHeading, Pose2d finalControlHeading) {
     double[] t = {0.0};
-    CubicPath path = new CubicPath(
+    Path path = new Path(
           swerveDrive.getPose(),
           pose,
           initialControlHeading,
