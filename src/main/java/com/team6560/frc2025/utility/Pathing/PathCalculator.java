@@ -43,7 +43,7 @@ public class PathCalculator {
             useQuintic = false;
         }
     }
-    
+
 
     /** Gets a control point based upon current pose, magnitude, and direction
      * @param currentPose A point of the curve
@@ -73,7 +73,7 @@ public class PathCalculator {
     }
 
 
-    /** Gets the two middle control points for a quintic bezier curve. The first control point is our initial control point. The second is our final.
+    /** Gets the two middle control points for our bezier spline. The first control point is our initial control point. The second is our final.
      * @param waypoint The waypoint to get the control points from
     */
     public Pose2d[] getControlPoints(Pose2d waypoint) {
@@ -183,6 +183,13 @@ public class PathCalculator {
         double dy = b.getY() - a.getY();
         Translation2d normal = new Translation2d(-dy, dx); 
         return normal.div(normal.getNorm() + 1E-6); // Normal vector is perpendicular to AB
+    }
+
+
+
+    public double calculateControlAngle(){
+        Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
+        return Rotation2d.fromRadians(Math.atan2(displacement.getY(), displacement.getX())).getDegrees();
     }
 
 
