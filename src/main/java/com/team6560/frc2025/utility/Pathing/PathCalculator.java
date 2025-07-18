@@ -31,7 +31,7 @@ public class PathCalculator {
     public final Pose2d BLUE_REEF_CENTER = new Pose2d(4.48, 4, new Rotation2d(0));
     public final Pose2d RED_REEF_CENTER = new Pose2d(13.05, 4, new Rotation2d(0));
 
-    public boolean useQuintic;
+    public boolean useQuintic; // LMFAO this needs to be renamed
 
     public PathCalculator(Pose2d currentPose, Pose2d finalPose){
         this.startPose = currentPose;
@@ -43,6 +43,7 @@ public class PathCalculator {
             useQuintic = false;
         }
     }
+    
 
     /** Gets a control point based upon current pose, magnitude, and direction
      * @param currentPose A point of the curve
@@ -88,6 +89,7 @@ public class PathCalculator {
         return useQuintic;
     }
 
+
     /** Obtains a cubic path from the start pose to the end pose, with a waypoint in between. Only use if {@link #getUseQuintic()} is false.
      * @param waypoint The waypoint to use
      * @return A path from the start pose to the end pose, with a waypoint in between
@@ -110,13 +112,62 @@ public class PathCalculator {
                         Constants.WHEEL_COF);
     }
 
-    // From here on out, denote our start point as A, our end point as B
 
-    /** Gets the two intersections of AB with the circle circumscribed around the reef*/
-    public Translation2d getCircleIntersections(){
-        // TODO: please please complete
-        return new Translation2d();
+    // From here on out, denote our start point as A, our end point as B. Define omega as the circle circumscribing the reef.
+
+
+    /** Gets the two intersections points of AB with the circle circumscribed around the reef
+     * @return An array of two Translation2d objects representing the intersection of AB with omega.
+    */
+    public Translation2d[] getCircleIntersections(){
+        final double RADIUS = 1.8; // radius of the circle around the reef in meters
+        Pose2d reefCenter;
+        // Refactor code if necessary
+        if(DriverStation.getAlliance().get() == Alliance.Blue){
+            reefCenter = BLUE_REEF_CENTER;
+        }
+        else{
+            reefCenter = RED_REEF_CENTER;
+        }
+        // models the line AB as a vector from A to B. Form is r(t) = (px, py) + t(dx, dy), where t is a time parameter.
+        double px = startPose.getX();
+        double py = startPose.getY();
+        Translation2d pathDisplacement = endPose.getTranslation().minus(startPose.getTranslation());
+        double dx = pathDisplacement.getX();
+        double dy = pathDisplacement.getY();
+
+        // models our circle.
+        double cx = reefCenter.getX();
+        double cy = reefCenter.getY();
+        double rSquared = Math.pow(RADIUS, 2);
+
+        // the intersection points can be found by substituting the parametrization into the circle equation and solving for t, then refactoring into r.
+        double A = Math.pow(dx, 2) + Math.pow(dy, 2);
+        double B = 2 * (dx * (px - cx) + dy * (py - cy));
+        double C = Math.pow(px - cx, 2) + Math.pow(py - cy, 2) - rSquared;
+
+        // Checks for discriminant > 0
+        double delta = Math.pow(B, 2) - 4 * A * C;
+        if (delta < 0) {
+            throw new IllegalArgumentException("you're chopped. (line does not intersect circle)");
+        }
+
+        // bash :D
+        double firstTValue = (-B + Math.sqrt(Math.pow(B, 2) - 4 * A * C)) / (2 * A);
+        double secondTValue = (-B - Math.sqrt(Math.pow(B, 2) - 4 * A * C)) / (2 * A);
+
+        Translation2d firstIntersection = new Translation2d(
+            px + firstTValue * dx, 
+            py + firstTValue * dy
+        );
+        Translation2d secondIntersection = new Translation2d(
+            px + secondTValue * dx, 
+            py + secondTValue * dy
+        ); 
+
+        return new Translation2d[] {firstIntersection, secondIntersection};
     }
+
 
     /** Gets the midpoint of two points (rotation doesn't even matter) */
     public Pose2d getMidpoint(Translation2d a, Translation2d b) {
@@ -125,7 +176,8 @@ public class PathCalculator {
         return new Pose2d(x, y, Rotation2d.fromDegrees(0));
     }
 
-    /** Gets the normal vector to AB */
+
+    /** Gets the normal and normalized vector to AB.*/
     public Translation2d getNormalVector(Translation2d a, Translation2d b) {
         double dx = b.getX() - a.getX();
         double dy = b.getY() - a.getY();
@@ -133,25 +185,29 @@ public class PathCalculator {
         return normal.div(normal.getNorm() + 1E-6); // Normal vector is perpendicular to AB
     }
 
-    // public PathGroup generateQuinticPath(){
-    //     // This is WRONG.
-    //     if(!useQuintic){
-    //         DriverStation.reportError("You cannot generate a quintic waypoint right now!", false);
-    //         return null;
-    //     }
 
-    //     // Gets the control points for the start and end poses.
-    //     Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, 
-    //             startPose.getRotation().getRadians() + Math.PI);
-    //     Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, 
-    //             endPose.getRotation().getRadians());
+    /** Calculates the control length for the start and end headings. Notice that the headings are the same for both start and end for each path segment.
+     * @return a control length heading based on arc length (for now)
+     */
+    public double calculateControlLength(){
+        return 0.0;
+    }
 
-    //     // Gets the control points for the waypoint.
-    //     Pose2d[] controlPoints = getControlPoints(getMidpoint(startPose.getTranslation(), endPose.getTranslation()));
 
-    //     return new PathGroup(startPose, endPose, startControlHeading, endControlHeading, 
-    //                     3.0, 3.0,
-    //                     Constants.WHEEL_COF,
-    //                     controlPoints[0], controlPoints[1]);
-    // }
+    /** This is for the special case in which we need to generate a path around an obstacle.
+     * @return a PathGroup object that contains two paths: one to a control point generated by going 1.5x robot length around the obstacle, and one to the target pose.
+    */
+    public PathGroup calculatePathGroup(){
+        // TODO: finish before tmrw
+        if(!useQuintic){
+            DriverStation.reportError("You cannot generate a PathGroup right now!", false);
+            return null;
+        }
+        Pose2d circleMidpoint = getMidpoint(getCircleIntersections()[0], getCircleIntersections()[1]);
+        Translation2d normalVector = getNormalVector(getCircleIntersections()[0], getCircleIntersections()[1]);
+
+        // Calculates the middle control point.
+        Pose2d waypoint = getPoseDirectionFrom(circleMidpoint, 1.0, normalVector.getAngle().getRadians());
+        return null;
+    }
 }

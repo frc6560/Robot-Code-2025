@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
+//TODOS: fix rotation.
+
 public class Path {
     private final Pose2d startPose;
     private final Pose2d endPose;

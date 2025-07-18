@@ -6,6 +6,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
+//TODOS: fix rotation. 
+
 public class PathGroup{
     public Path firstPath;
     public Path secondPath;
@@ -63,6 +65,8 @@ public class PathGroup{
             curvature = secondPath.getCurvature(timeParam);
             normalizedVelocity = secondPath.getNormalizedVelocityVector(timeParam);
         }
+
+        // Limits velocity
         double velocityMultiplier = Math.min(translationalSetpoint.velocity, Math.sqrt(MAX_AC / curvature + 1E-6));
 
         // fix rotation later
