@@ -28,8 +28,12 @@ public class PathCalculator {
     public double waypointInitialControlLength;
     public double endInitialControlLength;
 
+    public final double RADIUS = 1.8; // radius of the circle around the reef in meters
+
     public final Pose2d BLUE_REEF_CENTER = new Pose2d(4.48, 4, new Rotation2d(0));
     public final Pose2d RED_REEF_CENTER = new Pose2d(13.05, 4, new Rotation2d(0));
+
+    public Pose2d reefCenter;
 
     public boolean useQuintic; // LMFAO this needs to be renamed
 
@@ -41,6 +45,12 @@ public class PathCalculator {
             useQuintic = true;
         } else {
             useQuintic = false;
+        }
+        // This is fine because we initialize path calculator objects following robotinit
+        if(DriverStation.getAlliance().get() == Alliance.Blue){
+            reefCenter = BLUE_REEF_CENTER;
+        } else{
+            reefCenter = RED_REEF_CENTER;
         }
     }
 
@@ -101,7 +111,7 @@ public class PathCalculator {
         }
         // Calculates the angle bisector between our two poses. 
         double angle = startPose.getRotation().getRadians() 
-                        + MathUtil.inputModulus((endPose.getRotation().getDegrees() - startPose.getRotation().getDegrees()), 0,  90) / 2.0;
+                        + MathUtil.angleModulus(endPose.getRotation().getRadians() - startPose.getRotation().getRadians()) / 2.0;
 
         // Gets the control points for the start and end poses.
         Pose2d startControlHeading = getPoseDirectionFrom(startPose, 
@@ -127,15 +137,7 @@ public class PathCalculator {
      * @return An array of two Translation2d objects representing the intersection of AB with omega.
     */
     public Translation2d[] getCircleIntersections(){
-        final double RADIUS = 1.8; // radius of the circle around the reef in meters
-        Pose2d reefCenter;
-        // Refactor code if necessary
-        if(DriverStation.getAlliance().get() == Alliance.Blue){
-            reefCenter = BLUE_REEF_CENTER;
-        }
-        else{
-            reefCenter = RED_REEF_CENTER;
-        }
+
         // models the line AB as a vector from A to B. Form is r(t) = (px, py) + t(dx, dy), where t is a time parameter.
         double px = startPose.getX();
         double py = startPose.getY();
@@ -196,7 +198,7 @@ public class PathCalculator {
 
     public double calculateControlAngle(){
         Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
-        return Rotation2d.fromRadians(Math.atan2(displacement.getY(), displacement.getX())).getDegrees();
+        return Math.atan2(displacement.getY(), displacement.getX());
     }
 
 
@@ -204,7 +206,7 @@ public class PathCalculator {
      * @return a control length heading based on arc length (for now)
      */
     public double calculateControlLength(){
-        // TODO: please please complete
+        // TODO: please please finish
         return 0.0;
     }
 
@@ -221,8 +223,34 @@ public class PathCalculator {
         Pose2d circleMidpoint = getMidpoint(getCircleIntersections()[0], getCircleIntersections()[1]);
         Translation2d normalVector = getNormalVector(getCircleIntersections()[0], getCircleIntersections()[1]);
 
-        // Calculates the middle control point.
-        Pose2d waypoint = getPoseDirectionFrom(circleMidpoint, 1.0, normalVector.getAngle().getRadians());
-        return null;
+        // Calculates the middle control point. Because the normal vector may have been inverted, we do this the long way.
+        Translation2d disp = circleMidpoint.getTranslation().minus(reefCenter.getTranslation());
+        double angle = Math.atan2(disp.getY(), disp.getX());
+        double magnitude = (this.RADIUS - circleMidpoint.getTranslation().minus(reefCenter.getTranslation()).getNorm()) 
+                            + 1.5 * Math.sqrt(Math.pow(Constants.ROBOT_LENGTH, 2) + Math.pow(Constants.ROBOT_WIDTH, 2)); 
+        Pose2d waypointWithoutRotation = getPoseDirectionFrom(circleMidpoint, magnitude, angle);
+
+        Pose2d waypoint = new Pose2d(waypointWithoutRotation.getTranslation(), new Rotation2d(calculateControlAngle()));
+
+        // Finally calculates our paths.
+        Path firstPath = new Path(
+            this.startPose,
+            waypoint,
+            new Pose2d(), // FIX LATER!
+            getControlPoints(waypoint)[0],
+            0.5, // tune
+            0.5,
+            Constants.WHEEL_COF);
+
+        Path secondPath = new Path(
+            waypoint,
+            this.endPose,
+            getControlPoints(waypoint)[1],
+            new Pose2d(),
+            0.5,
+            0.5,
+            Constants.WHEEL_COF);
+
+        return new PathGroup(firstPath, secondPath, 0.5, 0.5, Constants.WHEEL_COF);
     }
 }
