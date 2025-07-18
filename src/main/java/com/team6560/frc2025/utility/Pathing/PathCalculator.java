@@ -104,10 +104,17 @@ public class PathCalculator {
                         + MathUtil.inputModulus((endPose.getRotation().getDegrees() - startPose.getRotation().getDegrees()), 0,  90) / 2.0;
 
         // Gets the control points for the start and end poses.
-        Pose2d startControlHeading = getPoseDirectionFrom(startPose, startFinalControlLength, angle);
-        Pose2d endControlHeading = getPoseDirectionFrom(endPose, endInitialControlLength, angle + Math.PI);
+        Pose2d startControlHeading = getPoseDirectionFrom(startPose, 
+                                                            startFinalControlLength, 
+                                                            angle);
+        Pose2d endControlHeading = getPoseDirectionFrom(endPose, 
+                                                            endInitialControlLength, 
+                                                            angle + Math.PI);
 
-        return new Path(startPose, endPose, startControlHeading, endControlHeading, 
+        return new Path(startPose,
+                        endPose, 
+                        startControlHeading, 
+                        endControlHeading, 
                         3.0, 3.0,
                         Constants.WHEEL_COF);
     }
@@ -197,6 +204,7 @@ public class PathCalculator {
      * @return a control length heading based on arc length (for now)
      */
     public double calculateControlLength(){
+        // TODO: please please complete
         return 0.0;
     }
 
