@@ -176,10 +176,11 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
     swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
     swerveDrive.field.setRobotPose(this.getPose());
-    if(getFieldVelocity().vxMetersPerSecond != 0 && getFieldVelocity().vyMetersPerSecond != 0){
-      System.out.println("vel: " + getFieldVelocity());
-    }
+    // if(getFieldVelocity().vxMetersPerSecond != 0 && getFieldVelocity().vyMetersPerSecond != 0){
+    //   System.out.println("vel: " + getFieldVelocity());
     // }
+    // }
+    System.out.println(swerveDrive.getOdometryHeadingNoAprilTags());
   }
 
   Pose2d getClosestTargetPoseLeft() {
