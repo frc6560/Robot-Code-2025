@@ -10,7 +10,7 @@ public final class Constants {
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(19.5);
 
-  public static final double WHEEL_COF = 0.8; // subject to much change.
+  public static final double WHEEL_COF = 1.19; // subject to much change.
 
   public static final double ROBOT_WIDTH = 0.965;
   public static final double ROBOT_LENGTH = 0.838;
