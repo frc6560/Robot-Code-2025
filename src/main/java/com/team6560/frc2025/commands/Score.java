@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
@@ -23,7 +22,7 @@ public class Score extends SequentialCommandGroup{
 
         double wristTarget = targetWristAngle;
         double elevatorTarget = targetElevatorHeight;
-        
+
         final Command mechanismUp = new FunctionalCommand(
                     () -> {
                     },
