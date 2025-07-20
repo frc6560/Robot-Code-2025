@@ -1,9 +1,11 @@
-package com.team6560.frc2025.commands.auto;
+package com.team6560.frc2025.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
+import com.team6560.frc2025.Constants;
+import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -12,23 +14,25 @@ import com.team6560.frc2025.subsystems.Wrist;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class ScoringL4 extends SequentialCommandGroup{
+public class Score extends SequentialCommandGroup{
 
-    public ScoringL4(Wrist wrist, Elevator elevator, PipeGrabber grabber) {
-        double wristAngleL4 = 6.56;
-        double elevStateL4 = 17.65;
+    public Score(Wrist wrist, Elevator elevator, PipeGrabber grabber, ManualControls controls, double targetWristAngle, double targetElevatorHeight) {
+
         Timer ejectTimer = new Timer();
         Timer downTimer = new Timer();
 
+        double wristTarget = targetWristAngle;
+        double elevatorTarget = targetElevatorHeight;
+        
         final Command mechanismUp = new FunctionalCommand(
                     () -> {
                     },
                     () -> {
-                        elevator.setElevatorPosition(elevStateL4);
-                        wrist.setMotorPosition(wristAngleL4);
+                        elevator.setElevatorPosition(elevatorTarget);
+                        wrist.setMotorPosition(wristTarget);
                     },
                     (interrupted) -> {},
-                    () -> Math.abs(elevator.getElevatorHeight() - elevStateL4) < 1.0 
+                    () -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < 1.0 
                     );
 
         final Command ejectPiece = new FunctionalCommand(
@@ -40,8 +44,8 @@ public class ScoringL4 extends SequentialCommandGroup{
                             if (ejectTimer.hasElapsed(0.2)) { // jank fix but wrist pos check doesn't work :(
                                 grabber.runGrabberOuttakeMaxSpeed();
                             }
-                            elevator.setElevatorPosition(elevStateL4);
-                            wrist.setMotorPosition(wristAngleL4);
+                            elevator.setElevatorPosition(elevatorTarget);
+                            wrist.setMotorPosition(wristTarget);
                         },
                         (interrupted) -> grabber.stop(), 
                         () -> ejectTimer.hasElapsed(0.3));
