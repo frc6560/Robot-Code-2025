@@ -95,24 +95,13 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
     NamedCommands.registerCommand("Scoring L4", new ScoringL4(wrist, elevator, pipeGrabber));
-    NamedCommands.registerCommand("Scoring L4 Up Only", new ScoringL4UpOnly(wrist, elevator, pipeGrabber));
-    NamedCommands.registerCommand("Scoring L4 Down Only", new ScoringL4DownOnly(wrist, elevator, pipeGrabber));
     // NamedCommands.registerCommand("TravelingL3", new L3Travel(wrist, elevator));
     configureBindings();
 
     autoChooser = new SendableChooser<Command>();
 
-    // autoChooser.addOption("1p Mid", get1PAuto());    
-
-    // autoChooser.addOption("No Auto", null);
-    // autoChooser.addOption("Taxi Auto", getTaxiAuto());
-
-    // autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
-    // autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
     autoChooser.setDefaultOption("AeroSeg3Inv", getAeroSeg3Inv());
-    // autoChooser.addOption("Bump Auto", getAeroBumpAuto());
 
-    // autoChooser.addOption("Test elevator collapse", testElevatorCollapse());
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -126,12 +115,7 @@ public class RobotContainer {
 
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
-    // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-    // driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    
-    //  driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-
-    // Use (new!) auto align mechanism
+    // Use auto align, will fix to incorporate scoring afterwards
     driverXbox.x().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseLeft().schedule(), drivebase));
 
     driverXbox.b().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseRight().schedule(), drivebase));
