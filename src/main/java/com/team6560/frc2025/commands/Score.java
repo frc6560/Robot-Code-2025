@@ -23,31 +23,23 @@ public class Score extends SequentialCommandGroup{
         double wristTarget = targetWristAngle;
         double elevatorTarget = targetElevatorHeight;
 
+        double E_TOLERANCE = 1.0;
+        double W_TOLERANCE = 8.0;
+
         final Command mechanismUp = new FunctionalCommand(
                     () -> {
                     },
                     () -> {
                         elevator.setElevatorPosition(elevatorTarget);
                         wrist.setMotorPosition(wristTarget);
+                        if(Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && 
+                           Math.abs(wrist.getWristAngle() - wristTarget) < W_TOLERANCE) {
+                            grabber.runGrabberOuttakeMaxSpeed();
+                        }
                     },
                     (interrupted) -> {},
-                    () -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < 1.0 
+                    () -> !grabber.hasGamePiece()
                     );
-
-        final Command ejectPiece = new FunctionalCommand(
-                        () -> {
-                            ejectTimer.reset();
-                            ejectTimer.start();
-                        },
-                        () -> {
-                            if (ejectTimer.hasElapsed(0.2)) { // jank fix but wrist pos check doesn't work :(
-                                grabber.runGrabberOuttakeMaxSpeed();
-                            }
-                            elevator.setElevatorPosition(elevatorTarget);
-                            wrist.setMotorPosition(wristTarget);
-                        },
-                        (interrupted) -> grabber.stop(), 
-                        () -> ejectTimer.hasElapsed(0.3));
 
         final Command mechanismDown = new FunctionalCommand(
                         () -> {
@@ -58,7 +50,7 @@ public class Score extends SequentialCommandGroup{
                         },
                         () -> {
                             wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
-                            if (downTimer.hasElapsed(0.7)) {
+                            if (downTimer.hasElapsed(0.3)) {
                                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
                             }
                         },
@@ -66,7 +58,7 @@ public class Score extends SequentialCommandGroup{
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0)
         );
 
-        super.addCommands(mechanismUp, ejectPiece, mechanismDown);
+        super.addCommands(mechanismUp, mechanismDown);
         super.addRequirements(wrist, elevator, grabber);
     }
 

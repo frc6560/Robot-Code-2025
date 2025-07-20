@@ -201,7 +201,7 @@ public class PathCalculator {
     }
 
 
-    /** Cal */
+    /** Calculates a control angle */
     public double calculateControlAngle(){
         Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
         return Math.atan2(displacement.getY(), displacement.getX());
