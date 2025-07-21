@@ -30,6 +30,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -58,9 +59,11 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.frc3481.swervelib.SwerveController;
 import com.frc3481.swervelib.SwerveDrive;
 import com.frc3481.swervelib.SwerveDriveTest;
+import com.frc3481.swervelib.imu.SwerveIMU;
 import com.frc3481.swervelib.math.SwerveMath;
 import com.frc3481.swervelib.parser.SwerveControllerConfiguration;
 import com.frc3481.swervelib.parser.SwerveDriveConfiguration;
@@ -175,12 +178,10 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
     swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
+    swerveDrive.field.getObject("Expected robot pose").setPose(new Pose2d(new Translation2d(this.getPose().getX(), 
+      this.getPose().getY()), 
+      swerveDrive.getOdometryHeadingNoAprilTags()));
     swerveDrive.field.setRobotPose(this.getPose());
-    // if(getFieldVelocity().vxMetersPerSecond != 0 && getFieldVelocity().vyMetersPerSecond != 0){
-    //   System.out.println("vel: " + getFieldVelocity());
-    // }
-    // }
-    System.out.println(swerveDrive.getOdometryHeadingNoAprilTags());
   }
 
   Pose2d getClosestTargetPoseLeft() {
@@ -710,6 +711,7 @@ public class SwerveSubsystem extends SubsystemBase
     if (pose == null || pose.equals(emptyPose)) return;
 
     resetOdometry(pose);
+    swerveDrive.setGyro(new Rotation3d(0, 0, pose.getRotation().getRadians()));
   }
 
   /**
