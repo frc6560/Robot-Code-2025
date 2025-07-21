@@ -175,12 +175,8 @@ public class SwerveSubsystem extends SubsystemBase
         swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
       }
     }
-
-    swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
-    swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
-    swerveDrive.field.getObject("Expected robot pose").setPose(new Pose2d(new Translation2d(this.getPose().getX(), 
-      this.getPose().getY()), 
-      swerveDrive.getOdometryHeadingNoAprilTags()));
+    System.out.println("without vision:" + swerveDrive.getOdometryHeadingNoAprilTags());
+    System.out.println("with vision: " + swerveDrive.getOdometryHeading());
     swerveDrive.field.setRobotPose(this.getPose());
   }
 
