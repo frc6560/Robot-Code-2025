@@ -408,7 +408,10 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
-  /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information */
+  /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information. This command is more so used for auto align.
+   * @param poseSupplier Supplier of the target {@link Pose2d} to drive to.
+   * @return a Command to drive to the specific path using a straight line. 
+  */
   public Command driveToPose(Supplier<Pose2d> poseSupplier){
     AutoAlignPath alignPath = new AutoAlignPath(
         swerveDrive.getPose(),
@@ -420,27 +423,6 @@ public class SwerveSubsystem extends SubsystemBase
     return followPath(alignPath);
   }
 
-  /** Experimental only: drive a full path similar to pathplanner*/
-  public Command pathfindToPose(Pose2d pose, Pose2d initialControlHeading, Pose2d finalControlHeading) {
-    double[] t = {0.0};
-    Path path = new Path(
-          swerveDrive.getPose(),
-          pose,
-          initialControlHeading,
-          finalControlHeading, // THESE NEED TO BE ADDED. TODO: turn into hermite form.
-          1.5, // max velocity
-          1.5, // max tangential acceleration
-          0.5 // max centripetal acceleration
-    );
-    Command pathfindCommand = run(
-      () -> {
-        t[0] += 0.02; 
-        Setpoint setpoint = path.calculate(t[0], getPose().getRotation().getRadians());
-        followSegment(setpoint);
-      }
-    );
-    return pathfindCommand;
-  }
 
   public Command driveToPose(Pose2d pose) {
     return driveToPose(() -> pose);
