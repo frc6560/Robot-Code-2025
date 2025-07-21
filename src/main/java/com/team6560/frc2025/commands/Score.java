@@ -25,13 +25,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Score extends SequentialCommandGroup {
+    public boolean canDunk = false;
 
     public Score(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, Pose2d targetPose,
-                ManualControls controls, double targetWristAngle, double targetElevatorHeight) {
+                ManualControls controls, double targetWrist, double targetElevatorHeight) {
 
         Timer downTimer = new Timer();
 
-        double wristTarget = targetWristAngle;
+        double wristDunkAngle = 6.56;
         double elevatorTarget = targetElevatorHeight;
 
         double E_TOLERANCE = 1.0;
@@ -74,7 +75,6 @@ public class Score extends SequentialCommandGroup {
                     () -> {
                         // Sets subsystems.
                         elevator.setElevatorPosition(elevatorTarget);
-                        wrist.setMotorPosition(wristTarget);
 
                         // Compute the next translation state for the robot to target (t+0.02s).
                         State translationSetpoint = translationProfile.calculate(0.02, translationalState, targetTranslationalState);
@@ -100,13 +100,20 @@ public class Score extends SequentialCommandGroup {
                             .getTranslation()
                             .interpolate(path.startPose.getTranslation(), 
                                 translationSetpoint.position / path.getDisplacement().getNorm());
-            
+                        
+                        double targetWristAngle = WristConstants.WristStates.L4;
 
                         if( translationalState.position < 0.1 && Math.abs(rotationalState.position) < 0.1){
                             drivetrain.drive(new ChassisSpeeds(0, 0, 0));
                             if(Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && 
-                            Math.abs(wrist.getWristAngle() - wristTarget) < W_TOLERANCE){
-                                grabber.runGrabberOuttakeMaxSpeed();
+                            Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < W_TOLERANCE){
+                                canDunk = true;
+                            }
+                            if(canDunk){
+                                targetWristAngle = wristDunkAngle;
+                                if(Math.abs(wrist.getWristAngle() - targetWristAngle) < W_TOLERANCE){
+                                    grabber.runGrabberOuttakeMaxSpeed();
+                                }
                             }
                         }
                         else {
@@ -117,8 +124,10 @@ public class Score extends SequentialCommandGroup {
                                 path.getNormalizedDisplacement().getX() * -translationSetpoint.velocity, // the problem is DEFINITELY here
                                 path.getNormalizedDisplacement().getY() * -translationSetpoint.velocity,
                                 rotationalState.velocity
-                        ));
-            }
+                            ));
+                        }
+
+                        wrist.setMotorPosition(targetWristAngle);
                     },
                     (interrupted) -> {},
                     () -> !grabber.hasGamePiece()
