@@ -9,6 +9,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 //TODO LIST: 
 // - fix rotation.
+// - better physics engine (HARD)
+// - test for constants
 
 public class Path {
     private final Pose2d startPose;

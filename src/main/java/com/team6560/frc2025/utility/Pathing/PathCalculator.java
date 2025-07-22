@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import com.team6560.frc2025.Constants;
 
 // TODO LIST:
-// write generation algorithm for a waypoint.
-// for obstacle get the segment intersecting circle, find perpendicular bisector, and go a tunable distance!
+// write generation algorithm for a waypoint. (done)
+// for obstacle get the segment intersecting circle, find perpendicular bisector, and go a tunable distance! (done)
 // generate path
-// equalize headings
+// equalize headings ()
 // go!
 
 /** A method to generate a smooth path to a pose of our choice. */
