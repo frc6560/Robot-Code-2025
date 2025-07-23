@@ -414,8 +414,8 @@ public class SwerveSubsystem extends SubsystemBase
         poseSupplier.get(),
         0.6, 
         0.5, 
-        180, 
-        360); 
+        3.14, 
+        6.28); 
     return followPath(alignPath);
   }
 

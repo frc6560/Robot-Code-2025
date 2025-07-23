@@ -6,10 +6,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
 //TODO LIST: 
-// - fix rotation.
-// - better physics engine (HARD)
+// - fix rotation. (in progress)
+// - better physics engine, somewhere else
 // - test for constants
 
 public class Path {
@@ -19,17 +20,20 @@ public class Path {
     private final Pose2d startControlHeading;
     private final Pose2d endControlHeading;
 
-    private TrapezoidProfile.State startState;
+    private final TrapezoidProfile.State startState;
     private final TrapezoidProfile.State endState;
 
+    private final TrapezoidProfile.State startRotation;
+    private final TrapezoidProfile.State endRotation;
+
+    // Profiles handling translation and rotation
     private final TrapezoidProfile translationProfile;
+    private final TrapezoidProfile rotationProfile;
 
     private final int LOOKUP_RES = 1000;
     private double[] arcLengthChart = new double[LOOKUP_RES + 1];
 
-    private double AT;
-    private final double MAX_A;
-    private double MAX_AC;
+    private double MAX_AT;
 
 
     private double x3 = 0.0;
@@ -42,36 +46,39 @@ public class Path {
     private double y1 = 0.0;
     private double y0 = 0.0;
 
+
     /** Defines a {@link Path} in 2 dimensions. Translation is handled via a Bézier curve and trapezoidal profile. Rotation is handled linearly.
      * @param startPose The start pose
      * @param endPose The end pose
      * @param startControlHeading The control point for the start of the curve, which defines the initial heading. Quintic bezier curves have an additional two control points.
      * @param endControlHeading The control point for the end of the curve, which defines the final heading. 
      * @param maxVelocity Maximum velocity
-     * @param maxAt Max tangential accel
+     * @param maxAt Max tangential acceleration allowed on the path
+     * @param maxOmega Maximum angular velocity, in radians/s
+     * @param maxAlpha Maximum angular acceleration, in radians/s^2
      */
     public Path(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
-                        double maxVelocity, double maxAt, double staticCof) {
+                        double maxVelocity, double maxAt, double maxOmega, double maxAlpha) {
         this.startPose = startPose;
         this.endPose = endPose;
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
 
-        // sets up the trapezoidal profile start and end states... as wel as the actual profiles
+        // Sets up the trapezoidal profile start and end states... as well as the actual profiles
+        // translation
         this.startState = new TrapezoidProfile.State(0, 0);
         this.endState = new TrapezoidProfile.State(getArcLength(), 0);
 
         this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAt));
 
-        // finally generates a lookup table for reference.
-        generateLookupTable();
+        // rotation
+        this.startRotation = new TrapezoidProfile.State(startPose.getRotation().getRadians(), 0);
+        this.endRotation = new TrapezoidProfile.State(endPose.getRotation().getRadians(), 0);
+        this.rotationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxOmega, maxAlpha));
 
-        // and calculates the maximum acceleration values.
-        MAX_A = staticCof * 9.81;
-        AT = 0;
-        MAX_AC = Math.sqrt(Math.pow(MAX_A, 2) - Math.pow(AT, 2)); // centripetal acceleration
+        this.MAX_AT = maxAt;
 
-
+        // Actually defines our curve
         // defines x component for the cubic Bézier curve
         this.x3 = -startPose.getX() + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.getX();
         this.x2 = 3 * startPose.getX() - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
@@ -83,6 +90,9 @@ public class Path {
         this.y2 = 3 * startPose.getY() - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
         this.y1 = -3 * startPose.getY() + 3 * startControlHeading.getY();
         this.y0 = startPose.getY();
+
+        // generate a lookup table for arc length to time
+        generateLookupTable();
     }
 
     /** Getter methods*/
@@ -156,14 +166,6 @@ public class Path {
         return new Translation2d(ddx, ddy);
     }
 
-    /** This calculates the maximum possible centripetal acceleration at any given point. */
-    public void calculateMaxAc(){
-        if(AT > MAX_A)  {
-            throw new IllegalArgumentException("you're chopped (max tangential acceleration cannot be greater than max acceleration).");
-        }
-        MAX_AC = Math.sqrt(Math.pow(MAX_A, 2) - Math.pow(AT, 2)); // centripetal acceleration
-    }
-
 
     /** This generates a lookup table to obtain different arc lengths.
      * @return An array of arc lengths for the path at different time intervals, with resolution 1/1000 of the total time.
@@ -233,32 +235,34 @@ public class Path {
 
     
     /** Calculates the next position of the path for the robot to target. Returns as a Setpoint object. 
+     * The reason we need the current rotation is because mod 360 shenanigans 
      * @param t the time parameter, currentRotation the current rotation of the robot
      * @param currentRotation the current rotation of the robot
      */
-    public Setpoint calculate(double t, double currentRotation){
+    public Setpoint calculate(TrapezoidProfile.State currentTranslationState, 
+                                TrapezoidProfile.State currentRotationState, double rotation){
         // Translation
-        TrapezoidProfile.State translationalSetpoint = translationProfile.calculate(t, startState, endState);
-        TrapezoidProfile.State previousState = translationProfile.calculate(t - 0.02, startState, endState);
-
+        TrapezoidProfile.State translationalSetpoint = translationProfile.calculate(0.02, currentTranslationState, endState);
         double timeParam = getTimeForArcLength(translationalSetpoint.position);
         Translation2d translationalTarget = calculatePosition(timeParam);
 
-        // Calculates max ac based upon at and takes the maximum velocity possible.
-        AT = (translationalSetpoint.velocity - previousState.velocity) / 0.02; // change in velocity over time
-        AT = MathUtil.clamp(AT, -MAX_A, MAX_A); // clamps to max acceleration
-        calculateMaxAc();
-        double velocityMultiplier = Math.min(translationalSetpoint.velocity, Math.sqrt(MAX_AC / getCurvature(timeParam) + 1E-6));
-
         // Rotation
-        double thetaTarget = MathUtil.interpolate(currentRotation, 
-                                                endPose.getRotation().getRadians(), timeParam);
+        double rotationalPose = rotation;
+        double errorToGoal = MathUtil.angleModulus(endRotation.position - rotationalPose);
+        double errorToSetpoint = MathUtil.angleModulus(startRotation.position - rotationalPose);
+
+        // gets rid of mod 2pi issues
+        endState.position = rotationalPose + errorToGoal;
+        currentRotationState.position = rotationalPose + errorToSetpoint;
+
+        // finally computes next rotation state 
+        State rotationalSetpoint = rotationProfile.calculate(0.02, currentRotationState, endRotation);
 
         return new Setpoint(translationalTarget.getX(), 
                             translationalTarget.getY(), 
-                            thetaTarget, 
-                            getNormalizedVelocityVector(timeParam).getX() * velocityMultiplier, 
-                            getNormalizedVelocityVector(timeParam).getY() * velocityMultiplier,
-                            0);
+                            rotationalSetpoint.position, 
+                            getNormalizedVelocityVector(timeParam).getX() * translationalSetpoint.velocity, 
+                            getNormalizedVelocityVector(timeParam).getY() * translationalSetpoint.velocity,
+                            rotationalSetpoint.velocity);
     }
 }

@@ -120,11 +120,11 @@ public class PathCalculator {
                         + MathUtil.angleModulus(endPose.getRotation().getRadians() - startPose.getRotation().getRadians()) / 2.0;
         
         // Calculates the control length based on the angle difference and the displacement.
-        double controLengthConstant = 1.0; // subject to tuning
+        double controlLengthConstant = 1.0; // subject to tuning
         Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
 
-        double angleDifference = Math.abs(angle, Math.atan2(displacement.getY(), displacement.getX()));
-        this.startFinalControlLength = displacement.getNorm() * Math.abs(Math.sin(angleDifference)) * controLengthConstant;
+        double angleDifference = Math.abs(angle - Math.atan2(displacement.getY(), displacement.getX()));
+        this.startFinalControlLength = displacement.getNorm() * Math.abs(Math.sin(angleDifference)) * controlLengthConstant;
         this.endInitialControlLength = startFinalControlLength; // symmetry
 
         // Gets the control points for the start and end poses.
@@ -139,8 +139,7 @@ public class PathCalculator {
                         endPose, 
                         startControlHeading, 
                         endControlHeading, 
-                        3.0, 3.0,
-                        Constants.WHEEL_COF);
+                        3.0, 3.0, 3.14, 6.28);
     }
 
 
@@ -245,8 +244,9 @@ public class PathCalculator {
             new Pose2d(), // FIX LATER!
             getControlPoints(waypoint)[0],
             0.5, // tune
-            0.5,
-            Constants.WHEEL_COF);
+            0.5, // tune
+            3.14,
+            6.28);
 
         Path secondPath = new Path(
             waypoint,
@@ -255,8 +255,9 @@ public class PathCalculator {
             new Pose2d(),
             0.5,
             0.5,
-            Constants.WHEEL_COF);
+            3.14,
+            6.28);
 
-        return new PathGroup(firstPath, secondPath, 0.5, 0.5, Constants.WHEEL_COF);
+        return new PathGroup(firstPath, secondPath, 0.5, 0.5, 3.14, 6.28);
     }
 }
