@@ -118,6 +118,14 @@ public class PathCalculator {
         // Calculates the angle bisector between our two poses. 
         double angle = startPose.getRotation().getRadians() 
                         + MathUtil.angleModulus(endPose.getRotation().getRadians() - startPose.getRotation().getRadians()) / 2.0;
+        
+        // Calculates the control length based on the angle difference and the displacement.
+        double controLengthConstant = 1.0; // subject to tuning
+        Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
+
+        double angleDifference = Math.abs(angle, Math.atan2(displacement.getY(), displacement.getX()));
+        this.startFinalControlLength = displacement.getNorm() * Math.abs(Math.sin(angleDifference)) * controLengthConstant;
+        this.endInitialControlLength = startFinalControlLength; // symmetry
 
         // Gets the control points for the start and end poses.
         Pose2d startControlHeading = getPoseDirectionFrom(startPose, 
@@ -201,19 +209,10 @@ public class PathCalculator {
     }
 
 
-    /** Calculates a control angle */
+    /** Calculates a control angle for our middle waypoint*/
     public double calculateControlAngle(){
         Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
         return Math.atan2(displacement.getY(), displacement.getX());
-    }
-
-
-    /** Calculates the control length for the start and end headings. Notice that the headings are the same for both start and end for each path segment.
-     * @return a control length heading based on arc length (for now)
-     */
-    public double calculateControlLength(){
-        // TODO: please please finish
-        return 0.0;
     }
 
 
@@ -236,6 +235,8 @@ public class PathCalculator {
         Pose2d waypointWithoutRotation = getPoseDirectionFrom(circleMidpoint, magnitude, angle);
 
         Pose2d waypoint = new Pose2d(waypointWithoutRotation.getTranslation(), new Rotation2d(calculateControlAngle()));
+
+        // Calculates each control point length. Path 1 and Path 2 are handled separately, unlike our quintic curve.
 
         // Finally calculates our paths.
         Path firstPath = new Path(
