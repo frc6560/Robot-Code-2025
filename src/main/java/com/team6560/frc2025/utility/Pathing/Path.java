@@ -57,7 +57,7 @@ public class Path {
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
 
-        // sets up the trapezoidal profile start and end states...
+        // sets up the trapezoidal profile start and end states... as wel as the actual profiles
         this.startState = new TrapezoidProfile.State(0, 0);
         this.endState = new TrapezoidProfile.State(getArcLength(), 0);
 
