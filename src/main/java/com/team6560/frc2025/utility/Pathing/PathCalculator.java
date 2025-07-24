@@ -18,8 +18,6 @@ import com.team6560.frc2025.Constants;
 
 /** A method to generate a smooth path to a pose of our choice. */
 public class PathCalculator {
-    public Path path;
-
     public Pose2d startPose;
     public Pose2d endPose;
 

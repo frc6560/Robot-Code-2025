@@ -5,6 +5,7 @@ import com.team6560.frc2025.utility.Setpoint;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
 //TODOS: fix rotation. 
 // FIX EVERYTHING
@@ -20,6 +21,7 @@ public class PathGroup{
     public TrapezoidProfile.State endRotation;
 
     public TrapezoidProfile profile;
+    public TrapezoidProfile rotationProfile;
 
     /** Creates a PathGroup object. TODO: refactor?*/
     public PathGroup(Path firstPath, Path secondPath, double maxVelocity, double maxAt, double maxOmega, double maxAlpha) {
@@ -30,47 +32,55 @@ public class PathGroup{
         this.endState = new TrapezoidProfile.State(firstPath.getArcLength() + secondPath.getArcLength(), 0);
 
         this.startRotation = new TrapezoidProfile.State(firstPath.getStartPose().getRotation().getRadians(), 0);
+        this.endRotation = new TrapezoidProfile.State(secondPath.getEndPose().getRotation().getRadians(), 0);
 
         // Note that we cannot use the original paths' profiles, as this would generate an unnecessary pause at the transition point.
         this.profile = new TrapezoidProfile(
             new TrapezoidProfile.Constraints(maxVelocity, maxAt)
         );
+        this.rotationProfile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(maxOmega, maxAlpha)
+        );
     }
 
 
     /** We don't really need any of the other functions. A modified calculation function. */
-    public Setpoint calculate(double t, TrapezoidProfile.State translation, TrapezoidProfile.State rotation,
+    public Setpoint calculate(TrapezoidProfile.State translation, TrapezoidProfile.State rotation,
                             double currentRotation){
         // Translation
-        TrapezoidProfile.State translationalSetpoint = profile.calculate(t, startState, endState);
+        TrapezoidProfile.State translationalSetpoint = profile.calculate(0.02, translation, endState);
 
-        double curvature;
         Translation2d normalizedVelocity;
-        Translation2d translationalTarget;
         double timeParam;
+        Translation2d translationalTarget;
+
+        // Rotation
+        double rotationalPose = currentRotation;
+        double errorToGoal = MathUtil.angleModulus(endRotation.position - rotationalPose);
+        double errorToSetpoint = MathUtil.angleModulus(startRotation.position - rotationalPose);
+
+        // gets rid of mod 2pi issues
+        endState.position = rotationalPose + errorToGoal;
+        rotation.position = rotationalPose + errorToSetpoint;
+
+        // finally computes next rotation state 
+        State rotationalSetpoint = rotationProfile.calculate(0.02, rotation, endRotation);
 
         if(translationalSetpoint.position < firstPath.getArcLength()){
             timeParam = firstPath.getTimeForArcLength(translationalSetpoint.position);
-            translationalTarget = firstPath.calculatePosition(timeParam);
-
-            curvature = firstPath.getCurvature(timeParam);
             normalizedVelocity = firstPath.getNormalizedVelocityVector(timeParam);
+            translationalTarget = firstPath.calculatePosition(timeParam);
         } else {
             timeParam = secondPath.getTimeForArcLength(translationalSetpoint.position - firstPath.getArcLength());
-            translationalTarget = secondPath.calculatePosition(timeParam);
-
-            curvature = secondPath.getCurvature(timeParam);
             normalizedVelocity = secondPath.getNormalizedVelocityVector(timeParam);
+            translationalTarget = secondPath.calculatePosition(timeParam);
         }
 
-        // fix rotation later
-        double thetaTarget = 0;
-        // return new Setpoint(translationalTarget.getX(),
-        //                     translationalTarget.getY(), 
-        //                     thetaTarget, 
-        //                     normalizedVelocity.getX() * velocityMultiplier, 
-        //                     normalizedVelocity.getY() * velocityMultiplier,
-        //                     0);
-        return null;
+        return new Setpoint(translationalTarget.getX(),
+                            translationalTarget.getY(), 
+                            rotationalSetpoint.position, 
+                            normalizedVelocity.getX() * translationalSetpoint.velocity, 
+                            normalizedVelocity.getY() * translationalSetpoint.velocity,
+                            rotationalSetpoint.velocity);
     }
 }

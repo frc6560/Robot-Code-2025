@@ -22,6 +22,7 @@ import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 import com.team6560.frc2025.utility.Pathing.Path;
+import com.team6560.frc2025.utility.Pathing.PathCalculator;
 import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.Setpoint;
 
@@ -294,12 +295,11 @@ public class SwerveSubsystem extends SubsystemBase
   TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
   TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
 
-  /** Follows a linear path with a trapezoidal profile. Used for auto align.
-   * 
+  /** Follows a linear path with a trapezoidal profile. Used for auto align. Translation is handled via error!
    * @param path Path object to follow.
    * @return Command to follow the path.
   */
-  public Command followPath(AutoAlignPath path){
+  public Command autoAlignToPath(AutoAlignPath path){
     // Set up profiles
     TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
     TrapezoidProfile.Constraints rotationConstraints = new Constraints(
@@ -369,41 +369,6 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-
-  /**
-   * Get the path follower with events.
-   *
-   * @param pathName PathPlanner path name.
-   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
-   */
-  public Command getAutonomousCommand(String pathName)
-  {
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
-    return new PathPlannerAuto(pathName);
-  }
-
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
-  public Command driveToPoseWithPathPlanner(Pose2d pose)
-  {
-
-  // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints( // used to be 1, 1.5
-        2.5, 2.25,
-        Units.degreesToRadians(200), Units.degreesToRadians(200));
-
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        pose,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     );
-  }
-
   /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information. This command is more so used for auto align.
    * @param poseSupplier Supplier of the target {@link Pose2d} to drive to.
    * @return a Command to drive to the specific path using a straight line. 
@@ -416,7 +381,7 @@ public class SwerveSubsystem extends SubsystemBase
         0.5, 
         3.14, 
         6.28); 
-    return followPath(alignPath);
+    return autoAlignToPath(alignPath);
   }
 
 
@@ -426,11 +391,38 @@ public class SwerveSubsystem extends SubsystemBase
 
 
   public Command driveToNearestPoseLeft() {
-    return driveToPoseWithPathPlanner(getClosestTargetPoseLeft());
+    return driveToPose(getClosestTargetPoseLeft());
   }
 
   public Command driveToNearestPoseRight(){
     return driveToPose(getClosestTargetPoseRight());
+  }
+
+  /** A full command to drive a path according to a custom Path object (see utility/Pathing). 
+   * @param targetPose The target {@link Pose2d} to pathfind to.
+   * @return A {@link Command} object that repetitively generates setpoints (TODO: respecting robot constraints) 
+   * that PID targets
+   */
+  public Command followPath(Pose2d targetPose){
+    PathCalculator pathCalculator = new PathCalculator(getPose(), targetPose);
+    // Path 
+    // // Checks if we need to use bezier splines or just a simple cubic bezier.
+    // if(Math.abs(pathCalculator.getRegion(getPose()) - pathCalculator.getRegion(targetPose)) < 1){
+    //   Path 
+    // }
+    return null;
+  }
+
+  /**
+   * Get the path follower with events.
+   *
+   * @param pathName PathPlanner path name.
+   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
+   */
+  public Command getAutonomousCommand(String pathName)
+  {
+    // Create a path following command using AutoBuilder. This will also trigger event markers.
+    return new PathPlannerAuto(pathName);
   }
 
   /**
