@@ -245,6 +245,8 @@ public class Path {
         TrapezoidProfile.State translationalSetpoint = translationProfile.calculate(0.02, currentTranslationState, endState);
         double timeParam = getTimeForArcLength(translationalSetpoint.position);
         Translation2d translationalTarget = calculatePosition(timeParam);
+        currentTranslationState.position = translationalSetpoint.position;
+        currentTranslationState.velocity = translationalSetpoint.velocity;
 
         // Rotation
         double rotationalPose = rotation;
@@ -257,6 +259,8 @@ public class Path {
 
         // finally computes next rotation state 
         State rotationalSetpoint = rotationProfile.calculate(0.02, currentRotationState, endRotation);
+        currentRotationState.position = rotationalSetpoint.position;
+        currentRotationState.velocity = rotationalSetpoint.velocity;
 
         return new Setpoint(translationalTarget.getX(), 
                             translationalTarget.getY(), 
