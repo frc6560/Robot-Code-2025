@@ -405,11 +405,11 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Command followPath(Pose2d targetPose){
     PathCalculator pathCalculator = new PathCalculator(getPose(), targetPose);
-    // Path 
-    // // Checks if we need to use bezier splines or just a simple cubic bezier.
-    // if(Math.abs(pathCalculator.getRegion(getPose()) - pathCalculator.getRegion(targetPose)) < 1){
-    //   Path 
-    // }
+    ArrayList<Path> pathQueue = new ArrayList<Path>();
+    // Checks if we need to use bezier splines or just a simple cubic bezier.
+    if(Math.abs(pathCalculator.getRegion(getPose()) - pathCalculator.getRegion(targetPose)) < 1){
+      Path singlePath = pathCalculator.generateCubicPath();
+    }
     return null;
   }
 
