@@ -28,12 +28,12 @@ public class Score extends SequentialCommandGroup {
     public boolean canDunk = false;
 
     public Score(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, Pose2d targetPose,
-                ManualControls controls, double targetWrist, double targetElevatorHeight) {
+                double targetWrist) {
 
         Timer downTimer = new Timer();
 
         double wristDunkAngle = 6.56;
-        double elevatorTarget = targetElevatorHeight;
+        double elevatorTarget = ElevatorConstants.ElevatorStates.L4;
 
         double E_TOLERANCE = 1.0;
         double W_TOLERANCE = 8.0;

@@ -9,6 +9,7 @@ import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
+import com.team6560.frc2025.commands.Score;
 import com.team6560.frc2025.commands.auto.*;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
@@ -116,7 +117,9 @@ public class RobotContainer {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
     // Use auto align, will fix to incorporate scoring afterwards
-    driverXbox.x().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseLeft().schedule(), drivebase));
+    driverXbox.x().whileTrue(new Score(
+      wrist, elevator, pipeGrabber, drivebase, new Pose2d(12.527, 5.227, Rotation2d.fromDegrees(120)), WristConstants.WristStates.L4 - WristConstants.WristStates.L4Offset
+    ));
 
     driverXbox.b().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseRight().schedule(), drivebase));
 

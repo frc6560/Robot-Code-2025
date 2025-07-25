@@ -86,9 +86,9 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(0, 0, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(0, 0, 0);
-  private final PIDController m_pidControllerTheta = new PIDController(0, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(2, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(2, 0, 0);
+  private final PIDController m_pidControllerTheta = new PIDController(0.8, 0, 0);
 
 
   /**
@@ -174,6 +174,7 @@ public class SwerveSubsystem extends SubsystemBase
       double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
       if(adjustedTime > 0){
         swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
+        System.out.println("vision measurements");
       }
     }
     System.out.println("without vision:" + swerveDrive.getOdometryHeadingNoAprilTags());
@@ -276,14 +277,10 @@ public class SwerveSubsystem extends SubsystemBase
 
     // Something is very wrong here
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
-      (-1) * (setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x)), 
+      setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
-      setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta)
+      (-1) * (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
-    
-    Pose2d expectedPose = new Pose2d(getPose().getX() + targetSpeeds.vxMetersPerSecond, getPose().getY() + targetSpeeds.vyMetersPerSecond, 
-                                      new Rotation2d(getPose().getRotation().getRadians() + targetSpeeds.omegaRadiansPerSecond));
-    swerveDrive.field.getObject("expectedPose").setPose(expectedPose);
 
     swerveDrive.driveFieldOriented(targetSpeeds);
   }
@@ -379,8 +376,8 @@ public class SwerveSubsystem extends SubsystemBase
         poseSupplier.get(),
         0.6, 
         0.5, 
-        3.14, 
-        6.28); 
+        6.28, 
+        6.18); 
     return autoAlignToPath(alignPath);
   }
 
