@@ -299,9 +299,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command autoAlignToPath(AutoAlignPath path){
     // Set up profiles
     TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
-    TrapezoidProfile.Constraints rotationConstraints = new Constraints(
-      Units.degreesToRadians(path.maxAngularVelocity),
-      Units.degreesToRadians(path.maxAngularAcceleration));
+    TrapezoidProfile.Constraints rotationConstraints = new Constraints(path.maxAngularVelocity,path.maxAngularAcceleration);
     TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
     TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
 
@@ -374,10 +372,10 @@ public class SwerveSubsystem extends SubsystemBase
     AutoAlignPath alignPath = new AutoAlignPath(
         swerveDrive.getPose(),
         poseSupplier.get(),
-        0.6, 
-        0.5, 
-        6.28, 
-        6.18); 
+        1, 
+        0.8, 
+        3.14, 
+        0.5); 
     return autoAlignToPath(alignPath);
   }
 
