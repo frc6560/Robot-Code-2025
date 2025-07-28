@@ -27,24 +27,25 @@ import edu.wpi.first.wpilibj.Timer;
 public class Score extends SequentialCommandGroup {
     public boolean canDunk = false;
 
-    public Score(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, Pose2d targetPose,
-                double targetWrist) {
+    public Score(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
+                    Pose2d targetPose, Pose2d currentPose, double targetWrist) {
 
         Timer downTimer = new Timer();
 
-        double wristDunkAngle = 6.56;
+        double wristDunkAngle = 6.56; 
         double elevatorTarget = ElevatorConstants.ElevatorStates.L4;
 
         double E_TOLERANCE = 1.0;
         double W_TOLERANCE = 8.0;
 
         AutoAlignPath path = new AutoAlignPath(
-                            drivetrain.getPose(),
+                            currentPose,
                             targetPose,
-                            0.6, 
-                            0.5, 
-                            180, 
-                            360); 
+                            1.5, 
+                            1, 
+                            3.14, 
+                            1.57); 
+
         TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
         TrapezoidProfile.State rotationalState = new TrapezoidProfile.State(0, 0);
 
@@ -53,9 +54,7 @@ public class Score extends SequentialCommandGroup {
 
         // Set up profiles
         TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
-        TrapezoidProfile.Constraints rotationConstraints = new Constraints(
-        Units.degreesToRadians(path.maxAngularVelocity),
-        Units.degreesToRadians(path.maxAngularAcceleration));
+        TrapezoidProfile.Constraints rotationConstraints = new Constraints(path.maxAngularVelocity,path.maxAngularAcceleration);
         TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
         TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
 
@@ -69,8 +68,8 @@ public class Score extends SequentialCommandGroup {
 
         
                         targetRotationalState.position = path.endPose.getRotation().getRadians();
-                        rotationalState.position = drivetrain.getPose().getRotation().getRadians();
-                        rotationalState.velocity = drivetrain.getRobotVelocity().omegaRadiansPerSecond;
+                        rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+                        rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
                     },
                     () -> {
                         // Sets subsystems.
@@ -81,8 +80,10 @@ public class Score extends SequentialCommandGroup {
                         translationalState.position = translationSetpoint.position;
                         translationalState.velocity = translationSetpoint.velocity;
 
+                        System.out.println(translationalState.position);
+
                         // no mod 360 shenanigans
-                        double rotationalPose = drivetrain.getPose().getRotation().getRadians();
+                        double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
                         double errorToGoal = MathUtil.angleModulus(targetRotationalState.position - rotationalPose);
                         double errorToSetpoint = MathUtil.angleModulus(rotationalState.position - rotationalPose);
 
@@ -99,12 +100,12 @@ public class Score extends SequentialCommandGroup {
                         Translation2d interpolatedTranslation = path.endPose
                             .getTranslation()
                             .interpolate(path.startPose.getTranslation(), 
-                                translationSetpoint.position / path.getDisplacement().getNorm());
+                            translationSetpoint.position / path.getDisplacement().getNorm());
                         
                         double targetWristAngle = WristConstants.WristStates.L4;
 
                         if( translationalState.position < 0.1 && Math.abs(rotationalState.position) < 0.1){
-                            drivetrain.drive(new ChassisSpeeds(0, 0, 0));
+                            drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
                             if(Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && 
                             Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < W_TOLERANCE){
                                 canDunk = true;
@@ -127,10 +128,10 @@ public class Score extends SequentialCommandGroup {
                             ));
                         }
 
-                        wrist.setMotorPosition(targetWristAngle);
+                    wrist.setMotorPosition(WristConstants.WristStates.L4);
                     },
                     (interrupted) -> {},
-                    () -> !grabber.hasGamePiece()
+                    () -> grabber.hasGamePiece()
         );
 
         final Command mechanismDown = new FunctionalCommand(

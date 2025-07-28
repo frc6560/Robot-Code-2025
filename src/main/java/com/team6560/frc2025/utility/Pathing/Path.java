@@ -5,25 +5,23 @@ import com.team6560.frc2025.utility.Setpoint;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.proto.Pose2dProto;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
-//TODO LIST: 
-// - fix rotation. (in progress)
-// - better physics engine, somewhere else
-// - test for constants
 
 public class Path {
-    private final Pose2d startPose;
-    private final Pose2d endPose;
+    private final Setpoint startPose;
+    private final Setpoint endPose;
 
     private final Pose2d startControlHeading;
     private final Pose2d endControlHeading;
 
-    private final TrapezoidProfile.State startState;
+    private TrapezoidProfile.State currentState;
     private final TrapezoidProfile.State endState;
 
     private final TrapezoidProfile.State startRotation;
+    private TrapezoidProfile.State currentRotation;
     private final TrapezoidProfile.State endRotation;
 
     // Profiles handling translation and rotation
@@ -32,9 +30,6 @@ public class Path {
 
     private final int LOOKUP_RES = 1000;
     private double[] arcLengthChart = new double[LOOKUP_RES + 1];
-
-    private double MAX_AT;
-
 
     private double x3 = 0.0;
     private double x2 = 0.0;
@@ -57,7 +52,7 @@ public class Path {
      * @param maxOmega Maximum angular velocity, in radians/s
      * @param maxAlpha Maximum angular acceleration, in radians/s^2
      */
-    public Path(Pose2d startPose, Pose2d endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
+    public Path(Setpoint startPose, Setpoint endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
                         double maxVelocity, double maxAt, double maxOmega, double maxAlpha) {
         this.startPose = startPose;
         this.endPose = endPose;
@@ -66,30 +61,29 @@ public class Path {
 
         // Sets up the trapezoidal profile start and end states... as well as the actual profiles
         // translation
-        this.startState = new TrapezoidProfile.State(0, 0);
-        this.endState = new TrapezoidProfile.State(getArcLength(), 0);
+        this.currentState = new TrapezoidProfile.State(0, startPose.getSpeed());
+        this.endState = new TrapezoidProfile.State(getArcLength(), endPose.getSpeed());
 
         this.translationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxVelocity, maxAt));
 
         // rotation
-        this.startRotation = new TrapezoidProfile.State(startPose.getRotation().getRadians(), 0);
-        this.endRotation = new TrapezoidProfile.State(endPose.getRotation().getRadians(), 0);
+        this.startRotation = new TrapezoidProfile.State(startPose.theta, startPose.omega);
+        this.currentRotation = new TrapezoidProfile.State(startPose.theta, startPose.omega);
+        this.endRotation = new TrapezoidProfile.State(endPose.theta, endPose.omega);
         this.rotationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxOmega, maxAlpha));
-
-        this.MAX_AT = maxAt;
 
         // Actually defines our curve
         // defines x component for the cubic Bézier curve
-        this.x3 = -startPose.getX() + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.getX();
-        this.x2 = 3 * startPose.getX() - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
-        this.x1 = -3 * startPose.getX() + 3 * startControlHeading.getX();
-        this.x0 = startPose.getX();
+        this.x3 = -startPose.x + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.x;
+        this.x2 = 3 * startPose.x - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
+        this.x1 = -3 * startPose.x + 3 * startControlHeading.getX();
+        this.x0 = startPose.x;
 
         // defines y components as well.
-        this.y3 = -startPose.getY() + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.getY();
-        this.y2 = 3 * startPose.getY() - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
-        this.y1 = -3 * startPose.getY() + 3 * startControlHeading.getY();
-        this.y0 = startPose.getY();
+        this.y3 = -startPose.y + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.x;
+        this.y2 = 3 * startPose.y - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
+        this.y1 = -3 * startPose.y + 3 * startControlHeading.getY();
+        this.y0 = startPose.y;
 
         // generate a lookup table for arc length to time
         generateLookupTable();
@@ -99,12 +93,12 @@ public class Path {
 
     /** Gets start pose */
     public Pose2d getStartPose() {
-        return startPose;
+        return startPose.getSetpointPose();
     }
 
     /** Gets end pose */
     public Pose2d getEndPose() {
-        return endPose;
+        return endPose.getSetpointPose();
     }
 
     /** Gets the start pose heading */
@@ -239,14 +233,13 @@ public class Path {
      * @param t the time parameter, currentRotation the current rotation of the robot
      * @param currentRotation the current rotation of the robot
      */
-    public Setpoint calculate(TrapezoidProfile.State currentTranslationState, 
-                                TrapezoidProfile.State currentRotationState, double rotation){
+    public Setpoint calculate(double rotation){
         // Translation
-        TrapezoidProfile.State translationalSetpoint = translationProfile.calculate(0.02, currentTranslationState, endState);
+        TrapezoidProfile.State translationalSetpoint = translationProfile.calculate(0.02, currentState, endState);
         double timeParam = getTimeForArcLength(translationalSetpoint.position);
         Translation2d translationalTarget = calculatePosition(timeParam);
-        currentTranslationState.position = translationalSetpoint.position;
-        currentTranslationState.velocity = translationalSetpoint.velocity;
+        currentState.position = translationalSetpoint.position;
+        currentState.velocity = translationalSetpoint.velocity;
 
         // Rotation
         double rotationalPose = rotation;
@@ -255,12 +248,12 @@ public class Path {
 
         // gets rid of mod 2pi issues
         endState.position = rotationalPose + errorToGoal;
-        currentRotationState.position = rotationalPose + errorToSetpoint;
+        currentRotation.position = rotationalPose + errorToSetpoint;
 
         // finally computes next rotation state 
-        State rotationalSetpoint = rotationProfile.calculate(0.02, currentRotationState, endRotation);
-        currentRotationState.position = rotationalSetpoint.position;
-        currentRotationState.velocity = rotationalSetpoint.velocity;
+        State rotationalSetpoint = rotationProfile.calculate(0.02, currentRotation, endRotation);
+        currentRotation.position = rotationalSetpoint.position;
+        currentRotation.velocity = rotationalSetpoint.velocity;
 
         return new Setpoint(translationalTarget.getX(), 
                             translationalTarget.getY(), 

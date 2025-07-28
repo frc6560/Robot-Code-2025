@@ -174,11 +174,8 @@ public class SwerveSubsystem extends SubsystemBase
       double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
       if(adjustedTime > 0){
         swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
-        System.out.println("vision measurements");
       }
     }
-    System.out.println("without vision:" + swerveDrive.getOdometryHeadingNoAprilTags());
-    System.out.println("with vision: " + swerveDrive.getOdometryHeading());
     swerveDrive.field.setRobotPose(this.getPose());
   }
 
@@ -272,15 +269,21 @@ public class SwerveSubsystem extends SubsystemBase
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
 
-    // telemetry
-    swerveDrive.field.getObject("targetPose").setPose(new Pose2d(setpoint.x, setpoint.y, new Rotation2d(setpoint.theta)));
-
-    // Something is very wrong here
+    // Telemetry
+    swerveDrive.field.getObject("TargetPose").setPose(
+      new Pose2d(
+        setpoint.x, 
+        setpoint.y, 
+        Rotation2d.fromRadians(setpoint.theta)
+      )
+    );
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
       (-1) * (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
+
+    System.out.println(targetSpeeds);
 
     swerveDrive.driveFieldOriented(targetSpeeds);
   }
@@ -372,8 +375,8 @@ public class SwerveSubsystem extends SubsystemBase
     AutoAlignPath alignPath = new AutoAlignPath(
         swerveDrive.getPose(),
         poseSupplier.get(),
-        1, 
-        0.8, 
+        2, 
+        1.5, 
         3.14, 
         0.5); 
     return autoAlignToPath(alignPath);
