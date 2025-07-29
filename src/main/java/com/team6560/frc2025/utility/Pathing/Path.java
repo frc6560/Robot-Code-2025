@@ -10,6 +10,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
 
+/** A cubic Bezier curve path object.
+ * @author fwen2026 */
 public class Path {
     private final Setpoint startPose;
     private final Setpoint endPose;

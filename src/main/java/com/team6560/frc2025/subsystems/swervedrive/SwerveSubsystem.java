@@ -22,7 +22,6 @@ import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 import com.team6560.frc2025.utility.Pathing.Path;
-import com.team6560.frc2025.utility.Pathing.PathCalculator;
 import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.Setpoint;
 
@@ -283,117 +282,7 @@ public class SwerveSubsystem extends SubsystemBase
       (-1) * (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
 
-    System.out.println(targetSpeeds);
-
     swerveDrive.driveFieldOriented(targetSpeeds);
-  }
-
-
-  TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
-  TrapezoidProfile.State rotationalState = new TrapezoidProfile.State(0, 0);
-
-  TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
-  TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
-
-  /** Follows a linear path with a trapezoidal profile. Used for auto align. Translation is handled via error!
-   * @param path Path object to follow.
-   * @return Command to follow the path.
-  */
-  public Command autoAlignToPath(AutoAlignPath path){
-    // Set up profiles
-    TrapezoidProfile.Constraints translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
-    TrapezoidProfile.Constraints rotationConstraints = new Constraints(path.maxAngularVelocity,path.maxAngularAcceleration);
-    TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
-    TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
-
-    Command followPathCommand = runOnce(
-      () -> {
-        // Compute current relative states for translation and rotation, with (0, 0) being target for translation.
-        translationalState.position = path.getDisplacement().getNorm();
-        translationalState.velocity = MathUtil.clamp(Math.sqrt(Math.pow(getFieldVelocity().vxMetersPerSecond, 2) + Math.pow(getFieldVelocity().vyMetersPerSecond, 2)),
-                                                    -path.maxVelocity,
-                                                    0);
-
-        
-        targetRotationalState.position = path.endPose.getRotation().getRadians();
-        rotationalState.position = getPose().getRotation().getRadians();
-        rotationalState.velocity = getRobotVelocity().omegaRadiansPerSecond;
-
-      }).andThen( 
-        run(
-          () -> {
-            // Compute the next translation state for the robot to target (t+0.02s).
-            State translationSetpoint = translationProfile.calculate(0.02, translationalState, targetTranslationalState);
-            translationalState.position = translationSetpoint.position;
-            translationalState.velocity = translationSetpoint.velocity;
-
-            // no mod 360 shenanigans
-            double rotationalPose = swerveDrive.getPose().getRotation().getRadians();
-            double errorToGoal = MathUtil.angleModulus(targetRotationalState.position - rotationalPose);
-            double errorToSetpoint = MathUtil.angleModulus(rotationalState.position - rotationalPose);
-
-            // feeds target (and current) poses without mod 360 shenanigans. also for feedback :)
-            targetRotationalState.position = rotationalPose + errorToGoal;
-            rotationalState.position = rotationalPose + errorToSetpoint;
-
-            // Computes the next rotation state for the robot to target.
-            State rotationalSetpoint = rotationProfile.calculate(0.02, rotationalState, targetRotationalState);
-            rotationalState.position = rotationalSetpoint.position;
-            rotationalState.velocity = rotationalSetpoint.velocity;
-
-            // converts our state to a field relative pose to target.
-            Translation2d interpolatedTranslation = path.endPose
-              .getTranslation()
-              .interpolate(path.startPose.getTranslation(), 
-                          translationSetpoint.position / path.getDisplacement().getNorm());
-            
-
-            if( translationalState.position < 0.1 && Math.abs(rotationalState.position) < 0.1){
-              swerveDrive.drive(new ChassisSpeeds(0, 0, 0));
-            }
-            else {
-              followSegment(new Setpoint(
-                interpolatedTranslation.getX(),
-                interpolatedTranslation.getY(),
-                rotationalState.position,
-                path.getNormalizedDisplacement().getX() * -translationSetpoint.velocity, // the problem is DEFINITELY here
-                path.getNormalizedDisplacement().getY() * -translationSetpoint.velocity,
-                rotationalState.velocity
-                ));
-            }
-          }));
-
-    return followPathCommand;
-  }
-
-
-  /** Drives to the specified Pose2d using a trapezoidal physics model. See followPath for more information. This command is more so used for auto align.
-   * @param poseSupplier Supplier of the target {@link Pose2d} to drive to.
-   * @return a Command to drive to the specific path using a straight line. 
-  */
-  public Command driveToPose(Supplier<Pose2d> poseSupplier){
-    AutoAlignPath alignPath = new AutoAlignPath(
-        swerveDrive.getPose(),
-        poseSupplier.get(),
-        2, 
-        1.5, 
-        3.14, 
-        0.5); 
-    return autoAlignToPath(alignPath);
-  }
-
-
-  public Command driveToPose(Pose2d pose) {
-    return driveToPose(() -> pose);
-  }
-
-
-  public Command driveToNearestPoseLeft() {
-    return driveToPose(getClosestTargetPoseLeft());
-  }
-
-  public Command driveToNearestPoseRight(){
-    return driveToPose(getClosestTargetPoseRight());
   }
 
   /** A full command to drive a path according to a custom Path object (see utility/Pathing). 
@@ -402,12 +291,12 @@ public class SwerveSubsystem extends SubsystemBase
    * that PID targets
    */
   public Command followPath(Pose2d targetPose){
-    PathCalculator pathCalculator = new PathCalculator(getPose(), targetPose);
-    ArrayList<Path> pathQueue = new ArrayList<Path>();
-    // Checks if we need to use bezier splines or just a simple cubic bezier.
-    if(Math.abs(pathCalculator.getRegion(getPose()) - pathCalculator.getRegion(targetPose)) < 1){
-      Path singlePath = pathCalculator.generateCubicPath();
-    }
+    // // PathCalculator pathCalculator = new PathCalculator(getPose(), targetPose);
+    // ArrayList<Path> pathQueue = new ArrayList<Path>();
+    // // Checks if we need to use bezier splines or just a simple cubic bezier.
+    // if(Math.abs(pathCalculator.getRegion(getPose()) - pathCalculator.getRegion(targetPose)) < 1){
+    //   Path singlePath = pathCalculator.generateCubicPath();
+    // }
     return null;
   }
 

@@ -30,6 +30,7 @@ public class Score extends SequentialCommandGroup {
     public Score(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
                     Pose2d targetPose, Pose2d currentPose, double targetWrist) {
 
+        Timer grabTimer = new Timer();
         Timer downTimer = new Timer();
 
         double wristDunkAngle = 6.56; 
@@ -42,7 +43,7 @@ public class Score extends SequentialCommandGroup {
                             currentPose,
                             targetPose,
                             1.5, 
-                            1, 
+                            1.0, 
                             3.14, 
                             1.57); 
 
@@ -72,15 +73,13 @@ public class Score extends SequentialCommandGroup {
                         rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
                     },
                     () -> {
-                        // Sets subsystems.
+                        // // Sets subsystems.
                         elevator.setElevatorPosition(elevatorTarget);
 
                         // Compute the next translation state for the robot to target (t+0.02s).
                         State translationSetpoint = translationProfile.calculate(0.02, translationalState, targetTranslationalState);
                         translationalState.position = translationSetpoint.position;
                         translationalState.velocity = translationSetpoint.velocity;
-
-                        System.out.println(translationalState.position);
 
                         // no mod 360 shenanigans
                         double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
@@ -104,15 +103,18 @@ public class Score extends SequentialCommandGroup {
                         
                         double targetWristAngle = WristConstants.WristStates.L4;
 
-                        if( translationalState.position < 0.1 && Math.abs(rotationalState.position) < 0.1){
+
+                        if((translationalState.position < 0.1) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.1)){
                             drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
                             if(Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && 
-                            Math.abs(wrist.getWristAngle() - WristConstants.WristStates.L4) < W_TOLERANCE){
+                            Math.abs(wrist.getWristAngle()) - 195 < W_TOLERANCE){ // TODO: no magic numbers
                                 canDunk = true;
                             }
                             if(canDunk){
                                 targetWristAngle = wristDunkAngle;
-                                if(Math.abs(wrist.getWristAngle() - targetWristAngle) < W_TOLERANCE){
+                                System.out.println(wrist.getWristAngle());
+                                if(Math.abs(wrist.getWristAngle() - (-233)) < W_TOLERANCE){ // TODO: remove magic numbers :D
+                                    grabTimer.start();
                                     grabber.runGrabberOuttakeMaxSpeed();
                                 }
                             }
@@ -122,37 +124,38 @@ public class Score extends SequentialCommandGroup {
                                 interpolatedTranslation.getX(),
                                 interpolatedTranslation.getY(),
                                 rotationalState.position,
-                                path.getNormalizedDisplacement().getX() * -translationSetpoint.velocity, // the problem is DEFINITELY here
+                                path.getNormalizedDisplacement().getX() * -translationSetpoint.velocity, 
                                 path.getNormalizedDisplacement().getY() * -translationSetpoint.velocity,
                                 rotationalState.velocity
                             ));
                         }
 
-                    wrist.setMotorPosition(WristConstants.WristStates.L4);
+                    wrist.setMotorPosition(targetWristAngle);
                     },
                     (interrupted) -> {},
-                    () -> grabber.hasGamePiece()
+                    () -> grabTimer.hasElapsed(0.25) // TODO: replace with something actual
         );
 
         final Command mechanismDown = new FunctionalCommand(
                         () -> {
-                            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-                            wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
+                            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.L4);
+                            wrist.setMotorPosition(WristConstants.WristStates.STOW);
                             downTimer.reset();
                             downTimer.start();
                         },
                         () -> {
-                            wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
-                            if (downTimer.hasElapsed(0.3)) {
+                            wrist.setMotorPosition(WristConstants.WristStates.STOW);
+                            if(downTimer.hasElapsed(0.6)){ // TOOD: NO TIMERS >:(
                                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
                             }
+                            elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
                         },
                         (interrupted) -> {},
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0)
         );
 
         super.addCommands(mechanismUp, mechanismDown);
-        super.addRequirements(wrist, elevator, grabber);
+        super.addRequirements(wrist, elevator, grabber, drivetrain);
     }
 
 }
