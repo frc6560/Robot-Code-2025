@@ -9,7 +9,7 @@ import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
-import com.team6560.frc2025.commands.Score;
+import com.team6560.frc2025.commands.AutoAlignCommand;
 import com.team6560.frc2025.commands.auto.*;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
@@ -77,8 +77,6 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    // CameraServer.startAutomaticCapture(0);
-
     climb = new Climb(controls);
     climbCommand = new ClimbCommand(climb, controls);
     climb.setDefaultCommand(climbCommand);
@@ -95,14 +93,9 @@ public class RobotContainer {
     wrist.setDefaultCommand(new WristCommand(wrist, controls));
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
-    NamedCommands.registerCommand("Scoring L4", new ScoringL4(wrist, elevator, pipeGrabber));
-    // NamedCommands.registerCommand("TravelingL3", new L3Travel(wrist, elevator));
     configureBindings();
-
     autoChooser = new SendableChooser<Command>();
-
     autoChooser.setDefaultOption("AeroSeg3Inv", getAeroSeg3Inv());
-
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -117,7 +110,7 @@ public class RobotContainer {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
     // Use auto align with scoring
-    driverXbox.x().whileTrue(Commands.runOnce(() -> new Score(
+    driverXbox.x().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(
       wrist, elevator, pipeGrabber, drivebase, 
       new Pose2d(12.545, 5.171, Rotation2d.fromDegrees(120)), drivebase.getPose(), WristConstants.WristStates.L4 - WristConstants.WristStates.L4Offset
     ).schedule(), drivebase));
@@ -148,23 +141,11 @@ public class RobotContainer {
   // }
 
   public Command getAeroSeg3Inv() {
-    return drivebase.getAutonomousCommand("Aero3Part1")
-    .alongWith(new L4Travel(elevator, wrist, 2.1))
-    .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-    .andThen(drivebase.getAutonomousCommand("Aero3Part2"))
-    .andThen((drivebase.getAutonomousCommand("Aero3Part3"))
-      .raceWith(new StationIntake(pipeGrabber, 3)))
-    .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-    .andThen(drivebase.getAutonomousCommand("Aero3Part4"))
-    .andThen((drivebase.getAutonomousCommand("Aero3Part5"))
-      .raceWith(new StationIntake(pipeGrabber, 3)))
-    .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-    .andThen(drivebase.getAutonomousCommand("Aero3Part6"));
+    return null;
   }
 
   public Command testElevatorCollapse() {
-    return new ScoringL4(wrist, elevator, pipeGrabber)
-    .andThen(new WaitCommand(0.5));
+    return null;
   }
 
   // public Command getAero3pAutoNoProcessor(){
