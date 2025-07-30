@@ -1,6 +1,6 @@
 package com.team6560.frc2025.utility.Enums;
 
-public enum ReefLevels {
+public enum ReefLevel {
     L1,
     L2,
     L3,

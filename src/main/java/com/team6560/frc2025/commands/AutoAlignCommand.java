@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -14,6 +13,8 @@ import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.Setpoint;
+
+import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,8 +25,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.Timer;
 
-
+/**
+ * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
+ * This command is used for scoring at the reef on any level, from L1-L4.
+ */
 public class AutoAlignCommand extends SequentialCommandGroup {
+    // Consts
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
@@ -34,35 +39,56 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     final double MAX_OMEGA = Math.toRadians(180);
     final double MAX_ALPHA = Math.toRadians(90);
 
+    // Poses
+    private Pose2d targetPose;
 
-    AutoAlignPath startPath;
-    AutoAlignPath endPath;
+    // Paths
+    private AutoAlignPath startPath;
+    private AutoAlignPath endPath;
 
-    TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
-    TrapezoidProfile.State rotationalState = new TrapezoidProfile.State(0, 0);
-    TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
-    TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
+    // Profiles
+    private TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
+    private TrapezoidProfile.State rotationalState = new TrapezoidProfile.State(0, 0);
+    private TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
+    private TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
 
+    private TrapezoidProfile.Constraints translationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+    private TrapezoidProfile.Constraints rotationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+    private TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
+    private TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
 
-    TrapezoidProfile.Constraints translationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    TrapezoidProfile.Constraints rotationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
-    TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
+    // Subsystems
+    private SwerveSubsystem drivetrain;
+    private Wrist wrist;
+    private Elevator elevator;
+    private PipeGrabber grabber;
 
-    SwerveSubsystem drivetrain;
+    // Levels
+    ReefSide side;
+    ReefIndex location;
+    ReefLevel level;
+
+    // Targets
+    private double elevatorTarget;
+    private double wristTarget;
+    private double wristOffset;
 
     /** A full command to score at the reef on any level, from L1-L4, with pathfinding, auto align, scoring, and retraction.*/
     public AutoAlignCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
-                    Pose2d targetPose) {
+                            ReefSide side, ReefIndex location, ReefLevel level) {
 
         this.drivetrain = drivetrain;
+        this.wrist = wrist;
+        this.elevator = elevator;
+        this.grabber = grabber;
+
+        this.side = side;
+        this.location = location;
+        this.level = level;
 
         Timer grabberTimer = new Timer();
 
-        double elevatorTarget = ElevatorConstants.ElevatorStates.L4;
-        double wristTarget = WristConstants.WristStates.L4;
-
-        double wristOffset = WristConstants.WristStates.L4Offset;
+        setTargets();
 
         startPath = new AutoAlignPath(
                             getPrescore(targetPose),
@@ -120,7 +146,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
-                    && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.L4) < W_TOLERANCE
+                    && Math.abs(wrist.getWristAngle() + 240 - wristTarget) < W_TOLERANCE
         );
 
         final Command dunkAndScore = new FunctionalCommand(
@@ -176,6 +202,29 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             targetPose.getY() + 0.75 * Math.sin(targetPose.getRotation().getRadians()),
             targetPose.getRotation()
         );
+    }
+
+    /** Sets the target for the robot, including target pose, elevator height, and arm angle */
+    public void setTargets(){
+        switch (level) {
+            case L1:
+                wristTarget = WristConstants.WristStates.L1;
+                wristOffset = WristConstants.WristStates.L1Offset;
+                break;
+            case L2:
+                wristTarget = WristConstants.WristStates.L2;
+                wristOffset = WristConstants.WristStates.L2Offset;
+                elevatorTarget = ElevatorConstants.ElevatorStates.L2;
+            case L3:
+                wristTarget = WristConstants.WristStates.L2;
+                wristOffset = WristConstants.WristStates.L2Offset;
+                elevatorTarget = ElevatorConstants.ElevatorStates.L3;
+            case L4: 
+                wristTarget = WristConstants.WristStates.L4;
+                wristOffset = WristConstants.WristStates.L4Offset;
+                elevatorTarget = ElevatorConstants.ElevatorStates.L4;
+                break;
+        }
     }
 
     /** Gets a setpoint for the robot PID to follow.
