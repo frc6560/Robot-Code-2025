@@ -29,7 +29,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 1.5;
+    final double MAX_VELOCITY = 1.0;
     final double MAX_ACCELERATION = 0.8;
     final double MAX_OMEGA = Math.toRadians(180);
     final double MAX_ALPHA = Math.toRadians(90);
@@ -138,7 +138,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> grabberTimer.hasElapsed(0.45)
+            () -> grabberTimer.hasElapsed(0.3)
         );
 
         final Command backUp = new FunctionalCommand(
