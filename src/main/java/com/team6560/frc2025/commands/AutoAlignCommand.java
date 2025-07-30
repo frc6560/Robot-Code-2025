@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
+import java.util.HashMap;
+
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -18,6 +20,8 @@ import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -59,9 +63,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
     // Subsystems
     private SwerveSubsystem drivetrain;
-    private Wrist wrist;
-    private Elevator elevator;
-    private PipeGrabber grabber;
 
     // Levels
     ReefSide side;
@@ -78,9 +79,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             ReefSide side, ReefIndex location, ReefLevel level) {
 
         this.drivetrain = drivetrain;
-        this.wrist = wrist;
-        this.elevator = elevator;
-        this.grabber = grabber;
 
         this.side = side;
         this.location = location;
@@ -206,10 +204,28 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
     public void setTargets(){
+        int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
+        final double DISTANCE_FROM_TAG = 0.16;
+
+        // Puts a HashMap of all possible april tag positions. This is with the elevator PRECISELY ALIGNED TO THE TAG.
+        HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<>();
+        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.426, 2.727, Rotation2d.fromDegrees(300)));
+        targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.344, 3.722, Rotation2d.fromDegrees(0)));
+        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.974, 4.988, Rotation2d.fromDegrees(60)));
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.690, 5.276, Rotation2d.fromDegrees(120)));
+        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
+        targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.148, 3.064, Rotation2d.fromDegrees(240)));
+
+        Pose2d aprilTagPose = targetPoses.get(location);
+        targetPose = aprilTagPose.plus(new Transform2d(Math.cos(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
+                                              Math.sin(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, Rotation2d.fromDegrees(0)));
+
+        // Sets subsystem targets
         switch (level) {
             case L1:
                 wristTarget = WristConstants.WristStates.L1;
                 wristOffset = WristConstants.WristStates.L1Offset;
+                elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
                 break;
             case L2:
                 wristTarget = WristConstants.WristStates.L2;
@@ -223,6 +239,11 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                 wristTarget = WristConstants.WristStates.L4;
                 wristOffset = WristConstants.WristStates.L4Offset;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L4;
+                break;
+            default:
+                wristTarget = WristConstants.WristStates.STOW;
+                wristOffset = 0;
+                elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
                 break;
         }
     }
