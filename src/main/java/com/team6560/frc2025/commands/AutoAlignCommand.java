@@ -106,7 +106,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             MAX_ALPHA);
 
 
-        // Initializes our four commands. 
+        // Initializes our four commands
+        // Pathfinding is done elsewhere
         final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
         final Command driveIn = new FunctionalCommand(
                     () -> {
@@ -217,8 +218,11 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.148, 3.064, Rotation2d.fromDegrees(240)));
 
         Pose2d aprilTagPose = targetPoses.get(location);
+
         targetPose = aprilTagPose.plus(new Transform2d(Math.cos(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
-                                              Math.sin(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, Rotation2d.fromDegrees(0)));
+                                                Math.sin(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
+                                                Rotation2d.fromDegrees(0)));
+
 
         // Sets subsystem targets
         switch (level) {
@@ -227,19 +231,25 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                 wristOffset = WristConstants.WristStates.L1Offset;
                 elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
                 break;
+
             case L2:
                 wristTarget = WristConstants.WristStates.L2;
                 wristOffset = WristConstants.WristStates.L2Offset;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L2;
+                break;
+
             case L3:
                 wristTarget = WristConstants.WristStates.L2;
                 wristOffset = WristConstants.WristStates.L2Offset;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L3;
+                break;
+
             case L4: 
                 wristTarget = WristConstants.WristStates.L4;
                 wristOffset = WristConstants.WristStates.L4Offset;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L4;
                 break;
+                
             default:
                 wristTarget = WristConstants.WristStates.STOW;
                 wristOffset = 0;
