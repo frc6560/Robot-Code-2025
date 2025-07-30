@@ -112,7 +112,7 @@ public class RobotContainer {
     // Use auto align with scoring
     driverXbox.x().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(
       wrist, elevator, pipeGrabber, drivebase, 
-      new Pose2d(12.545, 5.171, Rotation2d.fromDegrees(120)), drivebase.getPose(), WristConstants.WristStates.L4 - WristConstants.WristStates.L4Offset
+      new Pose2d(12.545, 5.171, Rotation2d.fromDegrees(120))
     ).schedule(), drivebase));
 
   }
