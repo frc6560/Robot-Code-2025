@@ -1,0 +1,218 @@
+package com.team6560.frc2025.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
+import com.team6560.frc2025.ManualControls;
+import com.team6560.frc2025.Constants.ElevatorConstants;
+import com.team6560.frc2025.Constants.WristConstants;
+import com.team6560.frc2025.subsystems.Elevator;
+import com.team6560.frc2025.subsystems.PipeGrabber;
+import com.team6560.frc2025.subsystems.Wrist;
+import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
+import com.team6560.frc2025.utility.AutoAlignPath;
+import com.team6560.frc2025.utility.Setpoint;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.Timer;
+
+
+public class AutoAlignCommand extends SequentialCommandGroup {
+    final double E_TOLERANCE = 1.0;
+    final double W_TOLERANCE = 8.0;
+
+    final double MAX_VELOCITY = 1.5;
+    final double MAX_ACCELERATION = 0.8;
+    final double MAX_OMEGA = Math.toRadians(180);
+    final double MAX_ALPHA = Math.toRadians(90);
+
+
+    AutoAlignPath startPath;
+    AutoAlignPath endPath;
+
+    TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
+    TrapezoidProfile.State rotationalState = new TrapezoidProfile.State(0, 0);
+    TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
+    TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
+
+
+    TrapezoidProfile.Constraints translationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+    TrapezoidProfile.Constraints rotationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
+    TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
+    TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
+
+    SwerveSubsystem drivetrain;
+
+    /** A full command to score at the reef on any level, from L1-L4, with pathfinding, auto align, scoring, and retraction.*/
+    public AutoAlignCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
+                    Pose2d targetPose) {
+
+        this.drivetrain = drivetrain;
+
+        Timer grabberTimer = new Timer();
+
+        double elevatorTarget = ElevatorConstants.ElevatorStates.L4;
+        double wristTarget = WristConstants.WristStates.L4;
+
+        double wristOffset = WristConstants.WristStates.L4Offset;
+
+        startPath = new AutoAlignPath(
+                            getPrescore(targetPose),
+                            targetPose,
+                            MAX_VELOCITY, 
+                            MAX_ACCELERATION, 
+                            MAX_OMEGA,
+                            MAX_ALPHA); 
+
+
+        endPath = new AutoAlignPath(
+                            targetPose,
+                            getPrescore(targetPose),
+                            MAX_VELOCITY, 
+                            MAX_ACCELERATION, 
+                            MAX_OMEGA,
+                            MAX_ALPHA);
+
+
+        // Initializes our four commands. 
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
+        final Command driveIn = new FunctionalCommand(
+                    () -> {
+                        // Computes the necessary states for the translational and rotational profiles for our in path.
+                        translationalState.position = startPath.getDisplacement().getNorm();
+                        translationalState.velocity = MathUtil.clamp((drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
+                                                                    + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/translationalState.position,
+                                                                    -startPath.maxVelocity,
+                                                                    0);
+
+        
+                        targetRotationalState.position = startPath.endPose.getRotation().getRadians();
+                        rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+                        rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
+                    },
+                    () -> {
+                        if((translationalState.position < 0.1) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.1)){
+                            drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
+                        }
+                        else {
+                            Setpoint newSetpoint = getNextSetpoint(startPath);
+                            drivetrain.followSegment(newSetpoint);
+                        }
+                    },
+                    (interrupted) -> {},
+                    () -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.L4) < W_TOLERANCE
+                        && (translationalState.position < 0.1) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.1
+        );
+
+        final Command actuateToPosition = new FunctionalCommand(
+            () -> {},
+            () -> {
+                elevator.setElevatorPosition(elevatorTarget);
+                wrist.setMotorPosition(wristTarget);
+            },
+            (interrupted) -> {},
+            () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
+                    && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.L4) < W_TOLERANCE
+        );
+
+        final Command dunkAndScore = new FunctionalCommand(
+            () -> {
+                // Resets our grabber encoder
+                grabber.zeroEncoder();
+            },
+            () -> {
+                wrist.setMotorPosition(wristTarget - wristOffset);
+                if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ // magic number :(
+                    grabberTimer.start();
+                    grabber.runGrabberOuttakeMaxSpeed();
+                }
+            },
+            (interrupted) -> {
+                grabber.stop();
+            },
+            () -> grabberTimer.hasElapsed(0.45)
+        );
+
+        final Command backUp = new FunctionalCommand(
+                        () -> {
+                            // Resets all trapezoidal profiles
+                            translationalState.position = endPath.getDisplacement().getNorm();
+                            translationalState.velocity = 0;
+
+                            targetRotationalState.position = endPath.endPose.getRotation().getRadians();
+                            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+                            rotationalState.velocity = 0;
+                        },
+                        () -> { 
+                            wrist.setMotorPosition(WristConstants.WristStates.STOW);
+                            if(Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.STOW) < W_TOLERANCE){ 
+                                elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
+
+                                Setpoint newSetpoint = getNextSetpoint(endPath);
+                                drivetrain.followSegment(newSetpoint);
+                            }
+                        },
+                        (interrupted) -> {},
+                        () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) && 
+                                (drivetrain.getSwerveDrive().getPose().getTranslation().getDistance(endPath.startPose.getTranslation()) < 0.1)
+        );
+
+        super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore, backUp);
+        super.addRequirements(wrist, elevator, grabber, drivetrain);
+    }
+
+    /** Gets the prescore for a specific Pose2d*/
+    public Pose2d getPrescore(Pose2d targetPose){
+        return new Pose2d(
+            targetPose.getX() + 0.75 * Math.cos(targetPose.getRotation().getRadians()),
+            targetPose.getY() + 0.75 * Math.sin(targetPose.getRotation().getRadians()),
+            targetPose.getRotation()
+        );
+    }
+
+    /** Gets a setpoint for the robot PID to follow.
+     * @return A Setpoint object representing the next target robot state on a certain auto align path.
+     */
+    public Setpoint getNextSetpoint(AutoAlignPath path){
+        // trans
+        State translationSetpoint = translationProfile.calculate(0.02, translationalState, targetTranslationalState);
+        translationalState.position = translationSetpoint.position;
+        translationalState.velocity = translationSetpoint.velocity;
+
+        // rot mod 360 calculations
+        double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+        double errorToGoal = MathUtil.angleModulus(targetRotationalState.position - rotationalPose);
+        double errorToSetpoint = MathUtil.angleModulus(rotationalState.position - rotationalPose);
+        targetRotationalState.position = rotationalPose + errorToGoal;
+        rotationalState.position = rotationalPose + errorToSetpoint;
+
+        // rot
+        State rotationalSetpoint = rotationProfile.calculate(0.02, rotationalState, targetRotationalState);
+        rotationalState.position = rotationalSetpoint.position;
+        rotationalState.velocity = rotationalSetpoint.velocity;
+
+        // arc length parametrization for a line
+        Translation2d interpolatedTranslation = path.endPose
+            .getTranslation()
+            .interpolate(path.startPose.getTranslation(), 
+            translationSetpoint.position / path.getDisplacement().getNorm());
+
+        return new Setpoint(
+            interpolatedTranslation.getX(),
+            interpolatedTranslation.getY(),
+            rotationalState.position,
+            path.getNormalizedDisplacement().getX() * -translationSetpoint.velocity, 
+            path.getNormalizedDisplacement().getY() * -translationSetpoint.velocity,
+            rotationalState.velocity
+        );
+    }
+}
+
