@@ -88,9 +88,13 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         Timer grabberTimer = new Timer();
 
         setTargets();
-
-        startPath = new AutoAlignPath(
-                            getPrescore(targetPose),
+        
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
+        final Command driveIn = new FunctionalCommand(
+                    () -> {
+                        // Computes the necessary states for the translational and rotational profiles for our in path.
+                        startPath = new AutoAlignPath(
+                            drivetrain.getPose(),
                             targetPose,
                             MAX_VELOCITY, 
                             MAX_ACCELERATION, 
@@ -98,19 +102,13 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             MAX_ALPHA); 
 
 
-        endPath = new AutoAlignPath(
+                        endPath = new AutoAlignPath(
                             targetPose,
                             getPrescore(targetPose),
                             MAX_VELOCITY, 
                             MAX_ACCELERATION, 
                             MAX_OMEGA,
                             MAX_ALPHA);
-        
-        System.out.println(targetPose);
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
-        final Command driveIn = new FunctionalCommand(
-                    () -> {
-                        // Computes the necessary states for the translational and rotational profiles for our in path.
                         translationalState.position = startPath.getDisplacement().getNorm();
                         translationalState.velocity = MathUtil.clamp((drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
                                                                     + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/translationalState.position,
