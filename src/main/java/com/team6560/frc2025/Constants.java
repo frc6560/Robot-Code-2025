@@ -52,7 +52,7 @@ public final class Constants {
       public static final double STOW = 0.4;
       public static final double L2 = 0.583; // used to be 1.0
       public static final double L3 = 6.5;
-      public static final double L4 = 19.1; // 17.65
+      public static final double L4 = 17.83; // 17.65
 
       public static final double S_STOW = 0.4;
       public static final double S_L2 = 1.51; // 2.58

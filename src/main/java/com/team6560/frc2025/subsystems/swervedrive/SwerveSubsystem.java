@@ -85,8 +85,8 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2, 0, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(2, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(2.5, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(2.5, 0, 0);
   private final PIDController m_pidControllerTheta = new PIDController(0.8, 0, 0);
 
 
@@ -271,7 +271,7 @@ public class SwerveSubsystem extends SubsystemBase
   */
   public Command pathfindToPose(Pose2d targetPose){
     PathConstraints constraints = new PathConstraints(
-        4.0, 2.5, 
+        4.5, 3.5, 
         Units.degreesToRadians(540), Units.degreesToRadians(720));
     
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
@@ -413,7 +413,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command centerModulesCommand()
   {
     return run(() -> Arrays.asList(swerveDrive.getModules())
-                           .forEach(it -> it.setAngle(0.0)));
+                          .forEach(it -> it.setAngle(0.0)));
   }
 
   /**

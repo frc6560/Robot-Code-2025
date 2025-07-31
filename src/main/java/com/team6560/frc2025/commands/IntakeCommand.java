@@ -31,9 +31,9 @@ public class IntakeCommand extends SequentialCommandGroup{
         final Command driveToIntakePos = swervedrive.pathfindToPose(targetPickupPose);
         FunctionalCommand deactuateElevator = new FunctionalCommand(
             () -> {
-                System.out.println("hi");
             },
             () -> {
+                System.out.println("hi");
                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
             },
             (interrupted) -> {},

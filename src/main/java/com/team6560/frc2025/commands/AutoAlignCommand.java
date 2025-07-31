@@ -133,7 +133,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                     },
                     (interrupted) -> {},
                     () -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.L4) < W_TOLERANCE
-                        && (translationalState.position < 0.1) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.1
+                        && (translationalState.position < 0.03) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
         );
 
         final Command actuateToPosition = new FunctionalCommand(
@@ -164,7 +164,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             },
             () -> grabberTimer.hasElapsed(0.3)
         );
-
+        
         final Command backUp = new FunctionalCommand(
                         () -> {
                             // Resets all trapezoidal profiles
@@ -188,8 +188,20 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
 
+        final Command retractWrist = new FunctionalCommand(
+            () -> {
+            },
+            () -> {
+                wrist.setMotorPosition(WristConstants.WristStates.STOW);
+            },
+            (interrupted) -> {},
+            () -> 
+                Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.STOW) < W_TOLERANCE
+            
+        );
+
         if(isAuto){
-            super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore);
+            super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore, retractWrist);
         }
         else{
             super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore, backUp);
@@ -209,14 +221,14 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
     public void setTargets(){
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
-        final double DISTANCE_FROM_TAG = 0.16;
+        final double DISTANCE_FROM_TAG = 0.151;
 
         // Puts a HashMap of all possible april tag positions. This is with the elevator PRECISELY ALIGNED TO THE TAG.
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<>();
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.426, 2.727, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.344, 3.722, Rotation2d.fromDegrees(0)));
-        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.974, 4.988, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.690, 5.276, Rotation2d.fromDegrees(120)));
+        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.991, 5.025, Rotation2d.fromDegrees(60)));
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.638, 5.377, Rotation2d.fromDegrees(120)));
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.148, 3.064, Rotation2d.fromDegrees(240)));
 

@@ -14,7 +14,7 @@ public class AutoAlignPath {
     public final double maxAngularAcceleration;
 
     public AutoAlignPath( Pose2d startPose,Pose2d endPose, double maxVelocity,double maxAcceleration, 
-                 double maxAngularVelocity, double maxAngularAcceleration) {
+                    double maxAngularVelocity, double maxAngularAcceleration) {
         this.startPose = startPose;
         this.endPose = endPose;
         this.maxVelocity = maxVelocity;
