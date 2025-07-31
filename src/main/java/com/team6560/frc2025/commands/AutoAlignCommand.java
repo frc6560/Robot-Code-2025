@@ -188,6 +188,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
         final Command retractWrist = new FunctionalCommand(
             () -> {
+                System.out.println("Running");
             },
             () -> {
                 wrist.setMotorPosition(WristConstants.WristStates.STOW);
