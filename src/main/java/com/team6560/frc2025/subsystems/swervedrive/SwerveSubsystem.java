@@ -160,13 +160,14 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
-    String[] limelightNames = {"limelight-bottom"};
+    String[] limelightNames = {"limelight-bottom", "limelight-top"};
     // Vision setup
     for( String limelightName : limelightNames) {
       LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
       PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
       if(limelightPoseEstimate == null) return;
+
       Pose2d limelightPose = limelightPoseEstimate.pose;
       if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
 
@@ -231,7 +232,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(3.0, 0.0, 0.0), // 2.3 // 5.7 // kI was 0.06 but do not use
+              new PIDConstants(2.3, 0.0, 0.0), 
               // Translation PID constants
               new PIDConstants(2.5, 0.0, 0.0) 
               // Rotation PID constants
@@ -253,7 +254,7 @@ public class SwerveSubsystem extends SubsystemBase
           },
           this
           // Reference to this subsystem to set requirements
-                           );
+                          );
 
     } catch (Exception e)
     {
@@ -270,13 +271,13 @@ public class SwerveSubsystem extends SubsystemBase
   */
   public Command pathfindToPose(Pose2d targetPose){
     PathConstraints constraints = new PathConstraints(
-        2, 1.0, // 4, 2.5
+        4.0, 2.5, 
         Units.degreesToRadians(540), Units.degreesToRadians(720));
     
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
       targetPose,
       constraints,
-1.5);
+1.0);
 
     return pathfindingCommand;
   }

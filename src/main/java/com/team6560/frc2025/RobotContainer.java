@@ -7,6 +7,7 @@ import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
+import com.team6560.frc2025.commands.IntakeCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.commands.AutoAlignCommand;
@@ -19,12 +20,16 @@ import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.utility.AutoAlignPath;
 
+import com.team6560.frc2025.utility.Enums.*;
+
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -95,7 +100,8 @@ public class RobotContainer {
 
     configureBindings();
     autoChooser = new SendableChooser<Command>();
-    autoChooser.setDefaultOption("AeroSeg3Inv", getAeroSeg3Inv());
+    autoChooser.setDefaultOption("AeroSeg3Inv", getProceduralGeneratedAuto());
+    autoChooser.addOption("3 piece top", get3PieceTopAuto());
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -110,10 +116,12 @@ public class RobotContainer {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
     // Use auto align with scoring
-    driverXbox.x().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(
-      wrist, elevator, pipeGrabber, drivebase, 
-      new Pose2d(12.564, 5.152, Rotation2d.fromDegrees(120))
-    ).schedule(), drivebase));
+    driverXbox.y().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
+    driverXbox.b().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
+    driverXbox.x().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+                              ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
 
   }
 
@@ -126,54 +134,25 @@ public class RobotContainer {
     drivebase.resetOdometryToLimelight();
   }
 
-  // public Command getAero3PAuto() {
-  //   return Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg1p"), new L4Travel(elevator, wrist))
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg2p")), new MechanismDown(elevator, wrist))
-  //     .andThen(new StationIntake(pipeGrabber, 0.3))
-  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg3p"), new StationIntake(pipeGrabber, 1.8)))
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg4p")), new MechanismDown(elevator, wrist))
-  //     .andThen(new StationIntake(pipeGrabber, 0.3))
-  //     .andThen(Commands.parallel(drivebase.getAutonomousCommand("Aero3pSeg5p"), new StationIntake(pipeGrabber, 1.8)))
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
-  // }
-
-  public Command getAeroSeg3Inv() {
-    return null;
+  public Command getProceduralGeneratedAuto() {
+    return Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+    ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase)
+    .andThen(Commands.runOnce(() -> new IntakeCommand(elevator, drivebase, pipeGrabber, 
+    new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120))), drivebase))
+    .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+    ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
   }
 
-  public Command testElevatorCollapse() {
-    return null;
+  public Command get3PieceTopAuto(){
+    Pose2d pickupPose = new Pose2d(1.137, 7, Rotation2d.fromDegrees(-54.5));
+    
+    return Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
+                              ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true).schedule(), drivebase)
+    .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
+                              ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase))
+    .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
+                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
   }
-
-  // public Command getAero3pAutoNoProcessor(){
-  //   return drivebase.getAutonomousCommand("Aero3p-1")
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3p-2"))
-  //     .andThen(new StationIntake(pipeGrabber, 0.5))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3p-3"))
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3p-4"))
-  //     .andThen(new StationIntake(pipeGrabber, 0.5))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
-  // }
-
-  // public Command getAeroBumpAuto(){
-  //   return drivebase.getAutonomousCommand("Aero3pSeg1p")
-  //     .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
-  //     .andThen(new StationIntake(pipeGrabber, 0.5))
-  //     .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
-  //     .andThen(drivebase.getAutonomousCommand("AeroBump-4"))
-  //     .andThen(drivebase.getAutonomousCommand("AeroBump-5"));
-  // }
-
-  // public Command getTestAuto(){
-  //   return drivebase.getAutonomousCommand("TestAuto");
-  // }
 
   public Command getTaxiAuto() {
     return drivebase.getAutonomousCommand("Taxi Auto");

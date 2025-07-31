@@ -27,6 +27,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -76,7 +77,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
     /** A full command to score at the reef on any level, from L1-L4, with pathfinding, auto align, scoring, and retraction.*/
     public AutoAlignCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
-                            ReefSide side, ReefIndex location, ReefLevel level) {
+                            ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto) {
 
         this.drivetrain = drivetrain;
 
@@ -104,10 +105,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             MAX_ACCELERATION, 
                             MAX_OMEGA,
                             MAX_ALPHA);
-
-
-        // Initializes our four commands
-        // Pathfinding is done elsewhere
+        
+        System.out.println(targetPose);
         final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
         final Command driveIn = new FunctionalCommand(
                     () -> {
@@ -155,7 +154,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             },
             () -> {
                 wrist.setMotorPosition(wristTarget - wristOffset);
-                if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ // magic number :(
+                if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ 
                     grabberTimer.start();
                     grabber.runGrabberOuttakeMaxSpeed();
                 }
@@ -186,11 +185,15 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             }
                         },
                         (interrupted) -> {},
-                        () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) && 
-                                (drivetrain.getSwerveDrive().getPose().getTranslation().getDistance(endPath.startPose.getTranslation()) < 0.1)
+                        () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
 
-        super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore, backUp);
+        if(isAuto){
+            super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore);
+        }
+        else{
+            super.addCommands(pathfindToPose, new ParallelCommandGroup(driveIn, actuateToPosition), dunkAndScore, backUp);
+        }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
     }
 
@@ -222,6 +225,10 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         targetPose = aprilTagPose.plus(new Transform2d(Math.cos(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
                                                 Math.sin(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
                                                 Rotation2d.fromDegrees(0)));
+        
+        if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue){
+            targetPose.minus(new Pose2d(8.577, 0, Rotation2d.fromDegrees(0)));
+        }
 
 
         // Sets subsystem targets
@@ -249,7 +256,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                 wristOffset = WristConstants.WristStates.L4Offset;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L4;
                 break;
-                
+
             default:
                 wristTarget = WristConstants.WristStates.STOW;
                 wristOffset = 0;
@@ -295,4 +302,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         );
     }
 }
+
+
 
