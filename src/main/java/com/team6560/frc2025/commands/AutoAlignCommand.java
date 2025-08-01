@@ -121,21 +121,17 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                         rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
                     },
                     () -> {
-                        if((translationalState.position < 0.05) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.1)){
+                        if((translationalState.position < 0.05) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
                             drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
                         }
                         else {
                             Setpoint newSetpoint = getNextSetpoint(startPath);
                             drivetrain.followSegment(newSetpoint);
                         }
-
-                        System.out.println("dt: " + ((translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.1));
-                        System.out.println("elev" +(Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE));
-                        System.out.println("wrist" + (Math.abs(wrist.getWristAngle() + 240 - wristTarget) < W_TOLERANCE));  
                     },
                     (interrupted) -> {},
                     () -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.L4) < W_TOLERANCE
-                        && (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.1
+                        && (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
         );
 
         final Command actuateToPosition = new FunctionalCommand(
@@ -151,10 +147,9 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
-                // Resets our grabber encoder
-                grabber.zeroEncoder();
             },
             () -> {
+                System.out.println("Running!");
                 wrist.setMotorPosition(wristTarget - wristOffset);
                 if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ 
                     grabberTimer.start();
@@ -192,7 +187,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
         final Command retractWrist = new FunctionalCommand(
             () -> {
-                System.out.println("Running");
             },
             () -> {
                 wrist.setMotorPosition(WristConstants.WristStates.STOW);
