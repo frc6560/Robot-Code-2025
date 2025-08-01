@@ -234,7 +234,7 @@ public class SwerveSubsystem extends SubsystemBase
               // PPHolonomicController is the built in path following controller for holonomic drive trains
               new PIDConstants(2.3, 0.0, 0.0), 
               // Translation PID constants
-              new PIDConstants(2.5, 0.0, 0.0) 
+              new PIDConstants(2.0, 0.0, 0.1) 
               // Rotation PID constants
           ),
           config,
@@ -302,7 +302,7 @@ public class SwerveSubsystem extends SubsystemBase
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
-      (-1) * (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
+      (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
 
     swerveDrive.driveFieldOriented(targetSpeeds);
