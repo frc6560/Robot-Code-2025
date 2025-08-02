@@ -130,8 +130,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                         }
                     },
                     (interrupted) -> {},
-                    () -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.L4) < W_TOLERANCE
-                        && (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
+                    () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
         );
 
         final Command actuateToPosition = new FunctionalCommand(
