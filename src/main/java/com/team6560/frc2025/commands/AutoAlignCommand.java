@@ -39,7 +39,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 1.0;
+    final double MAX_VELOCITY = 1.8;
     final double MAX_ACCELERATION = 0.8;
     final double MAX_OMEGA = Math.toRadians(180);
     final double MAX_ALPHA = Math.toRadians(90);
@@ -139,7 +139,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             () -> {
                 if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.7){
                     elevator.setElevatorPosition(elevatorTarget);
-                    wrist.setMotorPosition(wristTarget - wristOffset);
+                    wrist.setMotorPosition(wristTarget);
                 }
             },
             (interrupted) -> {},
