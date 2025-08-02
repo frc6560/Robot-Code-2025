@@ -86,6 +86,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         this.level = level;
 
         Timer grabberTimer = new Timer();
+        Timer actuationTimer = new Timer();
 
         setTargets();
         
@@ -134,10 +135,15 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         );
 
         final Command actuateToPosition = new FunctionalCommand(
-            () -> {},
             () -> {
-                elevator.setElevatorPosition(elevatorTarget);
-                wrist.setMotorPosition(wristTarget);
+                actuationTimer.reset();
+                actuationTimer.start();
+            },
+            () -> {
+                if(actuationTimer.hasElapsed(0.3)){
+                    elevator.setElevatorPosition(elevatorTarget);
+                    wrist.setMotorPosition(wristTarget - wristOffset);
+                }
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
