@@ -103,6 +103,16 @@ public class Path {
         return endPose.getSetpointPose();
     }
 
+    /** Gets the start pose velocity */
+    public double getStartVelocity() {
+        return startPose.getSpeed();
+    }
+
+    /** Gets the end pose velocity */
+    public double getEndVelocity(){
+        return endPose.getSpeed();
+    }
+
     /** Gets the start pose heading */
     public Pose2d getStartControlHeading() {
         return startControlHeading;

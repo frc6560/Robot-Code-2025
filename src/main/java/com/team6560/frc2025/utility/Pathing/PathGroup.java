@@ -7,17 +7,16 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 
-//TODOS: fix rotation. 
-// FIX EVERYTHING
 
 public class PathGroup{
     public Path firstPath;
     public Path secondPath;
 
-    public TrapezoidProfile.State startState;
+    public TrapezoidProfile.State currentState;
     public TrapezoidProfile.State endState;
 
     public TrapezoidProfile.State startRotation;
+    public TrapezoidProfile.State currentRotationState;
     public TrapezoidProfile.State endRotation;
 
     public TrapezoidProfile profile;
@@ -28,10 +27,11 @@ public class PathGroup{
         this.firstPath = firstPath;
         this.secondPath = secondPath;
 
-        this.startState = new TrapezoidProfile.State(0, 0);
-        this.endState = new TrapezoidProfile.State(firstPath.getArcLength() + secondPath.getArcLength(), 0);
+        this.currentState = new TrapezoidProfile.State(0, firstPath.getStartVelocity());
+        this.endState = new TrapezoidProfile.State(firstPath.getArcLength() + secondPath.getArcLength(), secondPath.getEndVelocity());
 
         this.startRotation = new TrapezoidProfile.State(firstPath.getStartPose().getRotation().getRadians(), 0);
+        this.currentRotationState = new TrapezoidProfile.State(firstPath.getStartPose().getRotation().getRadians(), 0);
         this.endRotation = new TrapezoidProfile.State(secondPath.getEndPose().getRotation().getRadians(), 0);
 
         // Note that we cannot use the original paths' profiles, as this would generate an unnecessary pause at the transition point.
@@ -45,14 +45,16 @@ public class PathGroup{
 
 
     /** We don't really need any of the other functions. A modified calculation function. */
-    public Setpoint calculate(TrapezoidProfile.State translation, TrapezoidProfile.State rotation,
-                            double currentRotation){
+    public Setpoint calculate(double currentRotation){
         // Translation
-        TrapezoidProfile.State translationalSetpoint = profile.calculate(0.02, translation, endState);
+        TrapezoidProfile.State translationalSetpoint = profile.calculate(0.02, currentState, endState);
 
         Translation2d normalizedVelocity;
         double timeParam;
         Translation2d translationalTarget;
+
+        currentState.position = translationalSetpoint.position;
+        currentState.velocity = translationalSetpoint.velocity;
 
         // Rotation
         double rotationalPose = currentRotation;
@@ -61,11 +63,14 @@ public class PathGroup{
 
         // gets rid of mod 2pi issues
         endState.position = rotationalPose + errorToGoal;
-        rotation.position = rotationalPose + errorToSetpoint;
+        currentRotationState.position = rotationalPose + errorToSetpoint;
 
         // finally computes next rotation state 
-        State rotationalSetpoint = rotationProfile.calculate(0.02, rotation, endRotation);
+        State rotationalSetpoint = rotationProfile.calculate(0.02, currentRotationState, endRotation);
+        currentRotationState.position = rotationalSetpoint.position;
+        currentRotationState.velocity = rotationalSetpoint.velocity;
 
+        // interpolation
         if(translationalSetpoint.position < firstPath.getArcLength()){
             timeParam = firstPath.getTimeForArcLength(translationalSetpoint.position);
             normalizedVelocity = firstPath.getNormalizedVelocityVector(timeParam);
