@@ -121,7 +121,7 @@ public class RobotContainer {
     driverXbox.b().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
     driverXbox.x().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
-                              ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
+                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
 
   }
 

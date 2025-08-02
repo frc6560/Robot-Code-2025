@@ -271,7 +271,7 @@ public class SwerveSubsystem extends SubsystemBase
   */
   public Command pathfindToPose(Pose2d targetPose){
     PathConstraints constraints = new PathConstraints(
-        4.5, 3.0, 
+        4.5, 3.5, 
         Units.degreesToRadians(540), Units.degreesToRadians(720));
     
     Command pathfindingCommand = AutoBuilder.pathfindToPose(

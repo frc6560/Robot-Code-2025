@@ -151,7 +151,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                System.out.println("Running!");
                 wrist.setMotorPosition(wristTarget - wristOffset);
                 if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ 
                     grabberTimer.start();
