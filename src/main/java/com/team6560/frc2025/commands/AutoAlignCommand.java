@@ -89,6 +89,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
         setTargets();
         
+        // Commands to pathfind, auto align, and score.
         final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
         final Command driveIn = new FunctionalCommand(
                     () -> {
@@ -162,7 +163,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> grabberTimer.hasElapsed(0.3)
+            () -> grabberTimer.hasElapsed(0.25)
         );
         
         final Command backUp = new FunctionalCommand(
@@ -221,14 +222,14 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
     public void setTargets(){
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
-        final double DISTANCE_FROM_TAG = 0.151;
+        final double DISTANCE_FROM_TAG = 0.164;
 
         // Puts a HashMap of all possible april tag positions. This is with the elevator PRECISELY ALIGNED TO THE TAG.
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<>();
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.426, 2.727, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.344, 3.722, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.991, 5.025, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.638, 5.377, Rotation2d.fromDegrees(120)));
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.615, 5.412, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.148, 3.064, Rotation2d.fromDegrees(240)));
 
