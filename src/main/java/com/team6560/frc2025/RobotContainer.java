@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -99,8 +100,8 @@ public class RobotContainer {
 
     configureBindings();
     autoChooser = new SendableChooser<Command>();
-    autoChooser.setDefaultOption("3 Piece Left", get3PieceTopAuto());
-    autoChooser.addOption("Test", getProceduralGeneratedAuto());
+    autoChooser.setDefaultOption("Test", getProceduralGeneratedAuto());
+    autoChooser.addOption("3 Piece Top", get3PieceTopAuto());
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -119,7 +120,7 @@ public class RobotContainer {
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
     driverXbox.b().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
-    driverXbox.x().whileTrue(Commands.runOnce(() -> new IntakeCommand(elevator, drivebase, pipeGrabber, 
+    driverXbox.x().whileTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, 
                               new Pose2d(11.907, 6.120, Rotation2d.fromDegrees(120))).schedule(), drivebase));
 
   }
@@ -134,22 +135,27 @@ public class RobotContainer {
   }
 
   public Command getProceduralGeneratedAuto() {
-    return Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
-    ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase)
-    .andThen(Commands.runOnce(() -> new IntakeCommand(elevator, drivebase, pipeGrabber, 
-    new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120))), drivebase))
-    .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
-    ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
+    // return Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+    // ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase)
+    // .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, 
+    // new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120))), drivebase))
+    // .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+    // ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
+    return new SequentialCommandGroup(
+      new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120))),
+      new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true)
+    );
   }
 
   public Command get3PieceTopAuto(){
     Pose2d pickupPose = new Pose2d(16.189, 7.165, Rotation2d.fromDegrees(-125));
     return Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase)
-                              .andThen(Commands.runOnce(() -> new IntakeCommand(elevator, drivebase, pipeGrabber, pickupPose).schedule(), drivebase))
+                              .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, pickupPose).schedule(), drivebase))
     .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
                               ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true).schedule(), drivebase))
-                              .andThen(Commands.runOnce(() -> new IntakeCommand(elevator, drivebase, pipeGrabber, pickupPose).schedule(), drivebase))
+                              .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, pickupPose).schedule(), drivebase))
     .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
                               ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true).schedule(), drivebase));
   }

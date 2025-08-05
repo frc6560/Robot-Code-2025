@@ -40,7 +40,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     final double W_TOLERANCE = 8.0;
 
     final double MAX_VELOCITY = 1.8;
-    final double MAX_ACCELERATION = 0.8;
+    final double MAX_ACCELERATION = 1.5; // originally 0.8
     final double MAX_OMEGA = Math.toRadians(360);
     final double MAX_ALPHA = Math.toRadians(360);
 
@@ -192,7 +192,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                System.out.println("This is running");
                 wrist.setMotorPosition(WristConstants.WristStates.STOW);
             },
             (interrupted) -> {},
