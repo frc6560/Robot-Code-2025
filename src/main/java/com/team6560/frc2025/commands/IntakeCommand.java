@@ -33,7 +33,6 @@ public class IntakeCommand extends SequentialCommandGroup{
             () -> {
             },
             () -> {
-                System.out.println("hi");
                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
             },
             (interrupted) -> {},

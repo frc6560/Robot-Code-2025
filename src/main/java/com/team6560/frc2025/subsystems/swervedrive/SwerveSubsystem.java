@@ -85,9 +85,9 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.5, 0, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(2.5, 0, 0);
-  private final PIDController m_pidControllerTheta = new PIDController(0.8, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(2.2, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(2.2, 0, 0);
+  private final PIDController m_pidControllerTheta = new PIDController(1.2, 0, 0);
 
 
   /**
@@ -232,9 +232,9 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(2.0, 0.0, 0.0), 
+              new PIDConstants(0.5, 0.0, 0.17), 
               // Translation PID constants
-              new PIDConstants(2.0, 0.0, 0.1) 
+              new PIDConstants(0.8, 0.0, 0.07) 
               // Rotation PID constants
           ),
           config,
@@ -271,13 +271,13 @@ public class SwerveSubsystem extends SubsystemBase
   */
   public Command pathfindToPose(Pose2d targetPose){
     PathConstraints constraints = new PathConstraints(
-        4.5, 3.5, 
+        5, 4, 
         Units.degreesToRadians(540), Units.degreesToRadians(720));
     
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
       targetPose,
       constraints,
-1.3);
+1.8);
 
     return pathfindingCommand;
   }

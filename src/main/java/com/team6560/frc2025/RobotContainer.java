@@ -51,7 +51,6 @@ public class RobotContainer {
   final XboxController secondXbox = new XboxController(1);
 
   private final ManualControls controls = new ManualControls(firstXbox, secondXbox);
-
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
   private final Climb climb;
@@ -120,8 +119,8 @@ public class RobotContainer {
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
     driverXbox.b().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
-    driverXbox.x().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
-                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
+    driverXbox.x().whileTrue(Commands.runOnce(() -> new IntakeCommand(elevator, drivebase, pipeGrabber, 
+                              new Pose2d(11.907, 6.120, Rotation2d.fromDegrees(120))).schedule(), drivebase));
 
   }
 

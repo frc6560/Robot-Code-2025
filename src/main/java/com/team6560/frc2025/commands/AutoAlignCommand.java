@@ -39,10 +39,10 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 1.3;
+    final double MAX_VELOCITY = 1.8;
     final double MAX_ACCELERATION = 0.8;
-    final double MAX_OMEGA = Math.toRadians(180);
-    final double MAX_ALPHA = Math.toRadians(90);
+    final double MAX_OMEGA = Math.toRadians(360);
+    final double MAX_ALPHA = Math.toRadians(360);
 
     // Poses
     private Pose2d targetPose;
@@ -99,7 +99,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             MAX_VELOCITY, 
                             MAX_ACCELERATION, 
                             MAX_OMEGA,
-                            MAX_ALPHA); 
+                            MAX_ALPHA);
 
 
                         endPath = new AutoAlignPath(
@@ -110,8 +110,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             MAX_OMEGA,
                             MAX_ALPHA);
                         translationalState.position = startPath.getDisplacement().getNorm();
-                        translationalState.velocity = MathUtil.clamp((drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
-                                                                    + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/translationalState.position,
+                        translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
+                                                                    + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/ translationalState.position),
                                                                     -startPath.maxVelocity,
                                                                     0);
 
@@ -121,13 +121,15 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                         rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
                     },
                     () -> {
-                        if((translationalState.position < 0.05) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
+                        if((translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
                             drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
                         }
                         else {
                             Setpoint newSetpoint = getNextSetpoint(startPath);
                             drivetrain.followSegment(newSetpoint);
                         }
+                        System.out.println("target " + targetPose);
+                        System.out.println("actual " + drivetrain.getPose());
                     },
                     (interrupted) -> {},
                     () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
@@ -137,7 +139,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.7){
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.4){
                     elevator.setElevatorPosition(elevatorTarget);
                     wrist.setMotorPosition(wristTarget);
                 }
@@ -154,7 +156,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                 wrist.setMotorPosition(wristTarget - wristOffset);
                 if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ 
                     grabberTimer.start();
-                    grabber.runGrabberOuttakeMaxSpeed();
+                    grabber.runGrabberOuttake();
                 }
             },
             (interrupted) -> {
@@ -211,8 +213,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     /** Gets the prescore for a specific Pose2d*/
     public Pose2d getPrescore(Pose2d targetPose){
         return new Pose2d(
-            targetPose.getX() + 0.75 * Math.cos(targetPose.getRotation().getRadians()),
-            targetPose.getY() + 0.75 * Math.sin(targetPose.getRotation().getRadians()),
+            targetPose.getX() + 0.6 * Math.cos(targetPose.getRotation().getRadians()),
+            targetPose.getY() + 0.6 * Math.sin(targetPose.getRotation().getRadians()),
             targetPose.getRotation()
         );
     }
@@ -285,13 +287,14 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         translationalState.position = translationSetpoint.position;
         translationalState.velocity = translationSetpoint.velocity;
 
-        // rot mod 360 calculations
+        // rot wraparound calculations
         double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-        double errorToGoal = MathUtil.angleModulus(targetRotationalState.position - rotationalPose);
-        double errorToSetpoint = MathUtil.angleModulus(rotationalState.position - rotationalPose);
-        targetRotationalState.position = rotationalPose + errorToGoal;
-        rotationalState.position = rotationalPose + errorToSetpoint;
+        double goalRotation = targetRotationalState.position;
+        double angularError = MathUtil.angleModulus(goalRotation - rotationalPose);
 
+        targetRotationalState.position = rotationalPose + angularError;
+        double setpointError = MathUtil.angleModulus(rotationalState.position - rotationalPose);
+        rotationalState.position = rotationalPose + setpointError;
         // rot
         State rotationalSetpoint = rotationProfile.calculate(0.02, rotationalState, targetRotationalState);
         rotationalState.position = rotationalSetpoint.position;
