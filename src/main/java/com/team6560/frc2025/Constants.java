@@ -1,5 +1,7 @@
 package com.team6560.frc2025;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import com.frc3481.swervelib.math.Matter;
@@ -105,6 +107,21 @@ public final class Constants {
     public static final double UPPER_SOFT_BOUND = 0.178; // was .198
     public static final double LOWER_SOFT_BOUND = -0.162; // abs encoder
     public static final double GEAR_RATIO = 1.5; 
+
+  }
+
+  public static final class FieldConstants{
+    // Left and right are viewed from the DS.
+    public static final double RED_X = 10.402;
+    public static final double BLUE_X = 7.164;
+
+    public static final Pose2d FAR_RIGHT_RED = new Pose2d(RED_X, 7.145, Rotation2d.fromDegrees(-180));
+    public static final Pose2d FAR_LEFT_RED = new Pose2d(RED_X, 1.08, Rotation2d.fromDegrees(-180));
+    public static final Pose2d RIGHT_RED = new Pose2d(RED_X, 5.645, Rotation2d.fromDegrees(-180));
+    public static final Pose2d LEFT_RED = new Pose2d(RED_X, 2.636, Rotation2d.fromDegrees(-180));
+    public static final Pose2d CENTER_RED = new Pose2d(RED_X, 4.0, Rotation2d.fromDegrees(-180));
+
+
 
   }
 }
