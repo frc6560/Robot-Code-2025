@@ -1,13 +1,17 @@
 package com.team6560.frc2025.commands;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
+import com.team6560.frc2025.Constants.FieldConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 
+import com.team6560.frc2025.utility.Enums.*;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -16,8 +20,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class IntakeCommand extends SequentialCommandGroup{
     Timer pipeGrabberTimer = new Timer();
+    PickupLocations location;
+    Pose2d targetPickupPose;
 
-    public IntakeCommand(Wrist wrist, Elevator elevator, SwerveSubsystem swervedrive, PipeGrabber grabber, Pose2d targetPickupPose){
+    public IntakeCommand(Wrist wrist, Elevator elevator, SwerveSubsystem swervedrive, PipeGrabber grabber, PickupLocations pickupLocation) {
+        location = pickupLocation;
+
+        getTargetPose();
         final Command driveToIntakePos = swervedrive.pathfindToPose(targetPickupPose);
         FunctionalCommand deactuateElevator = new FunctionalCommand(
             () -> {
@@ -48,5 +57,25 @@ public class IntakeCommand extends SequentialCommandGroup{
 
         super.addCommands(new ParallelCommandGroup(driveToIntakePos, deactuateElevator), intakePiece);
         super.addRequirements(elevator, swervedrive, grabber);
+    }
+
+    void getTargetPose(){
+        switch(location){
+            case RIGHT_RED:
+            targetPickupPose = new Pose2d(16.189, 7.165, Rotation2d.fromDegrees(-125));
+                break;
+            case LEFT_RED:
+                targetPickupPose = new Pose2d();
+                break;
+            case RIGHT_BLUE:
+                targetPickupPose = new Pose2d();
+                break;
+            case LEFT_BLUE:
+                targetPickupPose = new Pose2d();
+                break;
+            case TEST:
+                targetPickupPose = new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120));
+                break;
+        }
     }
 }
