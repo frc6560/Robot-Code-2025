@@ -5,7 +5,6 @@
 package com.team6560.frc2025.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
-import static edu.wpi.first.units.Units.Rotation;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -21,8 +20,6 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
-import com.team6560.frc2025.utility.Pathing.Path;
-import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.Setpoint;
 
 import edu.wpi.first.math.VecBuilder;
@@ -37,18 +34,14 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,11 +52,9 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.frc3481.swervelib.SwerveController;
 import com.frc3481.swervelib.SwerveDrive;
 import com.frc3481.swervelib.SwerveDriveTest;
-import com.frc3481.swervelib.imu.SwerveIMU;
 import com.frc3481.swervelib.math.SwerveMath;
 import com.frc3481.swervelib.parser.SwerveControllerConfiguration;
 import com.frc3481.swervelib.parser.SwerveDriveConfiguration;
@@ -71,7 +62,6 @@ import com.frc3481.swervelib.parser.SwerveParser;
 import com.frc3481.swervelib.telemetry.SwerveDriveTelemetry;
 import com.frc3481.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-import java.util.Set;
 
 public class SwerveSubsystem extends SubsystemBase
 {
@@ -85,8 +75,8 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.2, 0, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(2.2, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(2.0, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(2.0, 0, 0);
   private final PIDController m_pidControllerTheta = new PIDController(1.2, 0, 0);
 
 
@@ -119,18 +109,7 @@ public class SwerveSubsystem extends SubsystemBase
     setMotorBrake(true);
     setupPathPlanner();
 
-    // Shuffleboard.getTab("Field").add(aprilTagField);
-
-    // for (int i = 0; i < targetPose2ds.size(); i++) {
-    //   aprilTagField.getObject("TargetPosition+" + i).setPose(targetPose2ds.get(i));
-    // }
-
-
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
-
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858 ,	5.320), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.901  - 8.577,	5.328), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
   }
 
   /**
@@ -232,7 +211,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(0.5, 0.0, 0.17), 
+              new PIDConstants(0.15, 0.0, 0.11), 
               // Translation PID constants
               new PIDConstants(0.8, 0.0, 0.07) 
               // Rotation PID constants

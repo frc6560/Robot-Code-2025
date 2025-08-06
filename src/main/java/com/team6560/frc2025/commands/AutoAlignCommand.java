@@ -21,7 +21,6 @@ import com.team6560.frc2025.utility.Enums.*;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -41,8 +40,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
     final double MAX_VELOCITY = 1.8;
     final double MAX_ACCELERATION = 1.5; // originally 0.8
-    final double MAX_OMEGA = Math.toRadians(360);
-    final double MAX_ALPHA = Math.toRadians(360);
+    final double MAX_OMEGA = Math.toRadians(540);
+    final double MAX_ALPHA = Math.toRadians(720);
 
     // Poses
     private Pose2d targetPose;
@@ -93,7 +92,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
         final Command driveIn = new FunctionalCommand(
                     () -> {
-                        // Computes the necessary states for the translational and rotational profiles for our in path.
+                        // Computes the necessary states for the translational and rotational profiles for our path.
                         startPath = new AutoAlignPath(
                             drivetrain.getPose(),
                             targetPose,
@@ -129,8 +128,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                             Setpoint newSetpoint = getNextSetpoint(startPath);
                             drivetrain.followSegment(newSetpoint);
                         }
-                        System.out.println("target " + targetPose);
-                        System.out.println("actual " + drivetrain.getPose());
+                        System.out.println(targetPose);
                     },
                     (interrupted) -> {},
                     () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
@@ -140,7 +138,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.4){
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.6){
                     elevator.setElevatorPosition(elevatorTarget);
                     wrist.setMotorPosition(wristTarget);
                 }
@@ -213,8 +211,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     /** Gets the prescore for a specific Pose2d*/
     public Pose2d getPrescore(Pose2d targetPose){
         return new Pose2d(
-            targetPose.getX() + 0.6 * Math.cos(targetPose.getRotation().getRadians()),
-            targetPose.getY() + 0.6 * Math.sin(targetPose.getRotation().getRadians()),
+            targetPose.getX() + 0.75 * Math.cos(targetPose.getRotation().getRadians()),
+            targetPose.getY() + 0.75 * Math.sin(targetPose.getRotation().getRadians()),
             targetPose.getRotation()
         );
     }
@@ -229,15 +227,17 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.426, 2.727, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.344, 3.722, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.991, 5.025, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.615, 5.412, Rotation2d.fromDegrees(120))); 
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.635, 5.377, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.148, 3.064, Rotation2d.fromDegrees(240)));
 
         Pose2d aprilTagPose = targetPoses.get(location);
 
-        targetPose = aprilTagPose.plus(new Transform2d(Math.cos(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
-                                                Math.sin(aprilTagPose.getRotation().getRadians()) * DISTANCE_FROM_TAG * multiplier, 
-                                                Rotation2d.fromDegrees(0)));
+        targetPose = new Pose2d( 
+            aprilTagPose.getX() + (DISTANCE_FROM_TAG * Math.cos(aprilTagPose.getRotation().getRadians() + Math.PI/2) * multiplier),
+            aprilTagPose.getY() + (DISTANCE_FROM_TAG * Math.sin(aprilTagPose.getRotation().getRadians() + Math.PI/2) * multiplier),
+            aprilTagPose.getRotation()
+        );
         
         if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue){
             targetPose.minus(new Pose2d(8.577, 0, Rotation2d.fromDegrees(0)));

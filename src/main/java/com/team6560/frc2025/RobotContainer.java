@@ -144,7 +144,8 @@ public class RobotContainer {
     return new SequentialCommandGroup(
       new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
       new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120))),
-      new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true)
+      new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120)))
     );
   }
 
