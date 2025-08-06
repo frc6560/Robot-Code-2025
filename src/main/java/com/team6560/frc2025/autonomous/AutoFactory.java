@@ -7,9 +7,7 @@ import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
-import com.team6560.frc2025.utility.Enums.ReefIndex;
-import com.team6560.frc2025.utility.Enums.ReefLevel;
-import com.team6560.frc2025.utility.Enums.ReefSide;
+import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -47,13 +45,16 @@ public class AutoFactory {
         return Pair.of(FieldConstants.FAR_RIGHT_RED, IDLE);
     }
 
-    // Pair<Pose2d, Command> getFourPieceRight(){
-    //     return Pair.of(
-    //         FieldConstants.RIGHT_RED,
-    //         Commands.sequence(
-    //             new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-    //             new IntakeCommand(wrist, elevator, drivetrain, grabber, ),
-    //         )
-    //     )
-    // }
+    Pair<Pose2d, Command> getFourPieceRight(){
+        return Pair.of(
+            FieldConstants.RIGHT_RED,
+            Commands.sequence(
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true)
+            )
+        );
+    }
 }
