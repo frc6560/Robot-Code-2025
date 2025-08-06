@@ -11,7 +11,6 @@ import com.team6560.frc2025.commands.IntakeCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.commands.AutoAlignCommand;
-import com.team6560.frc2025.commands.auto.*;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -120,8 +119,6 @@ public class RobotContainer {
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
     driverXbox.b().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
-    driverXbox.x().whileTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, 
-                              new Pose2d(11.907, 6.120, Rotation2d.fromDegrees(120))).schedule(), drivebase));
 
   }
 
@@ -143,9 +140,9 @@ public class RobotContainer {
     // ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase));
     return new SequentialCommandGroup(
       new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120))),
+      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.TEST),
       new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120)))
+      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.TEST)
     );
   }
 
@@ -153,10 +150,10 @@ public class RobotContainer {
     Pose2d pickupPose = new Pose2d(16.189, 7.165, Rotation2d.fromDegrees(-125));
     return Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true).schedule(), drivebase)
-                              .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, pickupPose).schedule(), drivebase))
+                              .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.RIGHT_RED).schedule(), drivebase))
     .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
                               ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true).schedule(), drivebase))
-                              .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, pickupPose).schedule(), drivebase))
+                              .andThen(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.RIGHT_RED).schedule(), drivebase))
     .andThen(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, 
                               ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true).schedule(), drivebase));
   }
