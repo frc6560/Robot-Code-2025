@@ -252,7 +252,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
         final double DISTANCE_FROM_TAG = 0.164;
 
-        // Puts a HashMap of all possible april tag positions. This is with the elevator PRECISELY ALIGNED TO THE TAG.
+        // Puts a HashMap of all possible april tag positions. Notice that this is viewed bottom up, with y increasing.
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<>();
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.426, 2.727, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.344, 3.722, Rotation2d.fromDegrees(0)));
@@ -270,7 +270,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
         );
         
         if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue){
-            targetPose.minus(new Pose2d(8.577, 0, Rotation2d.fromDegrees(0)));
+            targetPose = applyAllianceTransform(targetPose);
         }
 
 
@@ -306,6 +306,15 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                 elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
                 break;
         }
+    }
+
+    /** Transforms red alliance poses to blue by reflecting around the center point of the field*/
+    public Pose2d applyAllianceTransform(Pose2d pose){
+        return new Pose2d(
+            pose.getX() - 2 * (pose.getX() - 8.75),
+            pose.getY() - 2 * (pose.getY() - 4.0),
+            pose.getRotation().rotateBy(Rotation2d.fromDegrees(180))
+        );
     }
 
     /** Gets a setpoint for the robot PID to follow.

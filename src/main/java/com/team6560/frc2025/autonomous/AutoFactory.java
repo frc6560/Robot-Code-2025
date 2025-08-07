@@ -38,27 +38,29 @@ public class AutoFactory {
 
     /** These literally do nothing. As in, nothing. */
     Pair<Pose2d, Command> getNoAutoLeft(){
-        return Pair.of(FieldConstants.FAR_LEFT_RED, IDLE);
+        return Pair.of(FieldConstants.getFarLeft(alliance), IDLE);
     }
 
     Pair<Pose2d, Command> getNoAutoRight(){
-        return Pair.of(FieldConstants.FAR_RIGHT_RED, IDLE);
+        return Pair.of(FieldConstants.getFarRight(alliance), IDLE);
     }
 
     Pair<Pose2d, Command> getFourPieceRight(){
         return Pair.of(
-            FieldConstants.RIGHT_RED,
+            FieldConstants.getRight(alliance),
             Commands.sequence(
-                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
                 new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
-                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true)
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L2, true)
             )
         );
     }
 
-    Pair<Pose2d, Command> getThreePieceLeft(){
-
+    Pair<Pose2d, Command> getFourPieceLeft(){
+        return null;
     }
 }
