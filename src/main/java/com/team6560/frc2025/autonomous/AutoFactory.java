@@ -45,6 +45,7 @@ public class AutoFactory {
         return Pair.of(FieldConstants.getFarRight(alliance), IDLE);
     }
 
+    /** These are four piece autos for various situations. All start on the left/right sides. */
     Pair<Pose2d, Command> getFourPieceBackRight(){
         return Pair.of(
             FieldConstants.getRight(alliance),
@@ -104,6 +105,4 @@ public class AutoFactory {
             )
         );
     }
-
-
 }
