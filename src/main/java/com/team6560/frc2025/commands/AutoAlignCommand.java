@@ -106,7 +106,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
     /** Gets a pathfinding command */
     public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose));
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 1.8);
         return pathfindToPose;
     }
 

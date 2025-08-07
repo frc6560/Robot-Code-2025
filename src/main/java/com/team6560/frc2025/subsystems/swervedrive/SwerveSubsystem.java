@@ -248,7 +248,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param targetPose The target {@link Pose2d} to pathfind to.
    * @return A {@link Command} object that pathfinds to our pose using PathPlanner
   */
-  public Command pathfindToPose(Pose2d targetPose){
+  public Command pathfindToPose(Pose2d targetPose, double endVelocity){
     PathConstraints constraints = new PathConstraints(
         5, 4, 
         Units.degreesToRadians(540), Units.degreesToRadians(720));
@@ -256,7 +256,7 @@ public class SwerveSubsystem extends SubsystemBase
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
       targetPose,
       constraints,
-1.8);
+endVelocity);
 
     return pathfindingCommand;
   }

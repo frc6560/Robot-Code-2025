@@ -1,7 +1,6 @@
 package com.team6560.frc2025.commands;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
-import com.team6560.frc2025.Constants.FieldConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
@@ -27,7 +26,7 @@ public class IntakeCommand extends SequentialCommandGroup{
         location = pickupLocation;
 
         getTargetPose();
-        final Command driveToIntakePos = swervedrive.pathfindToPose(targetPickupPose);
+        final Command driveToIntakePos = swervedrive.pathfindToPose(targetPickupPose, 0);
         FunctionalCommand deactuateElevator = new FunctionalCommand(
             () -> {
             },

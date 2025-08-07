@@ -4,5 +4,6 @@ public enum PickupLocations {
     RIGHT_RED,
     LEFT_RED,
     RIGHT_BLUE,
-    LEFT_BLUE
+    LEFT_BLUE,
+    TEST
 }
