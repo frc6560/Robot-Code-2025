@@ -45,22 +45,65 @@ public class AutoFactory {
         return Pair.of(FieldConstants.getFarRight(alliance), IDLE);
     }
 
+    Pair<Pose2d, Command> getFourPieceBackRight(){
+        return Pair.of(
+            FieldConstants.getRight(alliance),
+            Commands.sequence(
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
+            )
+        );
+    }
+
+    Pair<Pose2d, Command> getFourPieceBackLeft(){
+        return Pair.of(
+            FieldConstants.getLeft(alliance),
+            Commands.sequence(
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
+            )
+        );
+    }
+
     Pair<Pose2d, Command> getFourPieceRight(){
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.sequence(
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
                 new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
-                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
-                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true),
                 new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
-                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L2, true)
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true)
             )
         );
     }
 
     Pair<Pose2d, Command> getFourPieceLeft(){
-        return null;
+        return Pair.of(
+            FieldConstants.getLeft(alliance),
+            Commands.sequence(
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT_RED),
+                new AutoAlignCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true)
+            )
+        );
     }
+
+
 }
