@@ -38,8 +38,8 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 1.8;
-    final double MAX_ACCELERATION = 1.5; // originally 0.8
+    final double MAX_VELOCITY = 1.8; // originally 1.8
+    final double MAX_ACCELERATION = 1.5; // originally 1.5
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
 
@@ -106,7 +106,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
 
     /** Gets a pathfinding command */
     public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 1.8);
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 0.9); // originally 0.9
         return pathfindToPose;
     }
 
@@ -150,7 +150,6 @@ public class AutoAlignCommand extends SequentialCommandGroup {
                     Setpoint newSetpoint = getNextSetpoint(startPath);
                     drivetrain.followSegment(newSetpoint);
                 }
-                System.out.println(targetPose);
             },
             (interrupted) -> {},
             () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05

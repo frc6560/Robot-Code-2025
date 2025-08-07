@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+
 import com.frc3481.swervelib.math.Matter;
 public final class Constants {
 
@@ -121,7 +123,30 @@ public final class Constants {
     public static final Pose2d LEFT_RED = new Pose2d(RED_X, 2.636, Rotation2d.fromDegrees(-180));
     public static final Pose2d CENTER_RED = new Pose2d(RED_X, 4.0, Rotation2d.fromDegrees(-180));
 
+    public static final Pose2d FAR_LEFT_BLUE = new Pose2d(BLUE_X, 6.92, Rotation2d.fromDegrees(0));
+    public static final Pose2d FAR_RIGHT_BLUE = new Pose2d(BLUE_X, 1, Rotation2d.fromDegrees(0));
+    public static final Pose2d LEFT_BLUE = new Pose2d(BLUE_X, 5.645, Rotation2d.fromDegrees(0));
+    public static final Pose2d RIGHT_BLUE = new Pose2d(BLUE_X, 2.636, Rotation2d.fromDegrees(0));
+    public static final Pose2d CENTER_BLUE = new Pose2d(BLUE_X, 4.0, Rotation2d.fromDegrees(0));
 
+    public static Pose2d getFarRight(DriverStation.Alliance alliance){
+      return alliance == DriverStation.Alliance.Red ? FAR_RIGHT_RED : FAR_RIGHT_BLUE;
+    }
 
+    public static Pose2d getFarLeft(DriverStation.Alliance alliance){
+      return alliance == DriverStation.Alliance.Red ? FAR_LEFT_RED : FAR_LEFT_BLUE;
+    }
+
+    public static Pose2d getRight(DriverStation.Alliance alliance){
+      return alliance == DriverStation.Alliance.Red ? RIGHT_RED : RIGHT_BLUE;
+    }
+
+    public static Pose2d getLeft(DriverStation.Alliance alliance){
+      return alliance == DriverStation.Alliance.Red ? LEFT_RED : LEFT_BLUE;
+    }
+
+    public static Pose2d getCenter(DriverStation.Alliance alliance){
+      return alliance == DriverStation.Alliance.Red ? CENTER_RED : CENTER_BLUE;
+    }
   }
 }

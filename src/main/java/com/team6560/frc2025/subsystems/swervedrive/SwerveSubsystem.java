@@ -256,7 +256,7 @@ public class SwerveSubsystem extends SubsystemBase
     Command pathfindingCommand = AutoBuilder.pathfindToPose(
       targetPose,
       constraints,
-endVelocity);
+      endVelocity);
 
     return pathfindingCommand;
   }

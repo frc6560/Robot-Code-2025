@@ -57,4 +57,8 @@ public class AutoFactory {
             )
         );
     }
+
+    Pair<Pose2d, Command> getThreePieceLeft(){
+
+    }
 }
