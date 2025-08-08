@@ -2,6 +2,7 @@ package com.team6560.frc2025.autonomous;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** Defines an Auto class, which is a name, an enum ID, and a command. */
@@ -20,6 +21,7 @@ public class Auto {
     }
 
     public Command getCommand() {
+        update();
         return autoCommand.getSecond();
     }
 
@@ -32,6 +34,7 @@ public class Auto {
     }
 
     public void update(){
+        this.factory.updateAlliance(DriverStation.getAlliance().get());
         Pair<Pair<Pose2d, Command>, String> autos = getAutos();
         this.autoCommand = autos.getFirst();
     }

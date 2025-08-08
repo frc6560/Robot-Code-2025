@@ -25,8 +25,6 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
 
-  private Timer teleTimer;
-
   public Robot()
   {
     instance = this;

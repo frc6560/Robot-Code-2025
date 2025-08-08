@@ -29,6 +29,7 @@ public class ManualControls {
     
         return value;
       }
+      
     public ManualControls(XboxController firstXbox, XboxController secondXbox) {
         this.secondXbox = secondXbox;
         this.firstXbox = firstXbox;
