@@ -26,6 +26,7 @@ public class Auto {
     }
 
     public Pose2d getStartPose(){
+        update();
         return autoCommand.getFirst();
     }
 

@@ -11,4 +11,5 @@ public enum AutoRoutines {
     RIGHT_4P_BACK,
     RIGHT_4P,
     LEFT_4P,
+    TEST
 }

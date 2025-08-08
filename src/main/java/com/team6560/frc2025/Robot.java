@@ -100,6 +100,8 @@ public class Robot extends TimedRobot
   public void autonomousInit()
   {
     m_robotContainer.setMotorBrake(true);
+    // Only use reset odometry for actual match autos. do not use while testing.
+    // m_robotContainer.getDrivebase().resetOdometry(m_robotContainer.getAutonomousCommand().getStartPose());
     m_autonomousCommand = m_robotContainer.getAutonomousCommand().getCommand();
 
     // schedule the autonomous command (example)
