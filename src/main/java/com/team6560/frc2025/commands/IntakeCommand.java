@@ -11,6 +11,7 @@ import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -59,18 +60,15 @@ public class IntakeCommand extends SequentialCommandGroup{
     }
 
     void getTargetPose(){
+        DriverStation.Alliance alliance = DriverStation.getAlliance().get();
         switch(location){
-            case RIGHT_RED:
-            targetPickupPose = new Pose2d(16.189, 7.165, Rotation2d.fromDegrees(-125));
+            case RIGHT:
+                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(16.189, 7.165, Rotation2d.fromDegrees(-125)) 
+                                                                            : new Pose2d(1.12, 1.05, Rotation2d.fromDegrees(55));
                 break;
-            case LEFT_RED:
-                targetPickupPose = new Pose2d(16.189, 0.844, Rotation2d.fromDegrees(125));
-                break;
-            case RIGHT_BLUE:
-                targetPickupPose = new Pose2d(1.12, 1.05, Rotation2d.fromDegrees(55));
-                break;
-            case LEFT_BLUE:
-                targetPickupPose = new Pose2d(1.12, 7, Rotation2d.fromDegrees(-55));
+            case LEFT:
+                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(16.189, 1.05, Rotation2d.fromDegrees(-55)) 
+                                                                            : new Pose2d(1.12, 7, Rotation2d.fromDegrees(-55));
                 break;
             case TEST:
                 targetPickupPose = new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120));
