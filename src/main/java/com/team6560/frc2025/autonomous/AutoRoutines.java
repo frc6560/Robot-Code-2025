@@ -4,7 +4,6 @@ package com.team6560.frc2025.autonomous;
 public enum AutoRoutines {
     IDLE_LEFT,
     IDLE_RIGHT,
-    ADAPTIVE,
     CENTER_3P,
     LEFT_3P,
     RIGHT_3P,
