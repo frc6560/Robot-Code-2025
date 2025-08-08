@@ -64,13 +64,13 @@ public class IntakeCommand extends SequentialCommandGroup{
             targetPickupPose = new Pose2d(16.189, 7.165, Rotation2d.fromDegrees(-125));
                 break;
             case LEFT_RED:
-                targetPickupPose = new Pose2d();
+                targetPickupPose = new Pose2d(16.189, 0.844, Rotation2d.fromDegrees(125));
                 break;
             case RIGHT_BLUE:
-                targetPickupPose = new Pose2d();
+                targetPickupPose = new Pose2d(1.12, 1.05, Rotation2d.fromDegrees(55));
                 break;
             case LEFT_BLUE:
-                targetPickupPose = new Pose2d();
+                targetPickupPose = new Pose2d(1.12, 7, Rotation2d.fromDegrees(-55));
                 break;
             case TEST:
                 targetPickupPose = new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120));
