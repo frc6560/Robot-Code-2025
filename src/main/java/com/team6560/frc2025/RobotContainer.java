@@ -5,7 +5,6 @@ import com.team6560.frc2025.Constants.OperatorConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
-import com.team6560.frc2025.commands.IntakeCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.commands.ScoreCommand;
@@ -27,10 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 import java.io.File;
 import com.frc3481.swervelib.SwerveInputStream;
@@ -140,18 +136,6 @@ public class RobotContainer {
     drivebase.resetOdometryToLimelight();
   }
 
-  public Command getProceduralGeneratedAuto(){
-    return new SequentialCommandGroup(
-      new ScoreCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.TEST),
-      new ScoreCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-      new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.TEST)
-    );
-  }
-
-  public Command getTaxiAuto() {
-    return drivebase.getAutonomousCommand("Taxi Auto");
-  }
 
   public Auto getAutonomousCommand() {
     return autoChooser.getSelected();

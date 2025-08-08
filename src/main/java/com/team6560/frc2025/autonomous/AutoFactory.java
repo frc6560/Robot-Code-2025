@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 
 public class AutoFactory {
-    private final DriverStation.Alliance alliance;
+    private DriverStation.Alliance alliance;
 
     private Wrist wrist;
     private Elevator elevator;
@@ -144,5 +144,9 @@ public class AutoFactory {
                 new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT_RED)
             )
         );
+    }
+
+    public void updateAlliance(DriverStation.Alliance alliance) {
+        this.alliance = alliance;
     }
 }
