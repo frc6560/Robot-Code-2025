@@ -8,7 +8,7 @@ import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.IntakeCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
-import com.team6560.frc2025.commands.AutoAlignCommand;
+import com.team6560.frc2025.commands.ScoreCommand;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -103,9 +103,9 @@ public class RobotContainer {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
 
     // Use auto align with scoring
-    driverXbox.y().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+    driverXbox.y().whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
-    driverXbox.b().whileTrue(Commands.runOnce(() -> new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase,
+    driverXbox.b().whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
 
   }
@@ -121,9 +121,9 @@ public class RobotContainer {
 
   public Command getProceduralGeneratedAuto(){
     return new SequentialCommandGroup(
-      new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+      new ScoreCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
       new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.TEST),
-      new AutoAlignCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+      new ScoreCommand(wrist, elevator, pipeGrabber, drivebase, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
       new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.TEST)
     );
   }

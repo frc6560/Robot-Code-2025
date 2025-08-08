@@ -14,7 +14,6 @@ public class Auto {
     public Auto(AutoRoutines autoRoutine, AutoFactory factory){
         this.autoRoutine = autoRoutine;
         this.factory = factory;
-
         switch(autoRoutine){
             case IDLE_LEFT:
                 this.autoCommand = factory.getNoAutoLeft();
@@ -24,19 +23,18 @@ public class Auto {
                 this.autoCommand = factory.getNoAutoRight();
                 this.name = "Idle Right";
                 break;
-            // Actually fix these please.
-            // case ADAPTIVE:
-            //     // do once adaptive autos are done
-            //     break;
-            // case CENTER_3P:
-            //     // do once center piece is done
-            //     break;
-            // case LEFT_3P:
-            //     // do once the left is done
-            //     break;
-            // case RIGHT_3P:
-            //     // do once the right is done
-            //     break;
+            case CENTER_3P:
+                this.autoCommand = factory.getThreePieceCenter();
+                this.name = "Center 3P";
+                break;
+            case LEFT_3P:
+                this.autoCommand = factory.getThreePieceBackLeft();
+                this.name = "Left 3P";
+                break;
+            case RIGHT_3P:
+                this.autoCommand = factory.getThreePieceBackRight();
+                this.name = "Right 3P";
+                break;
             case LEFT_4P_BACK:
                 this.autoCommand = factory.getFourPieceBackLeft();
                 this.name = "Left 4P Back";

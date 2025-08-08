@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.Timer;
  * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
  * This command is used for scoring at the reef on any level, from L1-L4.
  */
-public class AutoAlignCommand extends SequentialCommandGroup {
+public class ScoreCommand extends SequentialCommandGroup {
     // Consts
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
@@ -81,7 +81,7 @@ public class AutoAlignCommand extends SequentialCommandGroup {
     Timer grabberTimer = new Timer();
 
     /** A constructor to score at a given level... in teleoperated mode.*/
-    public AutoAlignCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
+    public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
                             ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto) {
 
         this.drivetrain = drivetrain;
