@@ -57,4 +57,12 @@ public class Auto {
                 throw new IllegalArgumentException("Invalid Auto Routine: " + autoRoutine);
         }
     }
+
+    public Command getCommand() {
+        return autoCommand.getSecond();
+    }
+
+    public Pose2d getStartPose(){
+        return autoCommand.getFirst();
+    }
 }

@@ -15,9 +15,12 @@ import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
-
+import com.team6560.frc2025.autonomous.Auto;
+import com.team6560.frc2025.autonomous.AutoFactory;
+import com.team6560.frc2025.autonomous.AutoRoutines;
 import com.team6560.frc2025.utility.Enums.*;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -52,7 +55,8 @@ public class RobotContainer {
   private final Wrist wrist;
   private final Elevator elevator = new Elevator();
 
-  private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Auto> autoChooser;
+  private final AutoFactory factory;
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
@@ -69,7 +73,6 @@ public class RobotContainer {
     .allianceRelativeControl(true);; 
 
   public RobotContainer() {
-
     climb = new Climb(controls);
     climbCommand = new ClimbCommand(climb, controls);
     climb.setDefaultCommand(climbCommand);
@@ -87,8 +90,26 @@ public class RobotContainer {
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
     configureBindings();
-    autoChooser = new SendableChooser<Command>();
-    autoChooser.setDefaultOption("Test", getProceduralGeneratedAuto());
+
+    factory = new AutoFactory(
+      DriverStation.getAlliance().get(),
+      wrist,
+      elevator,
+      drivebase,
+      pipeGrabber
+    );
+
+    autoChooser = new SendableChooser<Auto>();
+
+    for(AutoRoutines auto : AutoRoutines.values()) {
+      Auto autonomousRoutine = new Auto(auto, factory);
+      if(auto == AutoRoutines.IDLE_LEFT){
+        autoChooser.setDefaultOption(autonomousRoutine.getName(), autonomousRoutine);
+      }
+      else {
+        autoChooser.addOption(autonomousRoutine.getName(), autonomousRoutine);
+      }
+    }
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -132,7 +153,7 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("Taxi Auto");
   }
 
-  public Command getAutonomousCommand() {
+  public Auto getAutonomousCommand() {
     return autoChooser.getSelected();
   }
   
