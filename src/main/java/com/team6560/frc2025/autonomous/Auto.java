@@ -79,6 +79,10 @@ public class Auto {
                 command = factory.getFourPieceLeft();
                 name = "Left 4P";
                 break;
+            case TEST:
+                command = factory.getTest();
+                name = "Test Auto";
+                break;
             default:
                 command = Pair.of(new Pose2d(), null);
                 name = "";

@@ -146,6 +146,17 @@ public class AutoFactory {
         );
     }
 
+    Pair<Pose2d, Command> getTest(){
+        return Pair.of(
+            new Pose2d(11.644, 6.096, FieldConstants.getCenter(alliance).getRotation()),
+            Commands.sequence(
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.TEST),
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true)
+            )
+        );
+    }
+
     public void updateAlliance(DriverStation.Alliance alliance) {
         this.alliance = alliance;
     }
