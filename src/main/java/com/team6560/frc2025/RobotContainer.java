@@ -149,4 +149,29 @@ public class RobotContainer {
     // TODO Auto-generated method stub
     this.drivebase.zeroGyro();
   }
+
+  /** Subsystem getters */
+  public SwerveSubsystem getDrivebase() {
+    return drivebase;
+  }
+
+  public Climb getClimb() {
+    return climb;
+  }
+
+  public PipeGrabber getPipeGrabber() {
+    return pipeGrabber;
+  }
+
+  public BallGrabber getBallGrabber() {
+    return ballGrabber;
+  }
+
+  public Wrist getWrist() {
+    return wrist;
+  }
+
+  public Elevator getElevator() {
+    return elevator;
+  }
 }
