@@ -152,7 +152,9 @@ public class AutoFactory {
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.TEST),
-                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true)
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.TEST),
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, true)
             )
         );
     }

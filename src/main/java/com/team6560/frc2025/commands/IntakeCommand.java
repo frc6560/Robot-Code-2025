@@ -71,7 +71,7 @@ public class IntakeCommand extends SequentialCommandGroup{
                                                                             : new Pose2d(1.12, 7, Rotation2d.fromDegrees(-55));
                 break;
             case TEST:
-                targetPickupPose = new Pose2d(11.644, 6.096, Rotation2d.fromDegrees(120));
+                targetPickupPose = new Pose2d(10, 7, Rotation2d.fromDegrees(120));
                 break;
         }
     }

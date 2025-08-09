@@ -3,6 +3,7 @@ package com.team6560.frc2025.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.util.HashMap;
@@ -38,8 +39,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 1.8; // originally 1.8
-    final double MAX_ACCELERATION = 1.5; // originally 1.5
+    final double MAX_VELOCITY = 2.1; 
+    final double MAX_ACCELERATION = 1.5;
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
 
@@ -77,8 +78,9 @@ public class ScoreCommand extends SequentialCommandGroup {
     private double wristTarget;
     private double wristOffset;
 
-    // A timer :(
+    // Timers :(
     Timer grabberTimer = new Timer();
+
 
     /** A constructor to score at a given level... in teleoperated mode.*/
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
@@ -96,18 +98,29 @@ public class ScoreCommand extends SequentialCommandGroup {
         setTargets();
 
         if(isAuto){
-            super.addCommands(getPathfindToPose(), new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), getScoreCommand(), getPartialDeactuationCommand());
+            super.addCommands(new ParallelCommandGroup(getPathfindToPose(), getGrabberIntake()),
+                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+                                getScoreCommand(), getPartialDeactuationCommand());
         }
         else{
-            super.addCommands(getPathfindToPose(), new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), getScoreCommand(), getFullDeactuationCommand());
+            super.addCommands(getPathfindToPose(), 
+                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+                                getScoreCommand(), getFullDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
     }
 
     /** Gets a pathfinding command */
     public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 0.9); // originally 0.9
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.1); // originally 0.9
         return pathfindToPose;
+    }
+
+    public Command getGrabberIntake(){
+        return new RunCommand(
+            () -> grabber.runIntakeMaxSpeed(),
+            grabber).withTimeout(0.4)
+            .andThen(() -> grabber.stop());
     }
 
     /** Gets an auto align command */
@@ -190,7 +203,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> grabberTimer.hasElapsed(0.25)
+            () -> grabberTimer.hasElapsed(0.2)
         );
         return dunkAndScore;
     }

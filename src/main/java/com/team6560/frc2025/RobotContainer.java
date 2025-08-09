@@ -121,7 +121,7 @@ public class RobotContainer {
 
     // Use auto align with scoring
     driverXbox.y().whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
-                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
+                              ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
     driverXbox.b().whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                               ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
 
