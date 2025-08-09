@@ -98,7 +98,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         setTargets();
 
         if(isAuto){
-            super.addCommands(new ParallelCommandGroup(getPathfindToPose(), getGrabberIntake()),
+            super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getPathfindToPose()),
                                 new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
                                 getScoreCommand(), getPartialDeactuationCommand());
         }
@@ -192,13 +192,15 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getScoreCommand(){
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
+                grabberTimer.start();
             },
             () -> {
-                wrist.setMotorPosition(wristTarget - wristOffset);
-                if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ 
-                    grabberTimer.start();
-                    grabber.runGrabberOuttake();
-                }
+                // wrist.setMotorPosition(wristTarget - wristOffset);
+                // if(Math.abs(wrist.getWristAngle() + 240 - (wristTarget - wristOffset)) < W_TOLERANCE){ 
+                //     grabberTimer.start();
+                //     grabber.runGrabberOuttake();
+                // }
+                grabber.runGrabberOuttake();
             },
             (interrupted) -> {
                 grabber.stop();

@@ -52,7 +52,7 @@ public class IntakeCommand extends SequentialCommandGroup{
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> pipeGrabberTimer.hasElapsed(0.5)
+            () -> pipeGrabberTimer.hasElapsed(0.05)
         );
 
         super.addCommands(new ParallelCommandGroup(driveToIntakePos, deactuateElevator), intakePiece);
