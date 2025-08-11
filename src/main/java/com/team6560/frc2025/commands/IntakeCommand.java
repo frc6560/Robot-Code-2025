@@ -36,8 +36,8 @@ public class IntakeCommand extends SequentialCommandGroup{
                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
             },
             (interrupted) -> {},
-            () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0 )
-                    // && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.PICKUP) < 8.0)
+            () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0 
+                    && Math.abs(wrist.getWristAngle() + 240 - WristConstants.WristStates.PICKUP) < 8.0)
         );
 
         FunctionalCommand intakePiece = new FunctionalCommand(
