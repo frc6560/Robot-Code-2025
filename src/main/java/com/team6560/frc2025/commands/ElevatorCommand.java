@@ -1,14 +1,10 @@
 package com.team6560.frc2025.commands;
 
-import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.Constants.ElevatorConstants;
-import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.Elevator;
-import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.Elevator.State;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ElevatorCommand extends Command {

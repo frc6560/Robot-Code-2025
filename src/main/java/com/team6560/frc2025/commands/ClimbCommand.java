@@ -1,6 +1,5 @@
 package com.team6560.frc2025.commands;
 
-import com.team6560.frc2025.Constants.ClimbConstants;
 import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.Climb;
 

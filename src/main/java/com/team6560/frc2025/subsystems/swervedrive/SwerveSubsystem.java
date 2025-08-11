@@ -75,8 +75,8 @@ public class SwerveSubsystem extends SubsystemBase
 
   // Values to tune
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.0, 0, 0); // TODO: values to tune
-  private final PIDController m_pidControllerY = new PIDController(2.0, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(2, 0, 0); // TODO: values to tune
+  private final PIDController m_pidControllerY = new PIDController(2, 0, 0);
   private final PIDController m_pidControllerTheta = new PIDController(1.2, 0, 0);
 
 
@@ -210,7 +210,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(0.15, 0.0, 0.11), 
+              new PIDConstants(0.12, 0.0, 0.11), 
               // Translation PID constants
               new PIDConstants(0.8, 0.0, 0.07) 
               // Rotation PID constants
