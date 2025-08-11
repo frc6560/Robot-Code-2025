@@ -1,15 +1,15 @@
 package com.team6560.frc2025.commands;
 
-import com.team6560.frc2025.ManualControls;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 public class PipeGrabberCommand extends Command {
     
     final PipeGrabber grabber;
-    final ManualControls controls;
+    final XboxControls controls;
 
-    public PipeGrabberCommand(PipeGrabber grabber, ManualControls controls) {
+    public PipeGrabberCommand(PipeGrabber grabber, XboxControls controls) {
         this.grabber = grabber;
         this.controls = controls;
         addRequirements(grabber);

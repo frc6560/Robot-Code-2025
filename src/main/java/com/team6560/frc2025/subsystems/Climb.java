@@ -8,8 +8,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team6560.frc2025.Constants;
-import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.ClimbConstants;
+import com.team6560.frc2025.controls.XboxControls;
 
 import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
@@ -47,7 +47,7 @@ public class Climb extends SubsystemBase {
 
     // public State state;
 
-    public Climb(ManualControls controls) { 
+    public Climb(XboxControls controls) { 
 
         this.motor1 = new TalonFX(ClimbConstants.MOTOR_1_ID, "Canivore");
         this.motor2 = new TalonFX(ClimbConstants.MOTOR_2_ID, "Canivore");

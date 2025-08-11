@@ -1,7 +1,7 @@
 package com.team6560.frc2025.commands;
 
-import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.WristConstants;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.Wrist.State;
 
@@ -15,10 +15,10 @@ public class WristCommand extends Command {
     final Wrist wrist;
 
     State targetState = State.STOW;
-    final ManualControls controls;
+    final XboxControls controls;
     DigitalInput LimitSwitch = new DigitalInput(WristConstants.LIMIT_SWITCH_PORT_ID);
 
-    public WristCommand(Wrist wrist, ManualControls controls){
+    public WristCommand(Wrist wrist, XboxControls controls){
       this.wrist = wrist;
       this.controls = controls;
 

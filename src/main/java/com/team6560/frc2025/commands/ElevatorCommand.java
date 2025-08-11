@@ -1,9 +1,9 @@
 package com.team6560.frc2025.commands;
 
 import com.team6560.frc2025.Constants;
-import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.Elevator.State;
@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorCommand extends Command {
 
     private final Elevator elevator;
-    private final ManualControls controls;
+    private final XboxControls controls;
 
     private State targetState;
 
     private double targetrotelev = -1;
 
-    public ElevatorCommand(Elevator elevator, ManualControls controls) {
+    public ElevatorCommand(Elevator elevator, XboxControls controls) {
         this.elevator = elevator;
         this.controls = controls;
         addRequirements(elevator);

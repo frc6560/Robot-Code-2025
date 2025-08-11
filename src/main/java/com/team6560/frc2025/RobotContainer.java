@@ -7,6 +7,7 @@ import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.commands.ScoreCommand;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
@@ -38,7 +39,7 @@ public class RobotContainer {
   final XboxController firstXbox = new XboxController(0);
   final XboxController secondXbox = new XboxController(1);
 
-  private final ManualControls controls = new ManualControls(firstXbox, secondXbox);
+  private final XboxControls controls = new XboxControls(firstXbox, secondXbox);
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
   private final Climb climb;

@@ -1,8 +1,8 @@
-package com.team6560.frc2025;
+package com.team6560.frc2025.controls;
 
 import edu.wpi.first.wpilibj.XboxController;
 
-public class ManualControls {
+public class XboxControls {
 
     // private final XboxController secondXbox;
     private final XboxController secondXbox;
@@ -30,7 +30,7 @@ public class ManualControls {
         return value;
       }
       
-    public ManualControls(XboxController firstXbox, XboxController secondXbox) {
+    public XboxControls(XboxController firstXbox, XboxController secondXbox) {
         this.secondXbox = secondXbox;
         this.firstXbox = firstXbox;
         

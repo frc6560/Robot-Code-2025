@@ -87,7 +87,7 @@ public final class Constants {
       public static final double PICKUP = 225;  
       public static final double L1 = 200; 
       public static final double L2 = 80.0; // -215.6, -223 dunk
-      public static final double L4 = 45.0; // good
+      public static final double L4 = 37.0; // good
 
       public static final double S_STOW = 208.5; // same as normal pickup position
       public static final double S_L2 = 148.5; // assuming no offset, also L3 33.76 

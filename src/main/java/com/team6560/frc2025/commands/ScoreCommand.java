@@ -183,7 +183,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
-            && Math.abs(wrist.getWristAngle() + 240 - wristTarget) < W_TOLERANCE
+            // && Math.abs(wrist.getWristAngle() + 240 - wristTarget) < W_TOLERANCE
         );
         return actuateToPosition;
     }
