@@ -73,8 +73,6 @@ public class Wrist extends SubsystemBase {
 
       // Applies the cancoder to the wrist motor
       this.fxConfig = new TalonFXConfiguration();
-      // fxConfig.Feedback.FeedbackRemoteSensorID = m_relativeEncoder.getDeviceID();
-      // fxConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
       fxConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
       fxConfig.Feedback.RotorToSensorRatio = 108;

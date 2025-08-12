@@ -39,8 +39,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 2.1; 
-    final double MAX_ACCELERATION = 1.5;
+    final double MAX_VELOCITY = 2.3;  // initial 2.1
+    final double MAX_ACCELERATION = 2.1; // initial 1.5
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
 
@@ -110,7 +110,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Gets a pathfinding command */
     public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.1); // originally 0.9
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 1.25); 
         return pathfindToPose;
     }
 
@@ -174,14 +174,11 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.6){
-                    elevator.setElevatorPosition(elevatorTarget);
-                    wrist.setMotorPosition(wristTarget);
-                }
+                elevator.setElevatorPosition(elevatorTarget);
+                wrist.setMotorPosition(wristTarget);
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
-            // && Math.abs(wrist.getWristAngle() + 240 - wristTarget) < W_TOLERANCE
         );
         return actuateToPosition;
     }
@@ -242,7 +239,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
         final double DISTANCE_FROM_TAG = 0.164;
 
-        // Puts a HashMap of all possible april tag positions. Notice that this is viewed bottom up, with y increasing.
+        // Puts a HashMap of all possible april tag positions. Notice this is viewed top down with the barge to the left.
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<>();
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.426, 2.727, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.344, 3.722, Rotation2d.fromDegrees(0)));

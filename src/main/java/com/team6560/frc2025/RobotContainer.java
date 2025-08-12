@@ -7,8 +7,8 @@ import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
+import com.team6560.frc2025.controls.ButtonBoard;
 import com.team6560.frc2025.controls.XboxControls;
-import com.team6560.frc2025.commands.ScoreCommand;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -18,7 +18,6 @@ import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
 import com.team6560.frc2025.autonomous.AutoRoutines;
-import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -38,6 +37,7 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final XboxController firstXbox = new XboxController(0);
   final XboxController secondXbox = new XboxController(1);
+  final ButtonBoard buttonBoard = new ButtonBoard(2); // fix ids.
 
   private final XboxControls controls = new XboxControls(firstXbox, secondXbox);
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
@@ -48,7 +48,6 @@ public class RobotContainer {
   private final PipeGrabberCommand pipeGrabberCommand;
   private final BallGrabber ballGrabber;
   private final BallGrabberCommand ballGrabberCommand;
-
   private final Wrist wrist;
   private final Elevator elevator = new Elevator();
 
@@ -110,22 +109,12 @@ public class RobotContainer {
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
+
   private void configureBindings() { 
-
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
-
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
-
-    // Use auto align with scoring
-    driverXbox.y().whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
-                              ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, false).schedule(), drivebase));
-    driverXbox.b().whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
-                              ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, false).schedule(), drivebase));
-
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)
@@ -174,5 +163,13 @@ public class RobotContainer {
 
   public Elevator getElevator() {
     return elevator;
+  }
+
+  public XboxControls getControls() {
+    return controls;
+  }
+
+  public ButtonBoard getButtonBoard() {
+    return buttonBoard;
   }
 }
