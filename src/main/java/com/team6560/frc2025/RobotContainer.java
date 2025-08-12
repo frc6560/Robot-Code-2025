@@ -6,6 +6,7 @@ import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
+import com.team6560.frc2025.commands.ScoreCommand;
 import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.controls.ButtonBoard;
 import com.team6560.frc2025.controls.XboxControls;
@@ -15,6 +16,10 @@ import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
+import com.team6560.frc2025.utility.Enums.ReefIndex;
+import com.team6560.frc2025.utility.Enums.ReefLevel;
+import com.team6560.frc2025.utility.Enums.ReefSide;
+import com.team6560.frc2025.subsystems.LocationManager;
 import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
 import com.team6560.frc2025.autonomous.AutoRoutines;
@@ -27,6 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.io.File;
 import com.frc3481.swervelib.SwerveInputStream;
@@ -40,6 +46,7 @@ public class RobotContainer {
   final ButtonBoard buttonBoard = new ButtonBoard(2); // fix ids.
 
   private final XboxControls controls = new XboxControls(firstXbox, secondXbox);
+  private final LocationManager locationManager = new LocationManager(buttonBoard);
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
   private final Climb climb;
@@ -50,6 +57,7 @@ public class RobotContainer {
   private final BallGrabberCommand ballGrabberCommand;
   private final Wrist wrist;
   private final Elevator elevator = new Elevator();
+
 
   private final SendableChooser<Auto> autoChooser;
   private final AutoFactory factory;
@@ -112,6 +120,19 @@ public class RobotContainer {
 
   private void configureBindings() { 
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+
+    // Trigger for auto align
+    Trigger autoAlignTrigger = new Trigger(
+      () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
+    );
+
+    autoAlignTrigger.whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
+                                                                        locationManager.getReefSide(), 
+                                                                        locationManager.getCurrentReefIndex(), 
+                                                                        locationManager.getCurrentReefLevel(), 
+                                                                        false).schedule(), drivebase)
+                                                                        .andThen(() -> locationManager.reset()));
+
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));

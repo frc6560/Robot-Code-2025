@@ -24,6 +24,11 @@ public class LocationManager extends SubsystemBase {
         this.currentReefSide = null;
     }
 
+    @Override
+    public void periodic() {
+        update();
+    }
+
     /** Runs periodically to check if an update to our target position has been made.*/
     public void update() {
         // Levels first. Checks top down. 
@@ -103,5 +108,9 @@ public class LocationManager extends SubsystemBase {
 
     public boolean isGoSwitchPressed() {
         return goSwitch;
+    }
+
+    public boolean hasTarget(){
+        return currentReefIndex != null && currentReefLevel != null && currentReefSide != null;
     }
 }
