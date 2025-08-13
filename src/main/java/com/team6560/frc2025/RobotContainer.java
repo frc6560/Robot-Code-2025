@@ -126,12 +126,11 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
     );
 
-    autoAlignTrigger.onTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
+    autoAlignTrigger.onTrue(Commands.sequence(new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                                                                         locationManager.getReefSide(), 
                                                                         locationManager.getCurrentReefIndex(), 
                                                                         locationManager.getCurrentReefLevel(), 
-                                                                        false).schedule(), drivebase)
-                                                                        .andThen(Commands.runOnce(() -> locationManager.reset())));
+                                                                        false), Commands.runOnce(() -> locationManager.reset())));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
