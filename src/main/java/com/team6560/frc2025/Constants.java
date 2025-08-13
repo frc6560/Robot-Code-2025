@@ -20,13 +20,6 @@ public final class Constants {
   public static final double ROBOT_LENGTH = 0.838;
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
-//  public static final class AutonConstants
-//  {
-//
-//    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-//    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
-//  }
-
   public static final class DrivebaseConstants
   {
     // Hold time on motor brakes when disabled
@@ -54,14 +47,14 @@ public final class Constants {
     public static final class ElevatorStates {
 
       public static final double STOW = 0.4;
-      public static final double L2 = 0.583; // used to be 1.0
-      public static final double L3 = 6.5;
+      public static final double L2 = 0.605; 
+      public static final double L3 = 6.62;
       public static final double L4 = 17.92; 
 
       public static final double S_STOW = 0.4;
-      public static final double S_L2 = 1.51; // 2.58
-       public static final double S_L3 = 8.15;  // 7.65
-      public static final double S_L4 = 20.8; // should be 21.28 but needs very good PID to not kill spring
+      public static final double S_L2 = 1.51;
+      public static final double S_L3 = 8.15;  
+      public static final double S_L4 = 20.8;
     }
   }
 
@@ -78,24 +71,19 @@ public final class Constants {
 
     public static final int LIMIT_SWITCH_PORT_ID = 19;
     public static final class WristStates {
-
-      // constant + offset = pos
-
-      // C + 35.0 = -215.6 + 360
-
       public static final double STOW = 90.0;
       public static final double PICKUP = 225;  
       public static final double L1 = 200; 
       public static final double L2 = 60; 
       public static final double L4 = 38; 
 
-      public static final double S_STOW = 208.5; // same as normal pickup position
-      public static final double S_L2 = 148.5; // assuming no offset, also L3 33.76 
+      public static final double S_STOW = 208.5; 
+      public static final double S_L2 = 148.5; 
       public static final double S_L4 = 250; 
 
       public static final double L1Offset = 0.0;
       public static final double L2Offset = 35.0;
-      public static final double L4Offset = 57.0; // 30.0
+      public static final double L4Offset = 57.0; 
       public static final double StowOffset = 0.0;
       public static final double PickupOffset = 0.0;
     }
@@ -106,8 +94,8 @@ public final class Constants {
     public static final int MOTOR_1_ID = 20;
     public static final int MOTOR_2_ID = 21;
     public static final int CANCODER_ID = 22;
-    public static final double UPPER_SOFT_BOUND = 0.178; // was .198
-    public static final double LOWER_SOFT_BOUND = -0.162; // abs encoder
+    public static final double UPPER_SOFT_BOUND = 0.178; 
+    public static final double LOWER_SOFT_BOUND = -0.162;
     public static final double GEAR_RATIO = 1.5; 
 
   }
