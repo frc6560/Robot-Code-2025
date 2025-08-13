@@ -72,6 +72,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     ReefSide side;
     ReefIndex location;
     ReefLevel level;
+    AlgaeLevel Alevel;
+    AlgaePosition Alocation;
 
     // Targets
     private double elevatorTarget;
@@ -82,12 +84,13 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** A constructor to score at a given level... in teleoperated mode.*/
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
-                            ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto, AlgaeLevel algaeLevel) {
+                            ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto, AlgaeLevel Alevel) {
 
         this.drivetrain = drivetrain;
         this.wrist = wrist;
         this.elevator = elevator;
         this.grabber = grabber;
+        this.Alevel = Alevel;
 
         this.side = side;
         this.location = location;
@@ -247,6 +250,8 @@ public class ScoreCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.6, 5.437, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.08, 2.908, Rotation2d.fromDegrees(240)));
+        targetPoses.put(ReefIndex.BARGE, new Pose2d(10.402, 4.0, Rotation2d.fromDegrees(180)));
+        targetPoses.put(ReefIndex.PROCESSOR, new Pose2d(7.164, 4.0, Rotation2d.fromDegrees(0)));
 
         Pose2d aprilTagPose = targetPoses.get(location);
 
@@ -287,6 +292,20 @@ public class ScoreCommand extends SequentialCommandGroup {
                 break;
         }
     }
+
+        switch (Alevel) {
+            case Processor:
+                elevatorTarget = ElevatorConstants.ElevatorStates.PROCESSOR;
+                wristTarget = WristConstants.WristStates.PROCESSOR;
+                break;
+            case Barge:
+                elevatorTarget = ElevatorConstants.ElevatorStates.BARGE;
+                wristTarget = WristConstants.WristStates.BARGE;
+                break;
+            default:
+                elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
+                wristTarget = WristConstants.WristStates.STOW;
+        }
 
     /** Transforms red alliance poses to blue by reflecting around the center point of the field*/
     public Pose2d applyAllianceTransform(Pose2d pose){

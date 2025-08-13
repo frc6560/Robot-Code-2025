@@ -6,5 +6,7 @@ public enum ReefIndex {
     TOP_LEFT,
     FAR_LEFT,
     BOTTOM_LEFT,
-    BOTTOM_RIGHT
+    BOTTOM_RIGHT,
+    BARGE,
+    PROCESSOR
 }

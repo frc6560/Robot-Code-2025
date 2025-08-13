@@ -55,6 +55,9 @@ public final class Constants {
       public static final double S_L2 = 1.51;
       public static final double S_L3 = 8.15;  
       public static final double S_L4 = 20.8;
+
+      public static final double Barge = 0.0; //placeholder
+      public static final double Processor = 0.0; //placeholder
     }
   }
 
@@ -86,6 +89,9 @@ public final class Constants {
       public static final double L4Offset = 57.0; 
       public static final double StowOffset = 0.0;
       public static final double PickupOffset = 0.0;
+
+      public static final double Barge = 0.0; //placeholder
+      public static final double Processor = 0.0; //placeholder
     }
   }
 
