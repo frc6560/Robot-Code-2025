@@ -43,7 +43,7 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final XboxController firstXbox = new XboxController(0);
   final XboxController secondXbox = new XboxController(1);
-  final ButtonBoard buttonBoard = new ButtonBoard(2); // fix ids.
+  final ButtonBoard buttonBoard = new ButtonBoard(1); 
 
   private final XboxControls controls = new XboxControls(firstXbox, secondXbox);
   private final LocationManager locationManager = new LocationManager(buttonBoard);
@@ -126,16 +126,17 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
     );
 
-    autoAlignTrigger.whileTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
+    autoAlignTrigger.onTrue(Commands.runOnce(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                                                                         locationManager.getReefSide(), 
                                                                         locationManager.getCurrentReefIndex(), 
                                                                         locationManager.getCurrentReefLevel(), 
                                                                         false).schedule(), drivebase)
-                                                                        .andThen(() -> locationManager.reset()));
+                                                                        .andThen(Commands.runOnce(() -> locationManager.reset())));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
+    driverXbox.b().onTrue(Commands.runOnce(() -> locationManager.reset()));
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)
@@ -192,5 +193,9 @@ public class RobotContainer {
 
   public ButtonBoard getButtonBoard() {
     return buttonBoard;
+  }
+
+  public LocationManager getLocationManager() {
+    return locationManager;
   }
 }

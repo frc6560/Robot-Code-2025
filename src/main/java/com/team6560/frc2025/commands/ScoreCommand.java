@@ -39,8 +39,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 2.3;  // initial 2.1
-    final double MAX_ACCELERATION = 2.1; // initial 1.5
+    final double MAX_VELOCITY = 2.7;  
+    final double MAX_ACCELERATION = 2.2; 
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
 
@@ -110,7 +110,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Gets a pathfinding command */
     public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 1.25); 
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.7); 
         return pathfindToPose;
     }
 
@@ -228,8 +228,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     /** Gets the prescore for a specific Pose2d*/
     public Pose2d getPrescore(Pose2d targetPose){
         return new Pose2d(
-            targetPose.getX() + 0.75 * Math.cos(targetPose.getRotation().getRadians()),
-            targetPose.getY() + 0.75 * Math.sin(targetPose.getRotation().getRadians()),
+            targetPose.getX() + 0.85 * Math.cos(targetPose.getRotation().getRadians()),
+            targetPose.getY() + 0.85 * Math.sin(targetPose.getRotation().getRadians()),
             targetPose.getRotation()
         );
     }

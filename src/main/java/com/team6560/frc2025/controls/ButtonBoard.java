@@ -17,7 +17,7 @@ public class ButtonBoard {
         return buttonBoard.getRawButtonPressed(axisID);
     }
 
-    // Reef buttons :(
+    // Reef buttons
     public boolean getScoreA() {
         return buttonBoard.getRawButtonPressed(1);
     }
@@ -25,22 +25,28 @@ public class ButtonBoard {
         return buttonBoard.getRawButtonPressed(2);
     }
     public boolean getScoreC() {
-        return buttonBoard.getRawButtonPressed(3);
+        return false;
+        // return buttonBoard.getRawButtonPressed(3);
     }
     public boolean getScoreD() {
-        return buttonBoard.getRawButtonPressed(4);
+        return false;
+        // return buttonBoard.getRawButtonPressed(4);
     }
     public boolean getScoreE() {
-        return buttonBoard.getRawButtonPressed(5);
+        return buttonBoard.getRawButtonPressed(8);
+        // return buttonBoard.getRawButtonPressed(5);
     }
     public boolean getScoreF() {
-        return buttonBoard.getRawButtonPressed(6);
+        return buttonBoard.getRawButtonPressed(4);
+        // return buttonBoard.getRawButtonPressed(6);
     }
     public boolean getScoreG() {
-        return buttonBoard.getRawButtonPressed(7);
+        return false;
+        // return buttonBoard.getRawButtonPressed(7);
     }
     public boolean getScoreH() {
-        return buttonBoard.getRawButtonPressed(8);
+        return false;
+        // return buttonBoard.getRawButtonPressed(8);
     }
     public boolean getScoreI() {
         return buttonBoard.getRawButtonPressed(9);
@@ -52,20 +58,24 @@ public class ButtonBoard {
         return buttonBoard.getRawButtonPressed(11);
     }
     public boolean getScoreL() {
-        return buttonBoard.getRawButtonPressed(12);
+        return false;
+        // return buttonBoard.getRawButtonPressed(12);
     }
 
     public boolean getL1(){
         return buttonBoard.getRawButton(13);
     }
     public boolean getL2(){
-        return buttonBoard.getRawButtonPressed(14);
+        return buttonBoard.getRawButton(3);
+        // return buttonBoard.getRawButton(14);
     }
     public boolean getL3(){
-        return buttonBoard.getRawButtonPressed(15);
+        return buttonBoard.getRawButton(12);
+        // return buttonBoard.getRawButton(15);
     }
     public boolean getL4(){
-        return buttonBoard.getRawButtonPressed(16);
+        return buttonBoard.getRawButton(7);
+        // return buttonBoard.getRawButton(16);
     }
 
     public boolean getShift(){
