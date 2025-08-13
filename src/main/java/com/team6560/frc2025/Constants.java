@@ -56,7 +56,7 @@ public final class Constants {
       public static final double STOW = 0.4;
       public static final double L2 = 0.583; // used to be 1.0
       public static final double L3 = 6.5;
-      public static final double L4 = 17.2; // 17.65
+      public static final double L4 = 17.54; 
 
       public static final double S_STOW = 0.4;
       public static final double S_L2 = 1.51; // 2.58
@@ -87,7 +87,7 @@ public final class Constants {
       public static final double PICKUP = 225;  
       public static final double L1 = 200; 
       public static final double L2 = 60; 
-      public static final double L4 = 30; 
+      public static final double L4 = 38; 
 
       public static final double S_STOW = 208.5; // same as normal pickup position
       public static final double S_L2 = 148.5; // assuming no offset, also L3 33.76 
