@@ -36,12 +36,6 @@ public class XboxControls {
         
     }
 
-    // slow down
-
-    public boolean slowDown() {
-      return (firstXbox.getLeftTriggerAxis() > 0.25);
-    }
-
     // climb
 
     public boolean getClimbDown() {
@@ -83,14 +77,14 @@ public class XboxControls {
     }
 
     public boolean goToPickup(){
-        return secondXbox.getRightTriggerAxis() > 0.25;
+        return firstXbox.getRightTriggerAxis() > 0.25;
     }
 
     // pipe and ball grabber 
 
     // shifted for ball
     public boolean runGrabberIntake(){
-      return secondXbox.getLeftTriggerAxis() > 0.25;
+      return firstXbox.getLeftTriggerAxis() > 0.25;
     }
 
     public boolean runGrabberOuttake() {
