@@ -244,7 +244,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.54, 3.720, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.064, 5.155, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.590, 5.455, Rotation2d.fromDegrees(120))); 
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.6, 5.437, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.08, 2.908, Rotation2d.fromDegrees(240)));
 
@@ -260,8 +260,6 @@ public class ScoreCommand extends SequentialCommandGroup {
             targetPose = applyAllianceTransform(targetPose);
         }
 
-
-        // Sets subsystem targets
         switch (level) {
             case L1:
                 wristTarget = WristConstants.WristStates.L1;

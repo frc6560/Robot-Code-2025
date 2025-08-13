@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.io.File;
+import java.util.Set;
+
 import com.frc3481.swervelib.SwerveInputStream;
 
 // took out subsystems + added camera
@@ -126,11 +128,13 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
     );
 
-    autoAlignTrigger.onTrue(Commands.sequence(new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
+    autoAlignTrigger.onTrue(Commands.defer(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                                                                         locationManager.getReefSide(), 
                                                                         locationManager.getCurrentReefIndex(), 
                                                                         locationManager.getCurrentReefLevel(), 
-                                                                        false), Commands.runOnce(() -> locationManager.reset())));
+                                                                        false), 
+                                                                        Set.of(wrist, elevator, pipeGrabber, drivebase))
+                                                                        .finallyDo((interrupted) -> locationManager.reset()));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
