@@ -138,7 +138,7 @@ public class PathCalculator {
                         endPose, 
                         startControlHeading, 
                         endControlHeading, 
-                        3.0, 3.0, 3.14, 6.28);
+                        5.0, 4.0, 3.14, 6.28);
     }
 
 
@@ -251,8 +251,8 @@ public class PathCalculator {
             waypoint,
             new Pose2d(), // FIX LATER!
             getControlPoints(waypointPose)[0],
-            0.5, // tune
-            0.5, // tune
+            5.0, // tune
+            4.0, // tune
             3.14,
             6.28);
 
@@ -261,11 +261,11 @@ public class PathCalculator {
             this.endPose,
             getControlPoints(waypointPose)[1],
             new Pose2d(),
-            0.5,
-            0.5,
+            5.0,
+            4.0,
             3.14,
             6.28);
 
-        return new PathGroup(firstPath, secondPath, 0.5, 0.5, 3.14, 6.28);
+        return new PathGroup(firstPath, secondPath, 5.0, 4.0, 3.14, 6.28);
     }
 }
