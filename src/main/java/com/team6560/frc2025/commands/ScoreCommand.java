@@ -228,8 +228,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     /** Gets the prescore for a specific Pose2d*/
     public Pose2d getPrescore(Pose2d targetPose){
         return new Pose2d(
-            targetPose.getX() + 0.85 * Math.cos(targetPose.getRotation().getRadians()),
-            targetPose.getY() + 0.85 * Math.sin(targetPose.getRotation().getRadians()),
+            targetPose.getX() + 0.84 * Math.cos(targetPose.getRotation().getRadians()), // initially 1
+            targetPose.getY() + 0.84 * Math.sin(targetPose.getRotation().getRadians()), // initially 1
             targetPose.getRotation()
         );
     }
