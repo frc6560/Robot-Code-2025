@@ -80,10 +80,6 @@ public class Auto {
                 command = factory.getFourPieceLeft();
                 name = "Left 4P";
                 break;
-            case RIGHT_2P_BACK:
-                command = factory.getTwoPieceBackRight();
-                name = "Right 2P Back";
-                break;
             case TEST:
                 command = factory.getTest();
                 name = "Test Auto";
