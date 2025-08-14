@@ -39,8 +39,12 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 2.1;  
-    final double MAX_ACCELERATION = 2.2; 
+    // Max velocities and accelerations for initial drive to prescore pose.
+    final double MAX_VELOCITY = 5.0;
+    final double MAX_ACCELERATION = 4.0;
+
+    final double MAX_FINAL_VELOCITY = 2.7;  
+    final double MAX_FINAL_ACCELERATION = 2.2; 
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
 
@@ -50,6 +54,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     // Paths
     private AutoAlignPath startPath;
     private AutoAlignPath endPath;
+    private AutoAlignPath path;
 
     // Profiles
     private TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
@@ -96,22 +101,16 @@ public class ScoreCommand extends SequentialCommandGroup {
         setTargets();
 
         if(isAuto){
-            super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getPathfindToPose()),
+            super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
                                 new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
                                 getScoreCommand());
         }
         else{
-            super.addCommands(getPathfindToPose(), 
+            super.addCommands(getDriveToPrescore(), 
                                 new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
                                 getScoreCommand(), getFullDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
-    }
-
-    /** Gets a pathfinding command */
-    public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.1); 
-        return pathfindToPose;
     }
 
     public Command getGrabberIntake(){
@@ -119,6 +118,46 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> grabber.runIntakeMaxSpeed(),
             grabber).withTimeout(0.4)
             .andThen(() -> grabber.stop());
+    }
+
+    /** Gets a drive to prescore command */
+    public Command getDriveToPrescore(){
+        final Command goToPrescore = new FunctionalCommand(
+            () -> {
+            // Computes the necessary states for the translational and rotational profiles for our path.
+            path = new AutoAlignPath(
+                drivetrain.getPose(),
+                targetPose,
+                MAX_VELOCITY, 
+                MAX_ACCELERATION, 
+                MAX_OMEGA,
+                MAX_ALPHA);
+
+            translationalState.position = path.getDisplacement().getNorm();
+            translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
+                                                                + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/ translationalState.position),
+                                                                -startPath.maxVelocity,
+                                                                0);
+
+            targetTranslationalState.velocity = 2.7;
+
+            targetRotationalState.position = startPath.endPose.getRotation().getRadians();
+            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+            rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
+        },
+        () -> {
+            if((translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
+                drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
+            }
+            else {
+                Setpoint newSetpoint = getNextSetpoint(path);
+                drivetrain.followSegment(newSetpoint);
+            }
+        },
+        (interrupted) -> {},
+        () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
+        );
+        return goToPrescore;
     }
 
     /** Gets an auto align command */
@@ -129,25 +168,19 @@ public class ScoreCommand extends SequentialCommandGroup {
                 startPath = new AutoAlignPath(
                     drivetrain.getPose(),
                     targetPose,
-                    MAX_VELOCITY, 
-                    MAX_ACCELERATION, 
+                    MAX_FINAL_VELOCITY, 
+                    MAX_FINAL_ACCELERATION, 
                     MAX_OMEGA,
                     MAX_ALPHA);
 
-
-                endPath = new AutoAlignPath(
-                    targetPose,
-                    getPrescore(targetPose),
-                    MAX_VELOCITY, 
-                    MAX_ACCELERATION, 
-                    MAX_OMEGA,
-                    MAX_ALPHA);
+                // Resets profiles
                 translationalState.position = startPath.getDisplacement().getNorm();
                 translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
                                                             + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/ translationalState.position),
                                                             -startPath.maxVelocity,
                                                             0);
 
+                targetTranslationalState.velocity = 0;
 
                 targetRotationalState.position = startPath.endPose.getRotation().getRadians();
                 rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
@@ -206,6 +239,14 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getFullDeactuationCommand(){
         final Command backUp = new FunctionalCommand(
                         () -> {
+                            endPath = new AutoAlignPath(
+                                targetPose,
+                                getPrescore(targetPose),
+                                MAX_FINAL_VELOCITY, 
+                                MAX_FINAL_ACCELERATION, 
+                                MAX_OMEGA,
+                                MAX_ALPHA);
+
                             // Resets all trapezoidal profiles
                             translationalState.position = endPath.getDisplacement().getNorm();
                             translationalState.velocity = 0;
