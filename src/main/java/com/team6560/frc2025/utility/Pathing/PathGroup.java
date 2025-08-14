@@ -62,7 +62,7 @@ public class PathGroup{
         double errorToSetpoint = MathUtil.angleModulus(startRotation.position - rotationalPose);
 
         // gets rid of mod 2pi issues
-        endState.position = rotationalPose + errorToGoal;
+        endRotation.position = rotationalPose + errorToGoal;
         currentRotationState.position = rotationalPose + errorToSetpoint;
 
         // finally computes next rotation state 
@@ -71,7 +71,7 @@ public class PathGroup{
         currentRotationState.velocity = rotationalSetpoint.velocity;
 
         // interpolation
-        if(translationalSetpoint.position < firstPath.getArcLength()){
+        if(translationalSetpoint.position <= firstPath.getArcLength()-1E-6){
             timeParam = firstPath.getTimeForArcLength(translationalSetpoint.position);
             normalizedVelocity = firstPath.getNormalizedVelocityVector(timeParam);
             translationalTarget = firstPath.calculatePosition(timeParam);

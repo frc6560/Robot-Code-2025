@@ -61,6 +61,22 @@ public class Path {
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
 
+        // generate a lookup table for arc length to time
+        generateLookupTable();
+
+        // Actually defines our curve
+        // defines x component for the cubic Bézier curve
+        this.x3 = -startPose.x + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.x;
+        this.x2 = 3 * startPose.x - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
+        this.x1 = -3 * startPose.x + 3 * startControlHeading.getX();
+        this.x0 = startPose.x;
+
+        // defines y components as well.
+        this.y3 = -startPose.y + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.y;
+        this.y2 = 3 * startPose.y - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
+        this.y1 = -3 * startPose.y + 3 * startControlHeading.getY();
+        this.y0 = startPose.y;
+
         // Sets up the trapezoidal profile start and end states... as well as the actual profiles
         // translation
         this.currentState = new TrapezoidProfile.State(0, startPose.getSpeed());
@@ -73,22 +89,6 @@ public class Path {
         this.currentRotation = new TrapezoidProfile.State(startPose.theta, startPose.omega);
         this.endRotation = new TrapezoidProfile.State(endPose.theta, endPose.omega);
         this.rotationProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(maxOmega, maxAlpha));
-
-        // Actually defines our curve
-        // defines x component for the cubic Bézier curve
-        this.x3 = -startPose.x + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.x;
-        this.x2 = 3 * startPose.x - 6 * startControlHeading.getX() + 3 * endControlHeading.getX();
-        this.x1 = -3 * startPose.x + 3 * startControlHeading.getX();
-        this.x0 = startPose.x;
-
-        // defines y components as well.
-        this.y3 = -startPose.y + 3 * startControlHeading.getY() - 3 * endControlHeading.getY() + endPose.x;
-        this.y2 = 3 * startPose.y - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
-        this.y1 = -3 * startPose.y + 3 * startControlHeading.getY();
-        this.y0 = startPose.y;
-
-        // generate a lookup table for arc length to time
-        generateLookupTable();
     }
 
     /** Getter methods*/
@@ -259,7 +259,7 @@ public class Path {
         double errorToSetpoint = MathUtil.angleModulus(startRotation.position - rotationalPose);
 
         // gets rid of mod 2pi issues
-        endState.position = rotationalPose + errorToGoal;
+        endRotation.position = rotationalPose + errorToGoal;
         currentRotation.position = rotationalPose + errorToSetpoint;
 
         // finally computes next rotation state 
