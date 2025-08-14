@@ -23,7 +23,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -117,6 +116,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             .andThen(() -> grabber.stop());
     }
 
+    /** Helper method for following a straight trajectory */
     public Command getFollowPath(AutoAlignPath path, double finalVelocity){
         final Command followPath = new FunctionalCommand(
             () -> {

@@ -51,11 +51,11 @@ public class AutoFactory {
             FieldConstants.getRight(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
             )
         );
@@ -66,11 +66,11 @@ public class AutoFactory {
             FieldConstants.getLeft(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
             )
         );
@@ -81,11 +81,11 @@ public class AutoFactory {
             FieldConstants.getRight(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true)
             )
         );
@@ -96,11 +96,11 @@ public class AutoFactory {
             FieldConstants.getLeft(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true)
             )
         );
@@ -111,9 +111,9 @@ public class AutoFactory {
             FieldConstants.getFarRight(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
             )
         );
@@ -125,9 +125,9 @@ public class AutoFactory {
             FieldConstants.getFarLeft(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
             )
         );
@@ -139,9 +139,9 @@ public class AutoFactory {
             FieldConstants.getCenter(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.LEFT),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT)
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT)
             )
         );
     }
@@ -151,9 +151,9 @@ public class AutoFactory {
             new Pose2d(11.644, 6.096, FieldConstants.getCenter(alliance).getRotation()),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.TEST),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.TEST),
+                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, true)
             )
         );
