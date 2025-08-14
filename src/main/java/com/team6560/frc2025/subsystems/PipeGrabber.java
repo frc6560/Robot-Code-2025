@@ -21,7 +21,7 @@ public class PipeGrabber extends SubsystemBase {
 
     private static final int GRABBER_MOTOR_ID = 17;
     private static final double INTAKE_SPEED = 0.5;
-    private static final double OUTTAKE_SPEED = -0.3;
+    private static final double OUTTAKE_SPEED = -0.25;
     private static final double OUTTAKE_SPEED_L1 = -0.2;
 
     // This is your constructor. Creates a new PipeGrabber.
