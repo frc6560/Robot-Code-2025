@@ -5,6 +5,7 @@ import com.team6560.frc2025.Constants.OperatorConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
+import com.team6560.frc2025.commands.IntakeCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.ScoreCommand;
 import com.team6560.frc2025.commands.WristCommand;
@@ -16,6 +17,7 @@ import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
+import com.team6560.frc2025.utility.Enums.PickupLocations;
 import com.team6560.frc2025.utility.Enums.ReefIndex;
 import com.team6560.frc2025.utility.Enums.ReefLevel;
 import com.team6560.frc2025.utility.Enums.ReefSide;
@@ -139,7 +141,7 @@ public class RobotContainer {
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
-    driverXbox.b().onTrue(Commands.runOnce(() -> locationManager.reset()));
+    driverXbox.b().onTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, pipeGrabber, PickupLocations.RIGHT).schedule(), drivebase));
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)

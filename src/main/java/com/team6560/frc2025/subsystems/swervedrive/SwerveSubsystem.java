@@ -211,9 +211,9 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(0.03, 0.0, 0.22),  // these constants can go kys
+              new PIDConstants(2.2, 0.0, 0.01),  // these constants can go kys
               // Translation PID constants
-              new PIDConstants(0.8, 0.0, 0.07) 
+              new PIDConstants(1.1, 0.0, 0.07) 
               // Rotation PID constants
           ),
           config,
@@ -259,6 +259,9 @@ public class SwerveSubsystem extends SubsystemBase
       constraints,
       endVelocity);
 
+      // Telemetry
+    swerveDrive.field.getObject("TargetPose").setPose(targetPose);
+
     return pathfindingCommand;
   }
 
@@ -270,15 +273,6 @@ public class SwerveSubsystem extends SubsystemBase
   public void followSegment(Setpoint setpoint) {
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
-
-    // Telemetry
-    swerveDrive.field.getObject("TargetPose").setPose(
-      new Pose2d(
-        setpoint.x, 
-        setpoint.y, 
-        Rotation2d.fromRadians(setpoint.theta)
-      )
-    );
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),

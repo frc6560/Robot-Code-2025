@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import java.util.Queue;
+
 import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.Setpoint;
 
@@ -34,7 +36,7 @@ public class PathCalculator {
 
     public Pose2d reefCenter;
 
-    public boolean useQuintic; // LMFAO this needs to be renamed
+    public boolean hasObstacle; 
 
     /** Designed to return a path from our start to end pose, while avoiding any possible obstacles.
      * @param currentPose the current pose of the robot
@@ -44,11 +46,8 @@ public class PathCalculator {
         this.startPose = currentPose;
         this.endPose = finalPose;
 
-        if(Math.abs(getRegion(currentPose.getSetpointPose()) - getRegion(finalPose.getSetpointPose())) > 1){
-            useQuintic = true;
-        } else {
-            useQuintic = false;
-        }
+        this.hasObstacle = getObstacleExists(currentPose.getSetpointPose(), finalPose.getSetpointPose());
+
         // This is fine because we initialize path calculator objects following robotinit
         if(DriverStation.getAlliance().get() == Alliance.Blue){
             reefCenter = BLUE_REEF_CENTER;
@@ -73,7 +72,7 @@ public class PathCalculator {
     /** Gets the "region" of a specific Pose2D according to its theta value. 
      * @return The region of a specific Pose2D.
     */
-    public int getRegion(Pose2d pose){
+    public boolean getObstacleExists(Pose2d firstPose, Pose2d secondPose){
         Pose2d reefCenter;
         if(DriverStation.getAlliance().get() == Alliance.Blue){
             reefCenter = BLUE_REEF_CENTER;
@@ -81,10 +80,11 @@ public class PathCalculator {
         else {
             reefCenter = RED_REEF_CENTER;
         }
-        Translation2d displacement = pose.getTranslation().minus(reefCenter.getTranslation());
-        double poseAngle = Rotation2d.fromRadians(Math.atan2(displacement.getY(), displacement.getX())).getDegrees();
-
-        return (int) (poseAngle + 30.0) / 60; // 0-5, inclusive
+        Translation2d firstDisplacement = firstPose.getTranslation().minus(reefCenter.getTranslation());
+        Translation2d secondDisplacement = secondPose.getTranslation().minus(reefCenter.getTranslation());
+        double diff = Math.abs(Math.atan2(secondDisplacement.getY(), secondDisplacement.getX()) - 
+                       Math.atan2(firstDisplacement.getY(), firstDisplacement.getX()));
+        return diff > 120.0;
     }
 
 
@@ -100,47 +100,9 @@ public class PathCalculator {
     }
 
     
-    public boolean getUseQuintic() {
-        return useQuintic;
+    public boolean hasObstacle() {
+        return hasObstacle;
     }
-
-
-    /** Obtains a cubic path from the start pose to the end pose, with a waypoint in between. Only use if {@link #getUseQuintic()} is false.
-     * @param waypoint The waypoint to use
-     * @return A path from the start pose to the end pose, with a waypoint in between
-     */
-    public Path generateCubicPath(){
-        if(useQuintic){
-            DriverStation.reportError("there are blocks in the way!", false);
-            return null;
-        }
-        // Calculates the angle bisector between our two poses. 
-        double angle = startPose.getSetpointPose().getRotation().getRadians() 
-                        + MathUtil.angleModulus(endPose.getSetpointPose().getRotation().getRadians() - startPose.getSetpointPose().getRotation().getRadians()) / 2.0;
-        
-        // Calculates the control length based on the angle difference and the displacement.
-        double controlLengthConstant = 1.0; // subject to tuning
-        Translation2d displacement = endPose.getTranslation().minus(startPose.getTranslation());
-
-        double angleDifference = Math.abs(angle - Math.atan2(displacement.getY(), displacement.getX()));
-        this.startFinalControlLength = displacement.getNorm() * Math.abs(Math.sin(angleDifference)) * controlLengthConstant;
-        this.endInitialControlLength = startFinalControlLength; // symmetry
-
-        // Gets the control points for the start and end poses.
-        Pose2d startControlHeading = getPoseDirectionFrom(startPose.getSetpointPose(), 
-                                                            startFinalControlLength, 
-                                                            angle);
-        Pose2d endControlHeading = getPoseDirectionFrom(endPose.getSetpointPose(), 
-                                                            endInitialControlLength, 
-                                                            angle + Math.PI);
-
-        return new Path(startPose,
-                        endPose, 
-                        startControlHeading, 
-                        endControlHeading, 
-                        5.0, 4.0, 3.14, 6.28);
-    }
-
 
     // From here on out, denote our start point as A, our end point as B. Define omega as the circle circumscribing the reef.
 
@@ -218,20 +180,17 @@ public class PathCalculator {
      * @return a PathGroup object that contains two paths: one to a control point generated by going 1.5x robot length around the obstacle, and one to the target pose.
     */
     public PathGroup calculatePathGroup(){
-        if(!useQuintic){
-            DriverStation.reportError("You cannot generate a PathGroup right now!", false);
-            return null;
-        }
         Pose2d circleMidpoint = getMidpoint(getCircleIntersections()[0], getCircleIntersections()[1]);
-        Translation2d normalVector = getNormalVector(getCircleIntersections()[0], getCircleIntersections()[1]);
+        getNormalVector(getCircleIntersections()[0], getCircleIntersections()[1]);
 
         // Calculates the middle control point. Because the normal vector may have been inverted, we do this the long way.
         Translation2d disp = circleMidpoint.getTranslation().minus(reefCenter.getTranslation());
         double angle = Math.atan2(disp.getY(), disp.getX());
-        double magnitude = (this.RADIUS - circleMidpoint.getTranslation().minus(reefCenter.getTranslation()).getNorm()) 
-                            + 1.5 * Math.sqrt(Math.pow(Constants.ROBOT_LENGTH, 2) + Math.pow(Constants.ROBOT_WIDTH, 2)); 
-        Pose2d waypointWithoutRotation = getPoseDirectionFrom(circleMidpoint, magnitude, angle);
+        double clearance = 1.5 * Math.hypot(Constants.ROBOT_LENGTH, Constants.ROBOT_WIDTH);
+        double distanceToCircle = Math.max(this.RADIUS - circleMidpoint.getTranslation().minus(reefCenter.getTranslation()).getNorm(), 0);
+        double magnitude = distanceToCircle + clearance;
 
+        Pose2d waypointWithoutRotation = getPoseDirectionFrom(circleMidpoint, magnitude, angle);
         Pose2d waypointPose = new Pose2d(waypointWithoutRotation.getTranslation(), new Rotation2d(calculateControlAngle()));
 
         Setpoint waypoint = new Setpoint(
@@ -242,8 +201,6 @@ public class PathCalculator {
             0, // vy
             0  // omega
         );
-
-        // Calculates each control point length. Path 1 and Path 2 are handled separately, unlike our quintic curve.
 
         // Finally calculates our paths.
         Path firstPath = new Path(

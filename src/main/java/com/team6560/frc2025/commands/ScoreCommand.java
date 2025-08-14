@@ -39,7 +39,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 2.7;  
+    final double MAX_VELOCITY = 2.1;  
     final double MAX_ACCELERATION = 2.2; 
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
@@ -110,7 +110,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Gets a pathfinding command */
     public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.7); 
+        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.1); 
         return pathfindToPose;
     }
 
@@ -174,8 +174,10 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                elevator.setElevatorPosition(elevatorTarget);
-                wrist.setMotorPosition(wristTarget);
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.7){
+                    elevator.setElevatorPosition(elevatorTarget);
+                    wrist.setMotorPosition(wristTarget);
+                }
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 

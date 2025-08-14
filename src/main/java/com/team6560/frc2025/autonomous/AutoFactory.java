@@ -61,6 +61,20 @@ public class AutoFactory {
         );
     }
 
+    /** An L2 auto simulating the 4pL4 auto. */
+    Pair<Pose2d, Command> getTwoPieceBackRight(){
+        return Pair.of(
+            FieldConstants.getRight(alliance),
+            Commands.sequence(
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true),
+                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
+                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L2, true)
+            )
+        );
+    }
+
     Pair<Pose2d, Command> getFourPieceBackLeft(){
         return Pair.of(
             FieldConstants.getLeft(alliance),

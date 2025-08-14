@@ -47,12 +47,12 @@ public class IntakeCommand extends SequentialCommandGroup{
         DriverStation.Alliance alliance = DriverStation.getAlliance().get();
         switch(location){
             case RIGHT:
-                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(15.925, 7.35, Rotation2d.fromDegrees(-125)) 
-                                                                            : new Pose2d(1.12, 1.05, Rotation2d.fromDegrees(55));
+                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(16.219, 7.347, Rotation2d.fromDegrees(55)) 
+                                                                            : new Pose2d(1.12, 1.05, Rotation2d.fromDegrees(-125));
                 break;
             case LEFT:
-                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(15.925, 0.681, Rotation2d.fromDegrees(-55)) 
-                                                                            : new Pose2d(1.12, 7, Rotation2d.fromDegrees(-55));
+                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(15.925, 0.681, Rotation2d.fromDegrees(-125)) 
+                                                                            : new Pose2d(1.12, 7, Rotation2d.fromDegrees(55));
                 break;
             case TEST:
                 targetPickupPose = new Pose2d(10, 7, Rotation2d.fromDegrees(120));
