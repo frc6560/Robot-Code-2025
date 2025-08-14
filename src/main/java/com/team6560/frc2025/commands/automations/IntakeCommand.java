@@ -26,6 +26,8 @@ public class IntakeCommand extends SequentialCommandGroup{
     PickupLocations location;
     Pose2d targetPickupPose;
 
+    // Note that this needs a second auto align, solely because rotation needs to be calculated differently.
+
     TrapezoidProfile translationProfile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(5.0, 4.0) // max velocity and acceleration
     );
@@ -62,18 +64,21 @@ public class IntakeCommand extends SequentialCommandGroup{
                 translationState.position = translationSetpoint.position;
                 translationState.velocity = translationSetpoint.velocity;
 
-                // rot wraparound calculations
-                double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-                double goalRotation = rotationTarget.position;
-                double angularError = MathUtil.angleModulus(goalRotation - rotationalPose);
+                // only activate rotation at 2.0m from target
+                if(drivetrain.getPose().getTranslation().getDistance(targetPickupPose.getTranslation()) < 2.0){
+                    // rot wraparound calculations
+                    double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+                    double goalRotation = rotationTarget.position;
+                    double angularError = MathUtil.angleModulus(goalRotation - rotationalPose);
 
-                rotationTarget.position = rotationalPose + angularError;
-                double setpointError = MathUtil.angleModulus(rotationState.position - rotationalPose);
-                rotationState.position = rotationalPose + setpointError;
-                // rot
-                State rotationalSetpoint = rotationProfile.calculate(0.02, rotationState, rotationTarget);
-                rotationState.position = rotationalSetpoint.position;
-                rotationState.velocity = rotationalSetpoint.velocity;
+                    rotationTarget.position = rotationalPose + angularError;
+                    double setpointError = MathUtil.angleModulus(rotationState.position - rotationalPose);
+                    rotationState.position = rotationalPose + setpointError;
+                    // rot
+                    State rotationalSetpoint = rotationProfile.calculate(0.02, rotationState, rotationTarget);
+                    rotationState.position = rotationalSetpoint.position;
+                    rotationState.velocity = rotationalSetpoint.velocity;
+                }
 
                 // arc length parametrization for a line
                 Translation2d interpolatedTranslation = path.endPose
