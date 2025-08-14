@@ -106,8 +106,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                                 getScoreCommand());
         }
         else{
-            super.addCommands(getDriveToPrescore(), 
-                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
                                 getScoreCommand(), getFullDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
