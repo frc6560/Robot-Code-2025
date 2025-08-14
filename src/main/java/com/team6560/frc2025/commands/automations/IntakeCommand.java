@@ -27,7 +27,7 @@ public class IntakeCommand extends SequentialCommandGroup{
         location = pickupLocation;
 
         getTargetPose();
-        final Command driveToIntakePos = swervedrive.pathfindToPose(targetPickupPose, 0);
+        // final Command driveToIntakePos = swervedrive.pathfindToPose(targetPickupPose, 0);
         FunctionalCommand deactuateElevator = new FunctionalCommand(
             () -> {
             },
@@ -39,7 +39,7 @@ public class IntakeCommand extends SequentialCommandGroup{
             () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0)
         );
 
-        super.addCommands(new ParallelCommandGroup(driveToIntakePos, deactuateElevator));
+        super.addCommands(new ParallelCommandGroup(deactuateElevator));
         super.addRequirements(elevator, swervedrive, grabber);
     }
 

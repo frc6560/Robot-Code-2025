@@ -1,8 +1,8 @@
 package com.team6560.frc2025.autonomous;
 
 import com.team6560.frc2025.Constants.FieldConstants;
-import com.team6560.frc2025.commands.ScoreCommand;
-import com.team6560.frc2025.commands.IntakeCommand;
+import com.team6560.frc2025.commands.automations.IntakeCommand;
+import com.team6560.frc2025.commands.automations.ScoreCommand;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
@@ -57,20 +57,6 @@ public class AutoFactory {
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
-            )
-        );
-    }
-
-    /** An L2 auto simulating the 4pL4 auto. */
-    Pair<Pose2d, Command> getTwoPieceBackRight(){
-        return Pair.of(
-            FieldConstants.getRight(alliance),
-            Commands.sequence(
-                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
-                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L2, true),
-                new IntakeCommand(wrist, elevator, drivetrain, grabber, PickupLocations.RIGHT),
-                new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L2, true)
             )
         );
     }

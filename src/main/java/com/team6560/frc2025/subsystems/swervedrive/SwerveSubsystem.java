@@ -245,26 +245,6 @@ public class SwerveSubsystem extends SubsystemBase
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  /** Pathfinds to a pre-scoring pose. 
-   * @param targetPose The target {@link Pose2d} to pathfind to.
-   * @return A {@link Command} object that pathfinds to our pose using PathPlanner
-  */
-  public Command pathfindToPose(Pose2d targetPose, double endVelocity){
-    PathConstraints constraints = new PathConstraints(
-        5, 4, 
-        Units.degreesToRadians(540), Units.degreesToRadians(720));
-    
-    Command pathfindingCommand = AutoBuilder.pathfindToPose(
-      targetPose,
-      constraints,
-      endVelocity);
-
-      // Telemetry
-    swerveDrive.field.getObject("TargetPose").setPose(targetPose);
-
-    return pathfindingCommand;
-  }
-
 
   /** PID to a setpoint. Basis of all path following commands.
    * @param {@link Setpoint} object for PID to target

@@ -1,4 +1,4 @@
-package com.team6560.frc2025.commands;
+package com.team6560.frc2025.commands.automations;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -52,8 +52,6 @@ public class ScoreCommand extends SequentialCommandGroup {
     private Pose2d targetPose;
 
     // Paths
-    private AutoAlignPath startPath;
-    private AutoAlignPath endPath;
     private AutoAlignPath path;
 
     // Profiles
@@ -62,10 +60,10 @@ public class ScoreCommand extends SequentialCommandGroup {
     private TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
     private TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
 
-    private TrapezoidProfile.Constraints translationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    private TrapezoidProfile.Constraints rotationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    private TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
-    private TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
+    private TrapezoidProfile.Constraints translationConstraints;
+    private TrapezoidProfile.Constraints rotationConstraint;
+    private TrapezoidProfile translationProfile;
+    private TrapezoidProfile rotationProfile;
 
     // Subsystems
     private SwerveSubsystem drivetrain;
@@ -119,84 +117,61 @@ public class ScoreCommand extends SequentialCommandGroup {
             .andThen(() -> grabber.stop());
     }
 
-    /** Gets a drive to prescore command */
-    public Command getDriveToPrescore(){
-        final Command goToPrescore = new FunctionalCommand(
+    public Command getFollowPath(AutoAlignPath path, double finalVelocity){
+        final Command followPath = new FunctionalCommand(
             () -> {
-            // Computes the necessary states for the translational and rotational profiles for our path.
-            path = new AutoAlignPath(
-                drivetrain.getPose(),
-                targetPose,
-                MAX_VELOCITY, 
-                MAX_ACCELERATION, 
-                MAX_OMEGA,
-                MAX_ALPHA);
+            // Resets profiles and states
+            translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
+            rotationConstraint = new Constraints(path.maxAngularVelocity, path.maxAngularAcceleration);
+
+            translationProfile = new TrapezoidProfile(translationConstraints);
+            rotationProfile = new TrapezoidProfile(rotationConstraint);
 
             translationalState.position = path.getDisplacement().getNorm();
-            translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
-                                                                + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/ translationalState.position),
-                                                                -startPath.maxVelocity,
+            translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * path.getDisplacement().getX() 
+                                                                + drivetrain.getFieldVelocity().vyMetersPerSecond * path.getDisplacement().getY())/ translationalState.position),
+                                                                -path.maxVelocity,
                                                                 0);
 
-            targetTranslationalState.velocity = 2.7;
+            targetTranslationalState.velocity = finalVelocity;
 
-            targetRotationalState.position = startPath.endPose.getRotation().getRadians();
+            targetRotationalState.position = path.endPose.getRotation().getRadians();
             rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
             rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
         },
-        () -> {
-            if((translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
-                drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
-            }
-            else {
+            () -> {
                 Setpoint newSetpoint = getNextSetpoint(path);
                 drivetrain.followSegment(newSetpoint);
-            }
-        },
-        (interrupted) -> {},
-        () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
-        );
-        return goToPrescore;
-    }
-
-    /** Gets an auto align command */
-    public Command getDriveInCommand(){
-        final Command driveIn = new FunctionalCommand(
-            () -> {
-                // Computes the necessary states for the translational and rotational profiles for our path.
-                startPath = new AutoAlignPath(
-                    drivetrain.getPose(),
-                    targetPose,
-                    MAX_FINAL_VELOCITY, 
-                    MAX_FINAL_ACCELERATION, 
-                    MAX_OMEGA,
-                    MAX_ALPHA);
-
-                // Resets profiles
-                translationalState.position = startPath.getDisplacement().getNorm();
-                translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
-                                                            + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/ translationalState.position),
-                                                            -startPath.maxVelocity,
-                                                            0);
-
-                targetTranslationalState.velocity = 0;
-
-                targetRotationalState.position = startPath.endPose.getRotation().getRadians();
-                rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-                rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
-            },
-            () -> {
-                if((translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
-                    drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
-                }
-                else {
-                    Setpoint newSetpoint = getNextSetpoint(startPath);
-                    drivetrain.followSegment(newSetpoint);
-                }
             },
             (interrupted) -> {},
             () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
         );
+        return followPath;
+    }
+
+    /** Gets a drive to prescore command */
+    public Command getDriveToPrescore(){
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            getPrescore(targetPose),
+            MAX_VELOCITY, 
+            MAX_ACCELERATION, 
+            MAX_OMEGA,
+            MAX_ALPHA);
+        final Command driveToPrescore = getFollowPath(path, 2.7);
+        return driveToPrescore;
+    }
+
+    /** Gets an auto align command */
+    public Command getDriveInCommand(){
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            targetPose,
+            MAX_FINAL_VELOCITY, 
+            MAX_FINAL_ACCELERATION, 
+            MAX_OMEGA,
+            MAX_ALPHA);
+        final Command driveIn = getFollowPath(path, 0);
         return driveIn;
     }
 
@@ -236,35 +211,25 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Gets a deactuation command for teleop */
     public Command getFullDeactuationCommand(){
-        final Command backUp = new FunctionalCommand(
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            getPrescore(targetPose),
+            MAX_FINAL_VELOCITY, 
+            MAX_FINAL_ACCELERATION, 
+            MAX_OMEGA,
+            MAX_ALPHA);
+        final Command deactuateSuperstructure = new FunctionalCommand(
                         () -> {
-                            endPath = new AutoAlignPath(
-                                targetPose,
-                                getPrescore(targetPose),
-                                MAX_FINAL_VELOCITY, 
-                                MAX_FINAL_ACCELERATION, 
-                                MAX_OMEGA,
-                                MAX_ALPHA);
-
-                            // Resets all trapezoidal profiles
-                            translationalState.position = endPath.getDisplacement().getNorm();
-                            translationalState.velocity = 0;
-
-                            targetRotationalState.position = endPath.endPose.getRotation().getRadians();
-                            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-                            rotationalState.velocity = 0;
                         },
                         () -> { 
                             wrist.setMotorPosition(WristConstants.WristStates.STOW);
                             elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-
-                            Setpoint newSetpoint = getNextSetpoint(endPath);
-                            drivetrain.followSegment(newSetpoint);
                         },
                         (interrupted) -> {},
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
-        return backUp;
+        final Command backUp = getFollowPath(path, 0);
+        return new ParallelCommandGroup(deactuateSuperstructure, backUp);
     }
 
     /** Gets the prescore for a specific Pose2d*/
