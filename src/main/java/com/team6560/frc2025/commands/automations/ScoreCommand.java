@@ -304,6 +304,10 @@ public class ScoreCommand extends SequentialCommandGroup {
         );
     }
 
+    public Pose2d getBargeTarget(Pose2d currentPose){
+        return new Pose2d(9.775, currentPose.getY(), Rotation2d.fromDegrees(0));
+    }
+
     /** Gets a setpoint for the robot PID to follow.
      * @return A Setpoint object representing the next target robot state on a certain auto align path.
      */
