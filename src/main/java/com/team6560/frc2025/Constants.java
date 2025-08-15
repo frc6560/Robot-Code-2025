@@ -47,7 +47,7 @@ public final class Constants {
     public static final class ElevatorStates {
 
       public static final double STOW = 0.4;
-      public static final double L2 = 1.5; 
+      public static final double L2 = 1.83; 
       public static final double L3 = 6.62;
       public static final double L4 = 18.4; 
 

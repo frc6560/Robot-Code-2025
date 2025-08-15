@@ -7,8 +7,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-import java.util.Queue;
-
 import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.Setpoint;
 

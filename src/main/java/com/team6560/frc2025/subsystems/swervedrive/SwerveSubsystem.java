@@ -12,7 +12,6 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
@@ -76,9 +75,9 @@ public class SwerveSubsystem extends SubsystemBase
   
   // Values to tune 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(3.3, 0.025, 0); 
-  private final PIDController m_pidControllerY = new PIDController(3.3, 0.025, 0);
-  private final PIDController m_pidControllerTheta = new PIDController(1.2, 0, 0);
+  private final PIDController m_pidControllerX = new PIDController(2.5, 0, 0); 
+  private final PIDController m_pidControllerY = new PIDController(2.5, 0, 0);
+  private final PIDController m_pidControllerTheta = new PIDController(1.0, 0, 0);
 
 
   /**

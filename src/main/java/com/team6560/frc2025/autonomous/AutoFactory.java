@@ -47,6 +47,7 @@ public class AutoFactory {
 
     /** These are four piece autos for various situations. All start on the left/right sides. */
     Pair<Pose2d, Command> getFourPieceBackRight(){
+        // make these L4
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.sequence(
@@ -148,7 +149,7 @@ public class AutoFactory {
 
     Pair<Pose2d, Command> getTest(){
         return Pair.of(
-            new Pose2d(11.644, 6.096, FieldConstants.getCenter(alliance).getRotation()),
+            FieldConstants.getRight(alliance),
             Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
