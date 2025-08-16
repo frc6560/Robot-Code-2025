@@ -39,8 +39,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double W_TOLERANCE = 8.0;
 
     // Max velocities and accelerations for initial drive to prescore pose.
-    final double MAX_VELOCITY = 5.0; //5.0
-    final double MAX_ACCELERATION = 4.0; //4.0
+    final double MAX_VELOCITY = 5.0; 
+    final double MAX_ACCELERATION = 4.0; 
 
     final double MAX_FINAL_VELOCITY = 2.7;  
     final double MAX_FINAL_ACCELERATION = 2.1; 
@@ -181,7 +181,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.7){
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.75){
                     elevator.setElevatorPosition(elevatorTarget);
                     wrist.setMotorPosition(wristTarget);
                 }

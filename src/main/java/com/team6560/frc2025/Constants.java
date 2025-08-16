@@ -49,7 +49,7 @@ public final class Constants {
       public static final double STOW = 0.4;
       public static final double L2 = 1.83; 
       public static final double L3 = 6.62;
-      public static final double L4 = 18.4; 
+      public static final double L4 = 18.9; 
 
       public static final double S_STOW = 0.4;
       public static final double S_L2 = 1.51;
@@ -75,7 +75,7 @@ public final class Constants {
       public static final double PICKUP = 225;  
       public static final double L1 = 200; 
       public static final double L2 = 60; 
-      public static final double L4 = 32.8; 
+      public static final double L4 = 34.8; 
 
       public static final double S_STOW = 208.5; 
       public static final double S_L2 = 148.5; 
