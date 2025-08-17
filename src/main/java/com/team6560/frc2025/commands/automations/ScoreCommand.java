@@ -43,7 +43,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double MAX_ACCELERATION = 4.0; 
 
     final double MAX_FINAL_VELOCITY = 2.7;  
-    final double MAX_FINAL_ACCELERATION = 2.1; 
+    final double MAX_FINAL_ACCELERATION = 2.0; 
     final double MAX_OMEGA = Math.toRadians(540);
     final double MAX_ALPHA = Math.toRadians(720);
 
@@ -144,7 +144,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                 drivetrain.followSegment(newSetpoint);
             },
             (interrupted) -> {},
-            () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
+            () -> (translationalState.position < 0.03) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
         );
         return followPath;
     }
@@ -181,7 +181,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.75){
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.8){
                     elevator.setElevatorPosition(elevatorTarget);
                     wrist.setMotorPosition(wristTarget);
                 }

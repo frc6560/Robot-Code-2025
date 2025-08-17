@@ -33,7 +33,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Matrix;
@@ -75,8 +74,8 @@ public class SwerveSubsystem extends SubsystemBase
   
   // Values to tune 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.8, 0, 0.12); 
-  private final PIDController m_pidControllerY = new PIDController(2.8, 0, 0.12);
+  private final PIDController m_pidControllerX = new PIDController(2.66, 0, 0.14); 
+  private final PIDController m_pidControllerY = new PIDController(2.66, 0, 0.14);
   private final PIDController m_pidControllerTheta = new PIDController(2.5, 0, 0.12);
 
 
