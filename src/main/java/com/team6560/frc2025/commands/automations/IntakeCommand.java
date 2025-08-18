@@ -94,7 +94,7 @@ public class IntakeCommand extends SequentialCommandGroup{
                     path.getNormalizedDisplacement().getY() * -translationSetpoint.velocity,
                     rotationState.velocity
                 );
-                drivetrain.followSegment(targetSetpoint);
+                drivetrain.followSegment(targetSetpoint, targetPickupPose);
             },
             (interrupted) -> {
                 drivetrain.drive(new ChassisSpeeds(0, 0, 0));

@@ -1,6 +1,7 @@
 package com.team6560.frc2025.commands.automations;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -23,6 +24,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -44,8 +46,8 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     final double MAX_FINAL_VELOCITY = 2.7;  
     final double MAX_FINAL_ACCELERATION = 2.0; 
-    final double MAX_OMEGA = Math.toRadians(540);
-    final double MAX_ALPHA = Math.toRadians(720);
+    final double MAX_OMEGA = Math.toRadians(270);
+    final double MAX_ALPHA = Math.toRadians(360);
 
     // Poses
     private Pose2d targetPose;
@@ -141,12 +143,18 @@ public class ScoreCommand extends SequentialCommandGroup {
         },
             () -> {
                 Setpoint newSetpoint = getNextSetpoint(path);
-                drivetrain.followSegment(newSetpoint);
+                drivetrain.followSegment(newSetpoint, targetPose);
+                if( drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.01
+                && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.01){
+                    drivetrain.drive(new ChassisSpeeds(0, 0, 0));
+                }
             },
             (interrupted) -> {},
-            () -> (translationalState.position < 0.03) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
+            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.03 
+            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.03
         );
         return followPath;
+
     }
 
     /** Gets a drive to prescore command */
@@ -181,7 +189,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.8){
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.85){
                     elevator.setElevatorPosition(elevatorTarget);
                     wrist.setMotorPosition(wristTarget);
                 }
@@ -204,7 +212,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> grabberTimer.hasElapsed(0.2)
+            () -> grabberTimer.hasElapsed(0.25)
         );
         return dunkAndScore;
     }
@@ -229,7 +237,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
         final Command backUp = getFollowPath(path, 0);
-        return new ParallelCommandGroup(deactuateSuperstructure, backUp);
+        return Commands.race(deactuateSuperstructure, backUp);
     }
 
     /** Gets the prescore for a specific Pose2d*/
@@ -251,7 +259,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.54, 3.720, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.064, 5.155, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.6, 5.437, Rotation2d.fromDegrees(120))); 
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.650, 5.408, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.08, 2.908, Rotation2d.fromDegrees(240)));
 

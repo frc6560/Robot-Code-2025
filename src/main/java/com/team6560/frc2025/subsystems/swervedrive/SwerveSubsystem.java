@@ -74,9 +74,9 @@ public class SwerveSubsystem extends SubsystemBase
   
   // Values to tune 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.66, 0, 0.14); 
-  private final PIDController m_pidControllerY = new PIDController(2.66, 0, 0.14);
-  private final PIDController m_pidControllerTheta = new PIDController(2.5, 0, 0.12);
+  private final PIDController m_pidControllerX = new PIDController(2.8, 0, 0.12); 
+  private final PIDController m_pidControllerY = new PIDController(2.8, 0, 0.12);
+  private final PIDController m_pidControllerTheta = new PIDController(1.8, 0.8, 0.14);
 
 
   /**\
@@ -200,7 +200,7 @@ public class SwerveSubsystem extends SubsystemBase
                   speedsRobotRelative,
                   swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
                   moduleFeedForwards.linearForces()
-                               );
+                              );
             } else
             {
               swerveDrive.setChassisSpeeds(speedsRobotRelative);
@@ -248,9 +248,12 @@ public class SwerveSubsystem extends SubsystemBase
    * @param {@link Setpoint} object for PID to target
    * @return Nothing. I'm not joking. Nothing.
    */
-  public void followSegment(Setpoint setpoint) {
+  public void followSegment(Setpoint setpoint, Pose2d targetPose) {
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
+    swerveDrive.field.getObject("TargetPose").setPose(targetPose);
+    m_pidControllerTheta.setIZone(0.15);
+
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
