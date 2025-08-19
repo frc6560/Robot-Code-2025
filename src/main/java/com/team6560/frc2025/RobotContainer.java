@@ -97,7 +97,7 @@ public class RobotContainer {
     configureBindings();
 
     factory = new AutoFactory(
-      DriverStation.getAlliance().get(),
+      null,
       wrist,
       elevator,
       drivebase,

@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import java.util.HashMap;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
@@ -29,6 +28,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.DriverStation;
+
+//TODOS: update other poses, deal with alliance.
 
 /**
  * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
@@ -247,6 +248,12 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
     public void setTargets(){
+        DriverStation.Alliance alliance;
+        if(!DriverStation.getAlliance().isPresent()){
+            alliance = DriverStation.Alliance.Blue;
+        }
+        else alliance = DriverStation.getAlliance().get();
+
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
         final double DISTANCE_FROM_TAG = 0.164;
 
@@ -267,7 +274,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             aprilTagPose.getRotation()
         );
         
-        if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue){
+        if(alliance == DriverStation.Alliance.Blue){
             targetPose = applyAllianceTransform(targetPose);
         }
 

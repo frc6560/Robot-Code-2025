@@ -25,6 +25,9 @@ public class AutoFactory {
     private PipeGrabber grabber;
 
     public AutoFactory(DriverStation.Alliance alliance, Wrist wrist, Elevator elevator, SwerveSubsystem drivetrain, PipeGrabber grabber) {
+        if(alliance == null) {
+            this.alliance = DriverStation.Alliance.Red;
+        }
         this.alliance = alliance;
         this.wrist = wrist;
         this.elevator = elevator;
