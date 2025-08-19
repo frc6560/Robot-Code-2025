@@ -1,5 +1,7 @@
 package com.team6560.frc2025.autonomous;
 
+import java.util.Set;
+
 import com.team6560.frc2025.Constants.FieldConstants;
 import com.team6560.frc2025.commands.automations.IntakeCommand;
 import com.team6560.frc2025.commands.automations.ScoreCommand;
@@ -50,10 +52,9 @@ public class AutoFactory {
 
     /** These are four piece autos for various situations. All start on the left/right sides. */
     Pair<Pose2d, Command> getFourPieceBackRight(){
-        // make these L4
         return Pair.of(
             FieldConstants.getRight(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
@@ -61,14 +62,14 @@ public class AutoFactory {
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
     Pair<Pose2d, Command> getFourPieceBackLeft(){
         return Pair.of(
             FieldConstants.getLeft(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
@@ -76,14 +77,14 @@ public class AutoFactory {
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
     Pair<Pose2d, Command> getFourPieceRight(){
         return Pair.of(
             FieldConstants.getRight(alliance),
-            Commands.sequence(
+            Commands.defer( () -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
@@ -91,14 +92,14 @@ public class AutoFactory {
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
     Pair<Pose2d, Command> getFourPieceLeft(){
         return Pair.of(
             FieldConstants.getLeft(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4, true),
@@ -106,20 +107,20 @@ public class AutoFactory {
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
     Pair<Pose2d, Command> getThreePieceBackRight(){
         return Pair.of(
             FieldConstants.getFarRight(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
@@ -127,13 +128,13 @@ public class AutoFactory {
     Pair<Pose2d, Command> getThreePieceBackLeft(){
         return Pair.of(
             FieldConstants.getFarLeft(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
@@ -141,25 +142,25 @@ public class AutoFactory {
     Pair<Pose2d, Command> getThreePieceCenter(){
         return Pair.of(
             FieldConstants.getCenter(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.FAR_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
     Pair<Pose2d, Command> getTest(){
         return Pair.of(
             FieldConstants.getRight(alliance),
-            Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4, true),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
                 new ScoreCommand(wrist, elevator, grabber, drivetrain, ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3, true)
-            )
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 

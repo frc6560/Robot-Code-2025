@@ -118,7 +118,11 @@ public class IntakeCommand extends SequentialCommandGroup{
     }
 
     void getTargetPose(){
-        DriverStation.Alliance alliance = DriverStation.getAlliance().get();
+        DriverStation.Alliance alliance;
+        if(!DriverStation.getAlliance().isPresent()){
+            alliance = DriverStation.Alliance.Blue;
+        }
+        else alliance = DriverStation.getAlliance().get();
         switch(location){
             case RIGHT:
                 targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(16.219, 7.347, Rotation2d.fromDegrees(55)) 
