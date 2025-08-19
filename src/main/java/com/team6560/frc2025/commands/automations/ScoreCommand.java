@@ -81,8 +81,6 @@ public class ScoreCommand extends SequentialCommandGroup {
     private double elevatorTarget;
     private double wristTarget;
 
-    // Timers :(
-    Timer grabberTimer = new Timer();
 
     /** A constructor to score at a given level... in teleoperated mode.*/
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
@@ -101,11 +99,11 @@ public class ScoreCommand extends SequentialCommandGroup {
 
         if(isAuto){
             super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
-                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand().withTimeout(1.5)), 
                                 getScoreCommand());
         }
         else{
-            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand().withTimeout(3.0)), 
                                 getScoreCommand(), getFullDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
@@ -204,7 +202,6 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getScoreCommand(){
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
-                grabberTimer.start();
             },
             () -> {
                 grabber.runGrabberOuttake();
@@ -212,9 +209,9 @@ public class ScoreCommand extends SequentialCommandGroup {
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> grabberTimer.hasElapsed(0.25)
+            () -> false
         );
-        return dunkAndScore;
+        return dunkAndScore.withTimeout(0.25);
     }
 
     /** Gets a deactuation command for teleop */
@@ -223,7 +220,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             drivetrain.getPose(),
             getPrescore(targetPose),
             MAX_FINAL_VELOCITY, 
-            MAX_FINAL_ACCELERATION, 
+            2.5, 
             MAX_OMEGA,
             MAX_ALPHA);
         final Command deactuateSuperstructure = new FunctionalCommand(
@@ -237,7 +234,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
         final Command backUp = getFollowPath(path, 0);
-        return Commands.race(deactuateSuperstructure, backUp);
+        return Commands.parallel(deactuateSuperstructure, backUp).withTimeout(0.5);
     }
 
     /** Gets the prescore for a specific Pose2d*/
