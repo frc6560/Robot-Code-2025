@@ -2,6 +2,7 @@ package com.team6560.frc2025;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -104,6 +105,14 @@ public final class Constants {
     public static final double LOWER_SOFT_BOUND = -0.162;
     public static final double GEAR_RATIO = 1.5; 
 
+  }
+
+  public static final class REEF_MEASUREMENTS {
+    public static final Translation2d REEF_POSITION = new Translation2d(10, 10); // Example position, adjust as needed
+    public static final double REEF_RADIUS = 0.5; // Example radius, adjust as needed
+    public static final double REEF_TOLERANCE = 0.1; // Tolerance for reaching the reef
+    public static final double ROBOT_RADIUS = 0.3; // Example robot radius, adjust as needed
+    public static final double REEF_AVOIDANCE_DISTANCE = REEF_RADIUS + ROBOT_RADIUS + REEF_TOLERANCE;
   }
 
   public static final class FieldConstants{
