@@ -60,9 +60,6 @@ public class Path {
         this.startControlHeading = startControlHeading;
         this.endControlHeading = endControlHeading;
 
-        // generate a lookup table for arc length to time
-        generateLookupTable();
-
         // Actually defines our curve
         // defines x component for the cubic Bézier curve
         this.x3 = -startPose.x + 3 * startControlHeading.getX() - 3 * endControlHeading.getX() + endPose.x;
@@ -75,6 +72,9 @@ public class Path {
         this.y2 = 3 * startPose.y - 6 * startControlHeading.getY() + 3 * endControlHeading.getY();
         this.y1 = -3 * startPose.y + 3 * startControlHeading.getY();
         this.y0 = startPose.y;
+
+        // generate a lookup table for arc length to time
+        generateLookupTable();
 
         // Sets up the trapezoidal profile start and end states... as well as the actual profiles
         // translation

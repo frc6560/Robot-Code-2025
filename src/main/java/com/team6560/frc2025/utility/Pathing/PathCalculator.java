@@ -11,7 +11,7 @@ import com.team6560.frc2025.Constants;
 import com.team6560.frc2025.utility.Setpoint;
 
 // TODO LIST:
-// equalize headings ()
+// equalize headings
 
 /** A method to generate a smooth path to a pose of our choice. */
 public class PathCalculator {
