@@ -187,10 +187,8 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.85){
                     elevator.setElevatorPosition(elevatorTarget);
                     wrist.setMotorPosition(wristTarget);
-                }
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
