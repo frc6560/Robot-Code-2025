@@ -43,7 +43,9 @@ public class Path {
     private double y0 = 0.0;
 
 
-    /** Defines a {@link Path} in 2 dimensions. Translation is handled via a Bézier curve and trapezoidal profile. Rotation is handled linearly.
+    /** Defines a {@link Path} in 2 dimensions. Translation is handled via a Bézier curve and trapezoidal profile. 
+     * Rotation is handled using a separate profile controlled by maxOmega and maxAlpha.
+     * 
      * @param startPose The start pose
      * @param endPose The end pose
      * @param startControlHeading The control point for the start of the curve, which defines the initial heading. Quintic bezier curves have an additional two control points.
@@ -52,6 +54,7 @@ public class Path {
      * @param maxAt Max tangential acceleration allowed on the path
      * @param maxOmega Maximum angular velocity, in radians/s
      * @param maxAlpha Maximum angular acceleration, in radians/s^2
+     * 
      */
     public Path(Setpoint startPose, Setpoint endPose, Pose2d startControlHeading, Pose2d endControlHeading, 
                         double maxVelocity, double maxAt, double maxOmega, double maxAlpha) {
