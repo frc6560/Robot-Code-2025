@@ -233,8 +233,8 @@ public class ScoreCommand extends SequentialCommandGroup {
                         (interrupted) -> {},
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
-        final Command backUp = getFollowPath(path, 0);
-        return Commands.parallel(deactuateSuperstructure, backUp).withTimeout(0.5);
+        // final Command backUp = getFollowPath(path, 0);
+        return Commands.parallel(deactuateSuperstructure).withTimeout(0.5);
     }
 
     /** Gets the prescore for a specific Pose2d*/

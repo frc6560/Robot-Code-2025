@@ -69,13 +69,13 @@ public class SwerveSubsystem extends SubsystemBase
   private ArrayList<Pose2d> targetPose2dsLeft = new ArrayList<Pose2d>();
   private ArrayList<Pose2d> targetPose2dsRight = new ArrayList<Pose2d>();
 
-  private final boolean visionDriveTest = true; // don't actually need this but ok
+  private final boolean visionDriveTest = true;
 
   
   // Values to tune 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.8, 0.15, 0.13); 
-  private final PIDController m_pidControllerY = new PIDController(2.8, 0.15, 0.13); // init 2.8 0 0.12
+  private final PIDController m_pidControllerX = new PIDController(2.8, 0.15, 0.15); 
+  private final PIDController m_pidControllerY = new PIDController(2.8, 0.15, 0.15); // init 2.8 0 0.12
   private final PIDController m_pidControllerTheta = new PIDController(1.8, 0.8, 0.14);  // golden
 
 
