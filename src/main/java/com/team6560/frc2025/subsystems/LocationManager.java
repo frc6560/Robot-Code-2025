@@ -12,6 +12,7 @@ public class LocationManager extends SubsystemBase {
     private ReefIndex currentReefIndex;
     private ReefSide currentReefSide;
     private ReefLevel currentReefLevel;
+    private AlgaeLevel currentAlgaeLevel;
 
     private boolean goSwitch;
 
@@ -22,6 +23,7 @@ public class LocationManager extends SubsystemBase {
         this.currentReefIndex = null;
         this.currentReefLevel = null;
         this.currentReefSide = null;
+        this.currentAlgaeLevel = null;
     }
 
     @Override
@@ -113,5 +115,9 @@ public class LocationManager extends SubsystemBase {
 
     public boolean hasTarget(){
         return currentReefIndex != null && currentReefLevel != null && currentReefSide != null;
+    }
+    
+    public Boolean hasBarge() {
+        return currentAlgaeLevel != null;
     }
 }

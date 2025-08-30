@@ -3,6 +3,7 @@ package com.team6560.frc2025;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.OperatorConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
+import com.team6560.frc2025.commands.BargeCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
@@ -135,7 +136,19 @@ public class RobotContainer {
                                                                         false), 
                                                                         Set.of(wrist, elevator, pipeGrabber, drivebase))
                                                                         .finallyDo((interrupted) -> locationManager.reset()));
+                                
+    Trigger autoBargeTrigger = new Trigger(
+      () -> (locationManager.hasBarge() && locationManager.isGoSwitchPressed())
+    );
 
+    autoBargeTrigger.onTrue(Commands.defer(() -> new BargeCommand(drivebase, wrist, elevator, ballGrabber),
+                      Set.of(drivebase, wrist, elevator, ballGrabber))
+                      .finallyDo(() -> locationManager.reset()));
+
+    
+                                                           
+
+    
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));

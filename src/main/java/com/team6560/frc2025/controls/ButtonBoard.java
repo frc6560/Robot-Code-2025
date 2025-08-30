@@ -44,7 +44,6 @@ public class ButtonBoard {
     }
     public boolean getScoreI() {
         return false;
-        // return buttonBoard.getRawButtonPressed(9);
     }
     public boolean getScoreJ() {
         return false;
@@ -82,5 +81,9 @@ public class ButtonBoard {
 
     public boolean getClimb(){
         return buttonBoard.getRawButtonPressed(19);
+    }
+
+    public boolean getBarge(){
+        return buttonBoard.getRawButtonPressed(9);
     }
 }

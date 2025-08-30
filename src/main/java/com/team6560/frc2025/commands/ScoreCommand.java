@@ -84,7 +84,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** A constructor to score at a given level... in teleoperated mode.*/
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
-                            ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto, AlgaeLevel Alevel) {
+                            ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto) {
 
         this.drivetrain = drivetrain;
         this.wrist = wrist;
