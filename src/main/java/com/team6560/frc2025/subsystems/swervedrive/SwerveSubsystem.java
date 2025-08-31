@@ -74,9 +74,9 @@ public class SwerveSubsystem extends SubsystemBase
   
   // Values to tune 
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.8, 0.15, 0.15); 
-  private final PIDController m_pidControllerY = new PIDController(2.8, 0.15, 0.15); // init 2.8 0 0.12
-  private final PIDController m_pidControllerTheta = new PIDController(1.8, 0.8, 0.14);  // golden
+  private final PIDController m_pidControllerX = new PIDController(2.8, 0.12, 0.15); 
+  private final PIDController m_pidControllerY = new PIDController(2.8, 0.12, 0.15); // init 2.8 0 0.12
+  private final PIDController m_pidControllerTheta = new PIDController(1.6, 0.85, 0.14);  // golden
 
 
   /**\
@@ -252,9 +252,9 @@ public class SwerveSubsystem extends SubsystemBase
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
     swerveDrive.field.getObject("TargetPose").setPose(targetPose);
-    m_pidControllerTheta.setIZone(0.15);
-    m_pidControllerX.setIZone(0.1);
-    m_pidControllerY.setIZone(0.1);
+    m_pidControllerTheta.setIZone(0.2);
+    m_pidControllerX.setIZone(0.25);
+    m_pidControllerY.setIZone(0.25);
 
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
