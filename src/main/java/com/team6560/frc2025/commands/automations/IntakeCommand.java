@@ -99,7 +99,7 @@ public class IntakeCommand extends SequentialCommandGroup{
             (interrupted) -> {
                 drivetrain.drive(new ChassisSpeeds(0, 0, 0));
             },
-            () -> drivetrain.getSwerveDrive().getPose().getTranslation().getDistance(targetPickupPose.getTranslation()) < 0.08
+            () -> (translationState.position < 0.03)
 
         );
         FunctionalCommand deactuateElevator = new FunctionalCommand(
