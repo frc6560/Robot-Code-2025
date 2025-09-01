@@ -148,8 +148,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                 }
             },
             (interrupted) -> {},
-            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.03 
-            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.03
+            () -> (translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.03)
         );
         return followPath;
 
