@@ -73,10 +73,12 @@ public class SwerveSubsystem extends SubsystemBase
 
   
   // Values to tune 
+
+  private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.185, 1.866, 0.159);
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
-  private final PIDController m_pidControllerX = new PIDController(2.8, 0.12, 0.15); 
-  private final PIDController m_pidControllerY = new PIDController(2.8, 0.12, 0.15); // init 2.8 0 0.12
-  private final PIDController m_pidControllerTheta = new PIDController(1.6, 0.85, 0.14);  // golden
+  private final PIDController m_pidControllerX = new PIDController(2.0, 0, 0.15); 
+  private final PIDController m_pidControllerY = new PIDController(2.0, 0, 0.15); // init 2.8 0 0.12
+  private final PIDController m_pidControllerTheta = new PIDController(1.35, 0, 0.14);  // golden
 
 
   /**\
@@ -104,6 +106,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
+    swerveDrive.replaceSwerveModuleFeedforward(driveFF);
     setMotorBrake(true);
     setupPathPlanner();
 
@@ -341,6 +344,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Command sysIdDriveMotorCommand()
   {
+    System.out.println("Running SysID command!");
     return SwerveDriveTest.generateSysIdCommand(
         SwerveDriveTest.setDriveSysIdRoutine(
             new Config(),

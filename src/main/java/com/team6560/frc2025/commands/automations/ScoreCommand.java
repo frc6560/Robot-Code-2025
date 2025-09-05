@@ -29,8 +29,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.DriverStation;
 
-//TODOS: update other poses, deal with alliance.
-
 /**
  * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
  * This command is used for scoring at the reef on any level, from L1-L4.
@@ -44,8 +42,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double MAX_VELOCITY = 5.0; 
     final double MAX_ACCELERATION = 4.0; 
 
-    final double MAX_FINAL_VELOCITY = 2.7;  
-    final double MAX_FINAL_ACCELERATION = 2.0; 
+    final double MAX_FINAL_VELOCITY = 2.1;  
+    final double MAX_FINAL_ACCELERATION = 1.8; 
     final double MAX_OMEGA = Math.toRadians(270);
     final double MAX_ALPHA = Math.toRadians(360);
 
@@ -99,11 +97,11 @@ public class ScoreCommand extends SequentialCommandGroup {
 
         if(isAuto){
             super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
-                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand().withTimeout(1.5)), 
+                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()).withTimeout(1.5), 
                                 getScoreCommand());
         }
         else{
-            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand().withTimeout(5.5)), 
+            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()).withTimeout(3.5), 
                                 getScoreCommand(), getFullDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
@@ -147,7 +145,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                 }
             },
             (interrupted) -> {},
-            () -> (translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.03)
+            () -> drivetrain.getPose().getTranslation().getDistance(path.endPose.getTranslation()) < 0.04
         );
         return followPath;
 
@@ -162,7 +160,9 @@ public class ScoreCommand extends SequentialCommandGroup {
             MAX_ACCELERATION, 
             MAX_OMEGA,
             MAX_ALPHA);
-        final Command driveToPrescore = getFollowPath(path, 2.7);
+        final Command driveToPrescore = getFollowPath(path, 2.7).until(
+            () -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.2
+        );
         return driveToPrescore;
     }
 
@@ -170,7 +170,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getDriveInCommand(){
         path = new AutoAlignPath(
             drivetrain.getPose(),
-            targetPose,
+            targetPose, //originally just target pose
             MAX_FINAL_VELOCITY, 
             MAX_FINAL_ACCELERATION, 
             MAX_OMEGA,
@@ -238,8 +238,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     /** Gets the prescore for a specific Pose2d*/
     public Pose2d getPrescore(Pose2d targetPose){
         return new Pose2d(
-            targetPose.getX() + 0.84 * Math.cos(targetPose.getRotation().getRadians()), 
-            targetPose.getY() + 0.84 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
             targetPose.getRotation()
         );
     }

@@ -27,7 +27,6 @@ public class LocationManager extends SubsystemBase {
     @Override
     public void periodic() {
         update();
-        System.out.println(hasTarget() + " " + currentReefIndex + " " + currentReefLevel + " " + currentReefSide);
     }
 
     /** Runs periodically to check if an update to our target position has been made.*/
