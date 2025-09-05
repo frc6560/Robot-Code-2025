@@ -78,7 +78,7 @@ public class SwerveSubsystem extends SubsystemBase
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
   private final PIDController m_pidControllerX = new PIDController(2.0, 0, 0.15); 
   private final PIDController m_pidControllerY = new PIDController(2.0, 0, 0.15); // init 2.8 0 0.12
-  private final PIDController m_pidControllerTheta = new PIDController(1.35, 0, 0.14);  // golden
+  private final PIDController m_pidControllerTheta = new PIDController(1.35, 0.6, 0.14);  // golden
 
 
   /**\
