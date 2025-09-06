@@ -141,14 +141,14 @@ public class ScoreCommand extends SequentialCommandGroup {
                 Setpoint newSetpoint = getNextSetpoint(path);
                 drivetrain.followSegment(newSetpoint, targetPose);
                 if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.03
-                    && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.05
+                    && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.017
                 ){
                     drivetrain.drive(new ChassisSpeeds(0, 0, 0));
                 }
             },
             (interrupted) -> {},
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.03
-            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.05
+            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.017
         );
         return followPath;
 
