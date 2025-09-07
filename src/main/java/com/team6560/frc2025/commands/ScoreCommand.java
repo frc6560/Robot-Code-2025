@@ -1,11 +1,11 @@
 package com.team6560.frc2025.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import java.util.HashMap;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
@@ -28,7 +28,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
+
+//TODOS: update other poses, deal with alliance.
 
 /**
  * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
@@ -39,17 +40,20 @@ public class ScoreCommand extends SequentialCommandGroup {
     final double E_TOLERANCE = 1.0;
     final double W_TOLERANCE = 8.0;
 
-    final double MAX_VELOCITY = 2.7;  
-    final double MAX_ACCELERATION = 2.2; 
-    final double MAX_OMEGA = Math.toRadians(540);
-    final double MAX_ALPHA = Math.toRadians(720);
+    // Max velocities and accelerations for initial drive to prescore pose.
+    final double MAX_VELOCITY = 5.0; 
+    final double MAX_ACCELERATION = 4.0; 
+
+    final double MAX_FINAL_VELOCITY = 2.7;  
+    final double MAX_FINAL_ACCELERATION = 2.0; 
+    final double MAX_OMEGA = Math.toRadians(270);
+    final double MAX_ALPHA = Math.toRadians(360);
 
     // Poses
     private Pose2d targetPose;
 
     // Paths
-    private AutoAlignPath startPath;
-    private AutoAlignPath endPath;
+    private AutoAlignPath path;
 
     // Profiles
     private TrapezoidProfile.State translationalState = new TrapezoidProfile.State(0, 0);
@@ -57,10 +61,10 @@ public class ScoreCommand extends SequentialCommandGroup {
     private TrapezoidProfile.State targetTranslationalState = new TrapezoidProfile.State(0, 0); // The position is actually the error.
     private TrapezoidProfile.State targetRotationalState = new TrapezoidProfile.State(0, 0);
 
-    private TrapezoidProfile.Constraints translationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    private TrapezoidProfile.Constraints rotationConstraints = new Constraints(MAX_VELOCITY, MAX_ACCELERATION);
-    private TrapezoidProfile translationProfile = new TrapezoidProfile(translationConstraints);
-    private TrapezoidProfile rotationProfile = new TrapezoidProfile(rotationConstraints);
+    private TrapezoidProfile.Constraints translationConstraints;
+    private TrapezoidProfile.Constraints rotationConstraint;
+    private TrapezoidProfile translationProfile;
+    private TrapezoidProfile rotationProfile;
 
     // Subsystems
     private SwerveSubsystem drivetrain;
@@ -72,15 +76,11 @@ public class ScoreCommand extends SequentialCommandGroup {
     ReefSide side;
     ReefIndex location;
     ReefLevel level;
-    AlgaeLevel Alevel;
-    AlgaePosition Alocation;
 
     // Targets
     private double elevatorTarget;
     private double wristTarget;
 
-    // Timers :(
-    Timer grabberTimer = new Timer();
 
     /** A constructor to score at a given level... in teleoperated mode.*/
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
@@ -90,7 +90,6 @@ public class ScoreCommand extends SequentialCommandGroup {
         this.wrist = wrist;
         this.elevator = elevator;
         this.grabber = grabber;
-        this.Alevel = Alevel;
 
         this.side = side;
         this.location = location;
@@ -99,22 +98,15 @@ public class ScoreCommand extends SequentialCommandGroup {
         setTargets();
 
         if(isAuto){
-            super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getPathfindToPose()),
-                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+            super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
+                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand().withTimeout(1.5)), 
                                 getScoreCommand());
         }
         else{
-            super.addCommands(getPathfindToPose(), 
-                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()), 
+            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand().withTimeout(3.0)), 
                                 getScoreCommand(), getFullDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
-    }
-
-    /** Gets a pathfinding command */
-    public Command getPathfindToPose(){
-        final Command pathfindToPose = drivetrain.pathfindToPose(getPrescore(targetPose), 2.7); 
-        return pathfindToPose;
     }
 
     public Command getGrabberIntake(){
@@ -124,50 +116,68 @@ public class ScoreCommand extends SequentialCommandGroup {
             .andThen(() -> grabber.stop());
     }
 
-    /** Gets an auto align command */
-    public Command getDriveInCommand(){
-        final Command driveIn = new FunctionalCommand(
+    /** Helper method for following a straight trajectory */
+    public Command getFollowPath(AutoAlignPath path, double finalVelocity){
+        final Command followPath = new FunctionalCommand(
             () -> {
-                // Computes the necessary states for the translational and rotational profiles for our path.
-                startPath = new AutoAlignPath(
-                    drivetrain.getPose(),
-                    targetPose,
-                    MAX_VELOCITY, 
-                    MAX_ACCELERATION, 
-                    MAX_OMEGA,
-                    MAX_ALPHA);
+            // Resets profiles and states
+            translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
+            rotationConstraint = new Constraints(path.maxAngularVelocity, path.maxAngularAcceleration);
 
+            translationProfile = new TrapezoidProfile(translationConstraints);
+            rotationProfile = new TrapezoidProfile(rotationConstraint);
 
-                endPath = new AutoAlignPath(
-                    targetPose,
-                    getPrescore(targetPose),
-                    MAX_VELOCITY, 
-                    MAX_ACCELERATION, 
-                    MAX_OMEGA,
-                    MAX_ALPHA);
-                translationalState.position = startPath.getDisplacement().getNorm();
-                translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * startPath.getDisplacement().getX() 
-                                                            + drivetrain.getFieldVelocity().vyMetersPerSecond * startPath.getDisplacement().getY())/ translationalState.position),
-                                                            -startPath.maxVelocity,
-                                                            0);
+            translationalState.position = path.getDisplacement().getNorm();
+            translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * path.getDisplacement().getX() 
+                                                                + drivetrain.getFieldVelocity().vyMetersPerSecond * path.getDisplacement().getY())/ translationalState.position),
+                                                                -path.maxVelocity,
+                                                                0);
 
+            targetTranslationalState.velocity = finalVelocity;
 
-                targetRotationalState.position = startPath.endPose.getRotation().getRadians();
-                rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-                rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
-            },
+            targetRotationalState.position = path.endPose.getRotation().getRadians();
+            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+            rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
+        },
             () -> {
-                if((translationalState.position < 0.03) && (Math.abs(rotationalState.position - targetRotationalState.position) < 0.05)){
-                    drivetrain.getSwerveDrive().drive(new ChassisSpeeds(0, 0, 0));
-                }
-                else {
-                    Setpoint newSetpoint = getNextSetpoint(startPath);
-                    drivetrain.followSegment(newSetpoint);
+                Setpoint newSetpoint = getNextSetpoint(path);
+                drivetrain.followSegment(newSetpoint, targetPose);
+                if( drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.01
+                && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.01){
+                    drivetrain.drive(new ChassisSpeeds(0, 0, 0));
                 }
             },
             (interrupted) -> {},
-            () -> (translationalState.position < 0.05) && Math.abs(rotationalState.position - targetRotationalState.position) < 0.05
+            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.03 
+            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.03
         );
+        return followPath;
+
+    }
+
+    /** Gets a drive to prescore command */
+    public Command getDriveToPrescore(){
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            getPrescore(targetPose),
+            MAX_VELOCITY, 
+            MAX_ACCELERATION, 
+            MAX_OMEGA,
+            MAX_ALPHA);
+        final Command driveToPrescore = getFollowPath(path, 2.7);
+        return driveToPrescore;
+    }
+
+    /** Gets an auto align command */
+    public Command getDriveInCommand(){
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            targetPose,
+            MAX_FINAL_VELOCITY, 
+            MAX_FINAL_ACCELERATION, 
+            MAX_OMEGA,
+            MAX_ALPHA);
+        final Command driveIn = getFollowPath(path, 0);
         return driveIn;
     }
 
@@ -177,8 +187,10 @@ public class ScoreCommand extends SequentialCommandGroup {
             () -> {
             },
             () -> {
-                elevator.setElevatorPosition(elevatorTarget);
-                wrist.setMotorPosition(wristTarget);
+                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.95){
+                    elevator.setElevatorPosition(elevatorTarget);
+                    wrist.setMotorPosition(wristTarget);
+                }
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
@@ -190,7 +202,6 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getScoreCommand(){
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
-                grabberTimer.start();
             },
             () -> {
                 grabber.runGrabberOuttake();
@@ -198,34 +209,32 @@ public class ScoreCommand extends SequentialCommandGroup {
             (interrupted) -> {
                 grabber.stop();
             },
-            () -> grabberTimer.hasElapsed(0.2)
+            () -> false
         );
-        return dunkAndScore;
+        return dunkAndScore.withTimeout(0.25);
     }
 
     /** Gets a deactuation command for teleop */
     public Command getFullDeactuationCommand(){
-        final Command backUp = new FunctionalCommand(
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            getPrescore(targetPose),
+            MAX_FINAL_VELOCITY, 
+            2.5, 
+            MAX_OMEGA,
+            MAX_ALPHA);
+        final Command deactuateSuperstructure = new FunctionalCommand(
                         () -> {
-                            // Resets all trapezoidal profiles
-                            translationalState.position = endPath.getDisplacement().getNorm();
-                            translationalState.velocity = 0;
-
-                            targetRotationalState.position = endPath.endPose.getRotation().getRadians();
-                            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-                            rotationalState.velocity = 0;
                         },
                         () -> { 
                             wrist.setMotorPosition(WristConstants.WristStates.STOW);
                             elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
-
-                            Setpoint newSetpoint = getNextSetpoint(endPath);
-                            drivetrain.followSegment(newSetpoint);
                         },
                         (interrupted) -> {},
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
         );
-        return backUp;
+        // final Command backUp = getFollowPath(path, 0);
+        return Commands.parallel(deactuateSuperstructure).withTimeout(0.5);
     }
 
     /** Gets the prescore for a specific Pose2d*/
@@ -239,6 +248,12 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
     public void setTargets(){
+        DriverStation.Alliance alliance;
+        if(!DriverStation.getAlliance().isPresent()){
+            alliance = DriverStation.Alliance.Blue;
+        }
+        else alliance = DriverStation.getAlliance().get();
+
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
         final double DISTANCE_FROM_TAG = 0.164;
 
@@ -247,11 +262,9 @@ public class ScoreCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.54, 3.720, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.064, 5.155, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.6, 5.437, Rotation2d.fromDegrees(120))); 
+        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.650, 5.408, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.08, 2.908, Rotation2d.fromDegrees(240)));
-        targetPoses.put(ReefIndex.BARGE, new Pose2d(10.402, 4.0, Rotation2d.fromDegrees(180)));
-        targetPoses.put(ReefIndex.PROCESSOR, new Pose2d(7.164, 4.0, Rotation2d.fromDegrees(0)));
 
         Pose2d aprilTagPose = targetPoses.get(location);
 
@@ -261,7 +274,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             aprilTagPose.getRotation()
         );
         
-        if(DriverStation.getAlliance().get() == DriverStation.Alliance.Blue){
+        if(alliance == DriverStation.Alliance.Blue){
             targetPose = applyAllianceTransform(targetPose);
         }
 
@@ -293,20 +306,6 @@ public class ScoreCommand extends SequentialCommandGroup {
         }
     }
 
-        switch (Alevel) {
-            case Processor:
-                elevatorTarget = ElevatorConstants.ElevatorStates.PROCESSOR;
-                wristTarget = WristConstants.WristStates.PROCESSOR;
-                break;
-            case Barge:
-                elevatorTarget = ElevatorConstants.ElevatorStates.BARGE;
-                wristTarget = WristConstants.WristStates.BARGE;
-                break;
-            default:
-                elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
-                wristTarget = WristConstants.WristStates.STOW;
-        }
-
     /** Transforms red alliance poses to blue by reflecting around the center point of the field*/
     public Pose2d applyAllianceTransform(Pose2d pose){
         return new Pose2d(
@@ -314,6 +313,10 @@ public class ScoreCommand extends SequentialCommandGroup {
             pose.getY() - 2 * (pose.getY() - 4.0),
             pose.getRotation().rotateBy(Rotation2d.fromDegrees(180))
         );
+    }
+
+    public Pose2d getBargeTarget(Pose2d currentPose){
+        return new Pose2d(9.775, currentPose.getY(), Rotation2d.fromDegrees(0));
     }
 
     /** Gets a setpoint for the robot PID to follow.
