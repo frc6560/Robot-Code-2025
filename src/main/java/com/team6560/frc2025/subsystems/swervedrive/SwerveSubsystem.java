@@ -78,7 +78,7 @@ public class SwerveSubsystem extends SubsystemBase
   Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
   private final PIDController m_pidControllerX = new PIDController(2.0, 0, 0.15); 
   private final PIDController m_pidControllerY = new PIDController(2.0, 0, 0.15); // init 2.8 0 0.12
-  private final PIDController m_pidControllerTheta = new PIDController(0.95, 0, 0.18);  // golden
+  private final PIDController m_pidControllerTheta = new PIDController(0.95, 0, 0.1);  // golden
 
 
   /**\
@@ -140,24 +140,23 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
-    String[] limelightNames = {"limelight-bottom", "limelight-top"};
+    // this is viewed top down, facing the front of the robot
+    String[] limelightNames = {"limelight-right", "limelight-left"};
     // Vision setup
     for( String limelightName : limelightNames) {
       LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
       PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
       if(limelightPoseEstimate == null) return;
-
       Pose2d limelightPose = limelightPoseEstimate.pose;
       if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
-
       double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
       if(adjustedTime > 0){
         swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
       }
     }
     swerveDrive.field.setRobotPose(this.getPose());
-  }
+  } 
 
   Pose2d getClosestTargetPoseLeft() {
     return getPose().nearest(targetPose2dsLeft);
@@ -529,7 +528,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void resetOdometryToLimelight() {
-    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-bottom");
+    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
     if (poseEstimate == null) return;
     
     Pose2d pose = poseEstimate.pose;
