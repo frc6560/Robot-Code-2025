@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.728942820865192,
-        "y": 6.807475222979332
+        "x": 2.835213396991855,
+        "y": 6.663960503476626
       },
       "isLocked": false,
       "linkedName": "CenterStart"
@@ -30,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5713295118343189,
+      "waypointRelativePos": 0.5906527366863901,
       "rotationDegrees": 59.99999999999999
     }
   ],

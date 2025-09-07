@@ -35,6 +35,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -262,6 +263,21 @@ public class SwerveSubsystem extends SubsystemBase
       setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
       (-1) * (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
+    );
+
+    swerveDrive.driveFieldOriented(targetSpeeds);
+  }
+
+  /** Measured in radians */
+  public void rotateCommand(double target){
+    m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+    SmartDashboard.getEntry("pid error").setDouble(m_pidControllerTheta.getError());
+    SmartDashboard.getEntry("pose in radians").setDouble(getPose().getRotation().getRadians());
+    SmartDashboard.getEntry("target pose").setDouble(target);
+    ChassisSpeeds targetSpeeds = new ChassisSpeeds(
+      0,
+      0,
+      (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians(), target))
     );
 
     swerveDrive.driveFieldOriented(targetSpeeds);
