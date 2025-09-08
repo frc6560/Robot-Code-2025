@@ -82,7 +82,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** A constructor to score at a given level... in teleoperated mode.*/
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
-                            ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto) {
+                            ReefSide side, ReefIndex location, ReefLevel level) {
 
         this.drivetrain = drivetrain;
         this.wrist = wrist;
@@ -95,7 +95,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
         setTargets();
 
-        if(isAuto){
+        if(DriverStation.isAutonomous()){
             super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
                                 new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()).withTimeout(1.5), 
                                 getScoreCommand());

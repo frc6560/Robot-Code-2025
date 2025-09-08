@@ -129,8 +129,7 @@ public class RobotContainer {
     autoAlignTrigger.onTrue(Commands.defer(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
                                                                         locationManager.getReefSide(), 
                                                                         locationManager.getCurrentReefIndex(), 
-                                                                        locationManager.getCurrentReefLevel(), 
-                                                                        false), 
+                                                                        locationManager.getCurrentReefLevel()), 
                                                                         Set.of(wrist, elevator, pipeGrabber, drivebase))
                                                                         .finallyDo((interrupted) -> locationManager.reset()));
 
