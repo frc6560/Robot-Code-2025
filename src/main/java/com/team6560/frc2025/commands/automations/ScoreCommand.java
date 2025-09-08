@@ -163,7 +163,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             MAX_ACCELERATION, 
             MAX_OMEGA,
             MAX_ALPHA);
-        final Command driveToPrescore = getFollowPath(path, 2.7).until(
+        final Command driveToPrescore = getFollowPath(path, 2.1).until(
             () -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.2
         );
         return driveToPrescore;

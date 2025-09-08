@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6516893974735194,
-        "y": 0.800869025180657
+        "x": 1.4432565789473681,
+        "y": 0.8594572368421052
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9189013033931075,
-        "y": 1.020019590845233
+        "x": 1.7104684848669562,
+        "y": 1.0786078025066812
       },
       "isLocked": false,
       "linkedName": "3pStationIntake"
     },
     {
       "anchor": {
-        "x": 3.7287074413139796,
-        "y": 2.997696615270539
+        "x": 3.702753180270223,
+        "y": 2.9506306363063803
       },
       "prevControl": {
-        "x": 2.9549970587019203,
-        "y": 2.1773458820685785
+        "x": 2.929042797658164,
+        "y": 2.13027990310442
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.30783401924836
+    "rotation": -125.00000000000001
   },
   "useDefaultConstraints": true
 }
