@@ -166,10 +166,12 @@ public class SwerveSubsystem extends SubsystemBase
       if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
       double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
       if(adjustedTime > 0){
-        limelightPose = new Pose2d(
-          limelightPose.getTranslation(),
-          swerveDrive.getOdometryHeading()
-        );
+        if(limelightPoseEstimate.tagCount < 2 && limelightPoseEstimate.avgTagDist > 1.8){
+          limelightPose = new Pose2d(
+            limelightPose.getTranslation(),
+            swerveDrive.getOdometryHeading()
+          );
+        }
         swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
       }
     }
