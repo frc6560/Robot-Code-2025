@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
+import com.team6560.frc2025.Constants.DrivebaseConstants;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
@@ -34,18 +35,6 @@ import edu.wpi.first.wpilibj.DriverStation;
  * This command is used for scoring at the reef on any level, from L1-L4.
  */
 public class ScoreCommand extends SequentialCommandGroup {
-    // Consts
-    final double E_TOLERANCE = 1.0;
-    final double W_TOLERANCE = 8.0;
-
-    // Max velocities and accelerations for initial drive to prescore pose.
-    final double MAX_VELOCITY = 5.0; 
-    final double MAX_ACCELERATION = 3.6; 
-
-    final double MAX_FINAL_VELOCITY = 2.1;  
-    final double MAX_FINAL_ACCELERATION = 1.8; 
-    final double MAX_OMEGA = Math.toRadians(270);
-    final double MAX_ALPHA = Math.toRadians(360);
 
     // Poses
     private Pose2d targetPose;
@@ -80,7 +69,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     private double wristTarget;
 
 
-    /** A constructor to score at a given level... in teleoperated mode.*/
+    /** Constructor for our scorign command */
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
                             ReefSide side, ReefIndex location, ReefLevel level) {
 
@@ -102,11 +91,12 @@ public class ScoreCommand extends SequentialCommandGroup {
         }
         else{
             super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()).withTimeout(3.5), 
-                                getScoreCommand(), getFullDeactuationCommand());
+                                getScoreCommand(), getDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
     }
 
+    /** Runs a grabber intake during auto, which decreases wait time at the station */
     public Command getGrabberIntake(){
         return new RunCommand(
             () -> grabber.runIntakeMaxSpeed(),
@@ -114,7 +104,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             .andThen(() -> grabber.stop());
     }
 
-    /** Helper method for following a straight trajectory */
+    /** Helper method for following a straight trajectory with a trapezoidal profile */
     public Command getFollowPath(AutoAlignPath path, double finalVelocity){
         final Command followPath = new FunctionalCommand(
             () -> {
@@ -138,11 +128,13 @@ public class ScoreCommand extends SequentialCommandGroup {
             rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
         },
             () -> {
+                // Move.
                 Setpoint newSetpoint = getNextSetpoint(path);
                 drivetrain.followSegment(newSetpoint, targetPose);
                 if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.03
                     && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.017
                 ){
+                    // Stop.
                     drivetrain.drive(new ChassisSpeeds(0, 0, 0));
                 }
             },
@@ -154,35 +146,35 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     }
 
-    /** Gets a drive to prescore command */
+    /** Drives close to our target pose during auto */
     public Command getDriveToPrescore(){
         path = new AutoAlignPath(
             drivetrain.getPose(),
             getPrescore(targetPose),
-            MAX_VELOCITY, 
-            MAX_ACCELERATION, 
-            MAX_OMEGA,
-            MAX_ALPHA);
+            DrivebaseConstants.kMaxAutoVelocity,
+            DrivebaseConstants.kMaxAutoAcceleration,
+            DrivebaseConstants.kMaxOmega,
+            DrivebaseConstants.kMaxAlpha);
         final Command driveToPrescore = getFollowPath(path, 2.1).until(
             () -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.2
         );
         return driveToPrescore;
     }
 
-    /** Gets an auto align command */
+    /** Snaps to the reef pose */
     public Command getDriveInCommand(){
         path = new AutoAlignPath(
             drivetrain.getPose(),
             targetPose, //originally just target pose
-            MAX_FINAL_VELOCITY, 
-            MAX_FINAL_ACCELERATION, 
-            MAX_OMEGA,
-            MAX_ALPHA);
+            DrivebaseConstants.kMaxAlignmentVelocity,
+            DrivebaseConstants.kMaxAlignmentAcceleration,
+            DrivebaseConstants.kMaxOmega,
+            DrivebaseConstants.kMaxAlpha);
         final Command driveIn = getFollowPath(path, 0);
         return driveIn;
     }
 
-    /** Gets an actuate to position command */
+    /** Actuates superstructure to our desired level */
     public Command getActuateCommand(){
         final Command actuateToPosition = new FunctionalCommand(
             () -> {
@@ -194,12 +186,12 @@ public class ScoreCommand extends SequentialCommandGroup {
                 }
             },
             (interrupted) -> {},
-            () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < E_TOLERANCE 
+            () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < ElevatorConstants.kElevatorTolerance
         );
         return actuateToPosition;
     }
 
-    /** Gets a command to score the game piece*/
+    /** Scores the piece */
     public Command getScoreCommand(){
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
@@ -215,15 +207,15 @@ public class ScoreCommand extends SequentialCommandGroup {
         return dunkAndScore.withTimeout(0.25);
     }
 
-    /** Gets a deactuation command for teleop */
-    public Command getFullDeactuationCommand(){
+    /** Deactuates the superstructure in teleop for driver QOL */
+    public Command getDeactuationCommand(){
         path = new AutoAlignPath(
             drivetrain.getPose(),
             getPrescore(targetPose),
-            MAX_FINAL_VELOCITY, 
-            2.5, 
-            MAX_OMEGA,
-            MAX_ALPHA);
+            DrivebaseConstants.kMaxAlignmentVelocity, 
+            DrivebaseConstants.kMaxAlignmentAcceleration,
+            DrivebaseConstants.kMaxOmega,
+            DrivebaseConstants.kMaxAlpha);
         final Command deactuateSuperstructure = new FunctionalCommand(
                         () -> {
                         },
@@ -232,13 +224,13 @@ public class ScoreCommand extends SequentialCommandGroup {
                             elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
                         },
                         (interrupted) -> {},
-                        () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0) 
+                        () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < ElevatorConstants.kElevatorTolerance) 
         );
         // final Command backUp = getFollowPath(path, 0);
         return Commands.parallel(deactuateSuperstructure).withTimeout(0.5);
     }
 
-    /** Gets the prescore for a specific Pose2d*/
+    /** Gets the prescore for a specific Pose2d */
     public Pose2d getPrescore(Pose2d targetPose){
         return new Pose2d(
             targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 

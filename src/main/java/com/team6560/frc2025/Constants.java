@@ -25,6 +25,16 @@ public final class Constants {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
 
+    // Max velocities and accelerations for auto
+    public static final double kMaxAutoVelocity = 5.0; 
+    public static final double kMaxAutoAcceleration = 3.6; 
+
+    // Max velocities and accelerations for teleop alignment
+    public static final double kMaxAlignmentVelocity = 2.1;  
+    public static final double kMaxAlignmentAcceleration = 1.8; 
+    public static final double kMaxOmega = Math.toRadians(270);
+    public static final double kMaxAlpha = Math.toRadians(360);
+
   }
 
   public static class OperatorConstants
@@ -45,6 +55,8 @@ public final class Constants {
     public static int ELEV_LOWER_LIMIT_SWITCH_ID = 29;
 
     public static double ELEV_GEAR_RATIO = 2.66;
+
+    public static final double kElevatorTolerance = 1.0;
     public static final class ElevatorStates {
 
       public static final double STOW = 0.4;
@@ -71,6 +83,7 @@ public final class Constants {
     public static final double LOWER_SOFT_BOUND = -5.0;
 
     public static final int LIMIT_SWITCH_PORT_ID = 19;
+    public static final double kWristTolerance = 8.0;
     public static final class WristStates {
       public static final double STOW = 90.0;
       public static final double PICKUP = 225;  
