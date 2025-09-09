@@ -141,7 +141,7 @@ public final class Constants {
   }
 
   public static final class FieldConstants{
-    // INTAKE
+    // AUTO 
     // Left and right are viewed from the DS.
     public static final double RED_X = 10.402;
     public static final double BLUE_X = 7.164;

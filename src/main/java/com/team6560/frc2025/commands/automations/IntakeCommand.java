@@ -1,5 +1,6 @@
 package com.team6560.frc2025.commands.automations;
 
+import com.team6560.frc2025.Constants.DrivebaseConstants;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.subsystems.Elevator;
@@ -47,10 +48,10 @@ public class IntakeCommand extends SequentialCommandGroup{
         AutoAlignPath path = new AutoAlignPath(
                     drivetrain.getPose(),
                     targetPickupPose,
-                    5.0,
-                    4.0,
-                    Math.toRadians(720),
-                    Math.toRadians(540)
+                    DrivebaseConstants.kMaxAutoVelocity,
+                    DrivebaseConstants.kMaxAutoAcceleration,
+                    DrivebaseConstants.kMaxOmega,
+                    DrivebaseConstants.kMaxAlpha
                 );
         translationState.position = path.getDisplacement().getNorm();
         rotationState.position = path.startPose.getRotation().getRadians();
