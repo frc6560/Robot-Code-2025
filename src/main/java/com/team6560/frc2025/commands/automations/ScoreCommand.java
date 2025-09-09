@@ -40,7 +40,7 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     // Max velocities and accelerations for initial drive to prescore pose.
     final double MAX_VELOCITY = 5.0; 
-    final double MAX_ACCELERATION = 3.8; 
+    final double MAX_ACCELERATION = 3.6; 
 
     final double MAX_FINAL_VELOCITY = 2.1;  
     final double MAX_FINAL_ACCELERATION = 1.8; 

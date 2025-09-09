@@ -146,7 +146,7 @@ public class SwerveSubsystem extends SubsystemBase
     // Vision setup
     for( String limelightName : limelightNames) {
       LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
-      PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+      PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
 
       if(limelightPoseEstimate == null) return;
       Pose2d limelightPose = limelightPoseEstimate.pose;
