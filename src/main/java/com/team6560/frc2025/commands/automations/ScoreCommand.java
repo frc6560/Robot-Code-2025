@@ -69,7 +69,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     private double wristTarget;
 
 
-    /** Constructor for our scorign command */
+    /** Constructor for our scoring command */
     public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
                             ReefSide side, ReefIndex location, ReefLevel level) {
 
@@ -250,7 +250,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
         final double DISTANCE_FROM_TAG = 0.164;
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<ReefIndex, Pose2d>();
-        
+
         // All target poses are in meters
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
