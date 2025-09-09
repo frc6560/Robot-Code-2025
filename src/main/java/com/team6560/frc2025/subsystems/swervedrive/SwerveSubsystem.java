@@ -154,6 +154,25 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
+    fuseVisionMeasurements();
+    swerveDrive.field.setRobotPose(this.getPose());
+  } 
+
+  Pose2d getClosestTargetPoseLeft() {
+    return getPose().nearest(targetPose2dsLeft);
+  }
+
+  Pose2d getClosestTargetPoseRight() {
+    return getPose().nearest(targetPose2dsRight);
+  }
+
+  @Override
+  public void simulationPeriodic()
+  {
+  }
+
+  /** Uses a Kalman filter and a couple heuristics to fuse our april tag pose estimator */
+  public void fuseVisionMeasurements(){
     // this is viewed top down, facing the front of the robot
     String[] limelightNames = {"limelight-right", "limelight-left"};
     // Vision setup
@@ -175,22 +194,6 @@ public class SwerveSubsystem extends SubsystemBase
         swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
       }
     }
-
-
-    swerveDrive.field.setRobotPose(this.getPose());
-  } 
-
-  Pose2d getClosestTargetPoseLeft() {
-    return getPose().nearest(targetPose2dsLeft);
-  }
-
-  Pose2d getClosestTargetPoseRight() {
-    return getPose().nearest(targetPose2dsRight);
-  }
-
-  @Override
-  public void simulationPeriodic()
-  {
   }
 
   /**
