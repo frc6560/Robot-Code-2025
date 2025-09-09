@@ -17,6 +17,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
+import com.team6560.frc2025.Constants.DrivebaseConstants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
 import com.team6560.frc2025.utility.Setpoint;
@@ -75,11 +76,23 @@ public class SwerveSubsystem extends SubsystemBase
   
   // Values to tune 
 
-  private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(0.185, 1.866, 0.159);
-  Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 999999);
-  private final PIDController m_pidControllerX = new PIDController(2.0, 0, 0.15); 
-  private final PIDController m_pidControllerY = new PIDController(2.0, 0, 0.15); 
-  private final PIDController m_pidControllerTheta = new PIDController(3.0, 0, 0.15);  // (not) golden
+  private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(DrivebaseConstants.kS, 
+                                                                            DrivebaseConstants.kV, 
+                                                                            DrivebaseConstants.kA);
+
+  Matrix<N3, N1> visionStdDevs = VecBuilder.fill(DrivebaseConstants.kStdvX,
+                                                 DrivebaseConstants.kStdvY, 
+                                                 DrivebaseConstants.kStdvTheta);
+
+  private final PIDController m_pidControllerX = new PIDController(DrivebaseConstants.kP_translation, 
+                                                            DrivebaseConstants.kI_translation, 
+                                                            DrivebaseConstants.kD_translation);
+  private final PIDController m_pidControllerY = new PIDController(DrivebaseConstants.kP_translation,
+                                                            DrivebaseConstants.kI_translation, 
+                                                            DrivebaseConstants.kD_translation);
+  private final PIDController m_pidControllerTheta = new PIDController(DrivebaseConstants.kP_rotation, 
+                                                                DrivebaseConstants.kI_rotation, 
+                                                                DrivebaseConstants.kD_rotation);
 
 
   /**\

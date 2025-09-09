@@ -1,8 +1,14 @@
 package com.team6560.frc2025;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import com.team6560.frc2025.utility.Enums.*;
@@ -39,6 +45,22 @@ public final class Constants {
     public static final double kMaxOmega = Math.toRadians(270);
     public static final double kMaxAlpha = Math.toRadians(360);
 
+    // Tunable constants
+    public static final double kS = 0.185;
+    public static final double kV = 1.866;
+    public static final double kA = 0.159;
+
+    public static final double kP_translation = 2.0;  
+    public static final double kI_translation = 0; 
+    public static final double kD_translation = 0.15; 
+
+    public static final double kP_rotation = 3.0;
+    public static final double kI_rotation = 0;
+    public static final double kD_rotation = 0.15;
+
+    public static final double kStdvX = 0.08;
+    public static final double kStdvY = 0.08;
+    public static final double kStdvTheta = 999999;
   }
 
   public static class OperatorConstants
@@ -119,14 +141,6 @@ public final class Constants {
   }
 
   public static final class FieldConstants{
-    // HashMap of reef target poses
-    public static final HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<>();
-        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
-        targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.54, 3.720, Rotation2d.fromDegrees(0)));
-        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.064, 5.155, Rotation2d.fromDegrees(60)));
-        targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.640, 5.361, Rotation2d.fromDegrees(120))); 
-        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
-        targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.08, 2.908, Rotation2d.fromDegrees(240)));
     // INTAKE
     // Left and right are viewed from the DS.
     public static final double RED_X = 10.402;
