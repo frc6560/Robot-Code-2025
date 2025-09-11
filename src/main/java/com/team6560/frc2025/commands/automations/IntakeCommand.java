@@ -30,10 +30,14 @@ public class IntakeCommand extends SequentialCommandGroup{
     // Note that this needs a second auto align, solely because rotation needs to be calculated differently.
 
     TrapezoidProfile translationProfile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(5.0, 4.0) // max velocity and acceleration
+        new TrapezoidProfile.Constraints(
+            DrivebaseConstants.kMaxAutoVelocity,
+            DrivebaseConstants.kMaxAutoVelocity) // max velocity and acceleration
     );
     TrapezoidProfile rotationProfile = new TrapezoidProfile(
-        new TrapezoidProfile.Constraints(Math.toRadians(720), Math.toRadians(540)) // max angular velocity and acceleration
+        new TrapezoidProfile.Constraints(
+            DrivebaseConstants.kMaxOmega,
+            DrivebaseConstants.kMaxAlpha) // max angular velocity and acceleration
     );
 
     TrapezoidProfile.State translationState = new TrapezoidProfile.State(0, 0);
