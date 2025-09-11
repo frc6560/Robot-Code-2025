@@ -30,7 +30,9 @@ public class AutoFactory {
         if(alliance == null) {
             this.alliance = DriverStation.Alliance.Red;
         }
-        this.alliance = alliance;
+        else{
+            this.alliance = alliance;
+        }
         this.wrist = wrist;
         this.elevator = elevator;
         this.drivetrain = drivetrain;
