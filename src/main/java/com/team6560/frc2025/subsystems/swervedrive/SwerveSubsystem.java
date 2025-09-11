@@ -145,26 +145,11 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-  // static {
-
-  // }
-
-
-  private Pose2d emptyPose = new Pose2d();
-
   @Override
   public void periodic(){
     fuseVisionMeasurements();
     swerveDrive.field.setRobotPose(this.getPose());
   } 
-
-  Pose2d getClosestTargetPoseLeft() {
-    return getPose().nearest(targetPose2dsLeft);
-  }
-
-  Pose2d getClosestTargetPoseRight() {
-    return getPose().nearest(targetPose2dsRight);
-  }
 
   @Override
   public void simulationPeriodic()
@@ -173,12 +158,13 @@ public class SwerveSubsystem extends SubsystemBase
 
   /** Uses a Kalman filter and a couple heuristics to fuse our april tag pose estimator */
   public void fuseVisionMeasurements(){
-    // this is viewed top down, facing the front of the robot
+    Pose2d emptyPose = new Pose2d();
+    // This is viewed top down, facing the front of the robot
     String[] limelightNames = {"limelight-right", "limelight-left"};
-    // Vision setup
+    // Vision fusion
     for( String limelightName : limelightNames) {
       LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
-      PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+      PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
       if(limelightPoseEstimate == null) return;
       Pose2d limelightPose = limelightPoseEstimate.pose;
@@ -568,6 +554,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void resetOdometryToLimelight() {
+    Pose2d emptyPose = new Pose2d();
     PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
     if (poseEstimate == null) return;
     
