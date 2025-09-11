@@ -80,7 +80,9 @@ public class WristCommand extends Command {
 
           outtake = -1;
 
-        } 
+        } else if (controls.resetWrist()){
+          targetState = State.HOME;
+        }
 
       }
     
@@ -120,7 +122,10 @@ public class WristCommand extends Command {
 
         wrist.setMotorPosition(WristConstants.WristStates.S_STOW);
 
-      } else {}
+      } else if (targetState == State.HOME){
+
+        wrist .setMotorPosition(WristConstants.WristStates.HOME);
+      }
 
     }
 

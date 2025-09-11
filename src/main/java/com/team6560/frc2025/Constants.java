@@ -87,6 +87,7 @@ public final class Constants {
       public static final double L4Offset = 57.0; 
       public static final double StowOffset = 0.0;
       public static final double PickupOffset = 0.0;
+      public static final double HOME = 0.0; //TODO: determine
     }
   }
 

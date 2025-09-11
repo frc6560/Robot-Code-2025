@@ -43,6 +43,7 @@ public class Wrist extends SubsystemBase {
     S_STOW,
     S_L2,
     S_L4,
+    HOME,
     MOVING, // placeholder bad state
   };
 

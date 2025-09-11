@@ -80,6 +80,10 @@ public class XboxControls {
         return firstXbox.getRightTriggerAxis() > 0.25;
     }
 
+    public boolean resetWrist(){
+      return secondXbox.getStartButton(); // TODO change to correct button
+    }
+
     // pipe and ball grabber 
 
     // shifted for ball
