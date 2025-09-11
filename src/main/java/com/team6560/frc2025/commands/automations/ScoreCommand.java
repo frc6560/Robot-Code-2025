@@ -253,7 +253,6 @@ public class ScoreCommand extends SequentialCommandGroup {
 
         // All target poses are in meters
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
-        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.54, 3.720, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.064, 5.155, Rotation2d.fromDegrees(60)));
         targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.640, 5.361, Rotation2d.fromDegrees(120))); 
