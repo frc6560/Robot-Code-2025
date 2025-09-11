@@ -28,5 +28,7 @@ public class BaregCommandHelpers {
         Translation2d endpos = end.getTranslation();
 
         double distance = startpos.getDistance(endpos);
+        return distance < 0.2;
+
     }
 }
