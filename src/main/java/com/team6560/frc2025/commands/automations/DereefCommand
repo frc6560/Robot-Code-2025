@@ -1,0 +1,78 @@
+package com.team6560.frc2025.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+
+import com.team6560.frc2025.Constants.ElevatorConstants;
+import com.team6560.frc2025.Constants.WristConstants;
+import com.team6560.frc2025.subsystems.Elevator;
+import com.team6560.frc2025.subsystems.PipeGrabber;
+import com.team6560.frc2025.subsystems.BallGrabber;
+import com.team6560.frc2025.subsystems.Wrist;
+import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
+
+import com.team6560.frc2025.utility.Enums.*;
+
+public class AlgaeDescoreCommand extends SequentialCommandGroup {
+
+        private SwerveSubsystem drivetrain;
+        private Wrist wrist;
+        private Elevator elevator;
+        private BallGrabber grabber;
+
+        ReefSide side;
+        ReefIndex location;
+        ReefLevel level;
+
+    public AlgaeDescoreCommand(Wrist wrist, Elevator elevator, BallGrabber grabber, SwerveSubsystem drivetrain,
+                               ReefSide side, ReefIndex location, ReefLevel level, boolean isAuto) {
+
+        // assign fields
+        this.drivetrain = drivetrain;
+        this.wrist = wrist;
+        this.elevator = elevator;
+        this.grabber = grabber;
+
+        double elevatorTarget;
+        double wristTarget;
+
+        if (level == ReefLevel.LOW_BALL) {
+            elevatorTarget = ElevatorConstants.ElevatorStates.top_algae;
+            wristTarget = WristConstants.WristStates.top_algae;
+        } else if (level == ReefLevel.HIGH_BALL) {
+            elevatorTarget = ElevatorConstants.ElevatorStates.top_algae;
+            wristTarget = WristConstants.WristStates.top_algae;
+        } else {
+            this.level = ReefLevel.L4;
+            // provide sensible defaults if not a known ball level
+            elevatorTarget = ElevatorConstants.ElevatorStates.top_algae;
+            wristTarget = WristConstants.WristStates.top_algae;
+        }
+
+
+        Command moveElevator = new RunCommand(() -> this.elevator.setElevatorPosition(elevatorTarget), this.elevator)
+                                .until(() -> { return Math.abs(this.elevator.getElevatorHeight() - elevatorTarget) < 1.0; });
+
+        Command moveWrist = new RunCommand(() -> this.wrist.setMotorPosition(wristTarget), this.wrist)
+                             .until(() -> { return Math.abs(this.wrist.getWristPosition() - wristTarget) < 5.0; });
+
+        Command spinGrabber = new RunCommand(() -> this.grabber.runIntake(), this.grabber)
+                               .withTimeout(2.0)
+                               .andThen(() -> this.grabber.stop());
+
+        Command moveElevatorDown = new RunCommand(() -> this.elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW), this.elevator)
+                                .until(() -> { return Math.abs(this.elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < 1.0; });
+
+        Command moveWristDown = new RunCommand(() -> this.wrist.setMotorPosition(WristConstants.WristStates.STOW), this.wrist)
+                             .until(() -> { return Math.abs(this.wrist.getWristPosition() - WristConstants.WristStates.STOW) < 5.0; });
+
+        SequentialCommandGroup seq = new SequentialCommandGroup(
+            new ParallelCommandGroup(moveElevator, moveWrist),spinGrabber, new ParallelCommandGroup(moveElevatorDown, moveWristDown));
+        addCommands(seq);
+    }
+
+    
+}
