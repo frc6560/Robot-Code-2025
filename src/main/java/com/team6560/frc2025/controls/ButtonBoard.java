@@ -72,6 +72,13 @@ public class ButtonBoard {
         return buttonBoard.getRawButton(12);
     }
 
+    public boolean getHighAlgae(){
+        return buttonBoard.getRawButton(13);
+    }
+    public boolean getLowAlgae(){
+        return buttonBoard.getRawButton(14);
+    }
+
     public boolean getShift(){
         return buttonBoard.getRawButtonPressed(17);
     }

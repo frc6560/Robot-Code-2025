@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
- * This command is used for scoring at the reef on any level, from L1-L4.
+ * This command is used for descoring algae at the reef on any level
  */
 public class AlgaeDescoreCommand extends SequentialCommandGroup {
 
@@ -60,8 +60,7 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
     private Elevator elevator;
     private BallGrabber grabber;
 
-    // Levels
-    ReefSide side;
+    // Locations
     DereefIndex location;
     ReefLevel level;
 
@@ -72,14 +71,13 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
 
     /** Constructor for our scoring command */
     public AlgaeDescoreCommand(Wrist wrist, Elevator elevator, BallGrabber grabber,SwerveSubsystem drivetrain,
-    DereefIndex location, ReefLevel level, ReefSide side) {
+    DereefIndex location, ReefLevel level) {
 
         this.drivetrain = drivetrain;
         this.wrist = wrist;
         this.elevator = elevator;
         this.grabber = grabber;
 
-        this.side = side;
         this.location = location;
         this.level = level;
 
@@ -228,7 +226,6 @@ public Command getIntakeAlgae() {
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
     private void setTargets() {
         DriverStation.Alliance alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue);
-        int multiplier = (side == ReefSide.LEFT) ? -1 : 1;
         final double DISTANCE_FROM_TAG = 0.164;
 
         HashMap<DereefIndex, Pose2d> targetPoses = new HashMap<>();
@@ -242,8 +239,8 @@ public Command getIntakeAlgae() {
         Pose2d tagPose = targetPoses.get(location);
 
         targetPose = new Pose2d(
-            tagPose.getX() + DISTANCE_FROM_TAG * Math.cos(tagPose.getRotation().getRadians() + Math.PI/2) * multiplier,
-            tagPose.getY() + DISTANCE_FROM_TAG * Math.sin(tagPose.getRotation().getRadians() + Math.PI/2) * multiplier,
+            tagPose.getX() + DISTANCE_FROM_TAG * Math.cos(tagPose.getRotation().getRadians() + Math.PI/2),
+            tagPose.getY() + DISTANCE_FROM_TAG * Math.sin(tagPose.getRotation().getRadians() + Math.PI/2),
             tagPose.getRotation()
         );
 

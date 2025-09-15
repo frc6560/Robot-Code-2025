@@ -12,6 +12,7 @@ public class LocationManager extends SubsystemBase {
     private ReefIndex currentReefIndex;
     private ReefSide currentReefSide;
     private ReefLevel currentReefLevel;
+    private DereefIndex currentDereefIndex;
 
     private boolean goSwitch;
 
@@ -40,7 +41,11 @@ public class LocationManager extends SubsystemBase {
             currentReefLevel = ReefLevel.L3; // test: 12
         } if(board.getL4()){
             currentReefLevel = ReefLevel.L4; // test: 7
-        }
+        } if(board.getLowAlgae()){
+            currentReefLevel = ReefLevel.LOW_BALL; // test: 13
+        } if(board.getHighAlgae()){
+            currentReefLevel = ReefLevel.HIGH_BALL; // test: 14
+        } 
 
         // Reef indices.
         // Indices are mapped from A to L. counterclockwise from left and far right, driver perspective
@@ -96,6 +101,10 @@ public class LocationManager extends SubsystemBase {
 
     public ReefIndex getCurrentReefIndex() {
         return currentReefIndex;
+    }
+
+    public DereefIndex getCurrentDereefIndex() {
+        return currentDereefIndex;
     }
 
     public ReefLevel getCurrentReefLevel() {

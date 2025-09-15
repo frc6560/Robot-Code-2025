@@ -7,6 +7,7 @@ import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
+import com.team6560.frc2025.commands.automations.AlgaeDescoreCommand;
 import com.team6560.frc2025.commands.automations.IntakeCommand;
 import com.team6560.frc2025.commands.automations.ScoreCommand;
 import com.team6560.frc2025.controls.ButtonBoard;
@@ -132,6 +133,17 @@ public class RobotContainer {
                                                                         locationManager.getCurrentReefLevel()), 
                                                                         Set.of(wrist, elevator, pipeGrabber, drivebase))
                                                                         .finallyDo((interrupted) -> locationManager.reset()));
+    // Trigger for auto Dereef                                              
+    Trigger autoDereefTrigger = new Trigger(
+      () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
+    );
+
+    autoDereefTrigger.onTrue(Commands.defer(() -> new AlgaeDescoreCommand(wrist, elevator, ballGrabber, drivebase,
+                                                                        locationManager.getCurrentDereefIndex(), 
+                                                                        locationManager.getCurrentReefLevel()), 
+                                                                        Set.of(wrist, elevator, ballGrabber, drivebase))
+                                                                        .finallyDo((interrupted) -> locationManager.reset()));
+                                                                
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
