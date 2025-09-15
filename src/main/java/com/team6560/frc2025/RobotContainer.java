@@ -18,7 +18,9 @@ import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
+import com.team6560.frc2025.utility.Enums.DereefIndex;
 import com.team6560.frc2025.utility.Enums.PickupLocations;
+import com.team6560.frc2025.utility.Enums.ReefLevel;
 import com.team6560.frc2025.subsystems.LocationManager;
 import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
@@ -134,15 +136,15 @@ public class RobotContainer {
                                                                         Set.of(wrist, elevator, pipeGrabber, drivebase))
                                                                         .finallyDo((interrupted) -> locationManager.reset()));
     // Trigger for auto Dereef                                              
-    Trigger autoDereefTrigger = new Trigger(
-      () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
-    );
+    // Trigger autoDereefTrigger = new Trigger(
+    //   () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
+    // );
 
-    autoDereefTrigger.onTrue(Commands.defer(() -> new AlgaeDescoreCommand(wrist, elevator, ballGrabber, drivebase,
-                                                                        locationManager.getCurrentDereefIndex(), 
-                                                                        locationManager.getCurrentReefLevel()), 
-                                                                        Set.of(wrist, elevator, ballGrabber, drivebase))
-                                                                        .finallyDo((interrupted) -> locationManager.reset()));
+    // autoDereefTrigger.onTrue(Commands.defer(() -> new AlgaeDescoreCommand(wrist, elevator, ballGrabber, drivebase,
+    //                                                                     locationManager.getCurrentDereefIndex(), 
+    //                                                                     locationManager.getCurrentReefLevel()), 
+    //                                                                     Set.of(wrist, elevator, ballGrabber, drivebase))
+    //                                                                     .finallyDo((interrupted) -> locationManager.reset()));
                                                                 
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
@@ -150,6 +152,13 @@ public class RobotContainer {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
     driverXbox.b().onTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT).schedule(), drivebase));
     driverXbox.y().onTrue(Commands.run(() -> drivebase.rotateCommand(2.0/3 * Math.PI)));
+    driverXbox.x().onTrue(Commands.defer(() -> new AlgaeDescoreCommand(wrist, elevator, ballGrabber, drivebase,
+      DereefIndex.TOP_LEFT, 
+      ReefLevel.HIGH_BALL), 
+      Set.of(wrist, elevator, ballGrabber, drivebase))
+      .finallyDo((interrupted) -> locationManager.reset()));
+    
+
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)
