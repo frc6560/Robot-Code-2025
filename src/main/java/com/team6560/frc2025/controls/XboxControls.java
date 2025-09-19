@@ -3,8 +3,6 @@ package com.team6560.frc2025.controls;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class XboxControls {
-
-    // private final XboxController secondXbox;
     private final XboxController secondXbox;
     private final XboxController firstXbox;
     
@@ -36,7 +34,7 @@ public class XboxControls {
         
     }
 
-    // climb
+    // --- CLIMB ---
 
     public boolean getClimbDown() {
       return secondXbox.getRightY() > 0.7; 
@@ -48,7 +46,7 @@ public class XboxControls {
         // return secondXbox.getRightStickButton(); 
     }
 
-    // elevator
+    // // --- SUPERSTRUCTURE ---
 
     public boolean goToL1(){
         return secondXbox.getAButton();
@@ -70,8 +68,6 @@ public class XboxControls {
       return secondXbox.getRightBumperButton();
     }
 
-    // wrist
-
     public boolean goToStow(){
         return secondXbox.getBackButton(); // TODO change to correct button
     }
@@ -80,7 +76,7 @@ public class XboxControls {
         return firstXbox.getRightTriggerAxis() > 0.25;
     }
 
-    // pipe and ball grabber 
+    // --- END EFFECTORS ---
 
     // shifted for ball
     public boolean runGrabberIntake(){
@@ -97,16 +93,4 @@ public class XboxControls {
     public boolean goToPlacePos() {
       return secondXbox.getLeftBumperButton();
     }
-
-    // tests 
-
-    // public double testWrist(){
-    //   return deadband(secondXbox.getRightX(), 0.1);
-    // }
-    // public double testEle(){
-    //   return secondXbox.getLeftX();
-    // }
-    // public boolean resetWrist(){
-    //   return secondXbox.getRightBumperButton();
-    // }
 }

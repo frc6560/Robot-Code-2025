@@ -3,43 +3,38 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6710380497685173,
-        "y": 7.345275607638889
+        "x": 3.1843728298562586,
+        "y": 6.979578269675941
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.835213396991855,
-        "y": 6.663960503476626
+        "x": 3.961945529509037,
+        "y": 7.154740306712978
       },
       "isLocked": false,
       "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 5.56700847402227,
-        "y": 4.958544385345507
+        "x": 5.362892433444221,
+        "y": 5.331785662615755
       },
       "prevControl": {
-        "x": 4.27703920717704,
-        "y": 5.779531973384033
+        "x": 5.254114945018296,
+        "y": 6.2271035879629775
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "CenterScore"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5906527366863901,
-      "rotationDegrees": 59.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
-    "maxAcceleration": 4.0,
+    "maxAcceleration": 3.7,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -53,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.4871142591711
+    "rotation": 34.0
   },
   "useDefaultConstraints": true
 }
