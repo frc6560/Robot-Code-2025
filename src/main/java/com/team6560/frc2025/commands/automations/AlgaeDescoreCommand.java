@@ -96,11 +96,11 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
     }
 
     /** Gets the algae intake command */
-public Command getIntakeAlgae() {
-    return new RunCommand(() -> grabber.runIntake(), grabber)
-            .withTimeout(2.0)
-            .andThen(() -> grabber.stop());
-}
+    public Command getIntakeAlgae() {
+        return new RunCommand(() -> grabber.runIntake(), grabber)
+                .until(() -> grabber.isBallStuck()) // Stops when ball is detected as stuck
+                .andThen(() -> grabber.stop());
+    }
 
     /** Helper method for following a straight trajectory with a trapezoidal profile */
     public Command getFollowPath(AutoAlignPath path, double finalVelocity){
