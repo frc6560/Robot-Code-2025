@@ -180,7 +180,7 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
             new RunCommand(() -> elevator.setElevatorPosition(elevatorTarget), elevator)
                 .until(() -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < ElevatorConstants.kElevatorTolerance),
             new RunCommand(() -> wrist.setMotorPosition(wristTarget), wrist)
-                .until(() -> Math.abs(wrist.getWristPosition() - wristTarget) < 5.0)
+                .until(() -> Math.abs(elevator.getElevatorHeight() - elevatorTarget) < ElevatorConstants.kElevatorTolerance)
         );
     }
 
