@@ -231,7 +231,7 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
         targetPoses.put(DereefIndex.BOTTOM_RIGHT, new Pose2d(13.376, 2.66, Rotation2d.fromDegrees(300)));
         targetPoses.put(DereefIndex.FAR_RIGHT, new Pose2d(14.412, 3.613, Rotation2d.fromDegrees(0)));
         targetPoses.put(DereefIndex.TOP_RIGHT, new Pose2d(14.083, 4.978, Rotation2d.fromDegrees(60)));
-        targetPoses.put(DereefIndex.TOP_LEFT, new Pose2d(12.788, 5.386, Rotation2d.fromDegrees(120)));
+        targetPoses.put(DereefIndex.TOP_LEFT, new Pose2d(12.745, 5.338, Rotation2d.fromDegrees(120)));
         targetPoses.put(DereefIndex.FAR_LEFT, new Pose2d(11.718, 4.429, Rotation2d.fromDegrees(180)));
         targetPoses.put(DereefIndex.BOTTOM_LEFT, new Pose2d(12.06, 3.075, Rotation2d.fromDegrees(240)));
 
