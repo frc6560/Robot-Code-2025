@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.1843728298562586,
-        "y": 6.979578269675941
+        "x": 12.766784262970548,
+        "y": 5.437792233306518
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.961945529509037,
-        "y": 7.154740306712978
+        "x": 13.544356962623327,
+        "y": 5.612954270343555
       },
       "isLocked": false,
       "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 5.362892433444221,
-        "y": 5.331785662615755
+        "x": 5.230251172408924,
+        "y": 5.03810722831181
       },
       "prevControl": {
-        "x": 5.254114945018296,
-        "y": 6.2271035879629775
+        "x": 5.121473683982998,
+        "y": 5.933425153659032
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 34.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }
