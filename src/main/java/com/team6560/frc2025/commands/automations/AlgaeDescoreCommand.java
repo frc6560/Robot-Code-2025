@@ -187,19 +187,19 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
     public Command getDeactuationCommand(){
         path = new AutoAlignPath(
             drivetrain.getPose(),
-            getPrescore(targetPose),
+            get_backpuPose2d(targetPose),
             DrivebaseConstants.kMaxAlignmentVelocity, 
             DrivebaseConstants.kMaxAlignmentAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
         final Command deactuateSuperstructure = new FunctionalCommand(
             () -> {
-                // stop any intake that might still be running
-                grabber.stop();
+
+
             },
             () -> { 
                 // Retract superstructure to stow position
-                wrist.setMotorPosition(WristConstants.WristStates.STOW);
+                wrist.setMotorPosition(WristConstants.WristStates.S_L2);
                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
             },
             (interrupted) -> {
@@ -207,10 +207,10 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
                 grabber.stop();
             },
             () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < ElevatorConstants.kElevatorTolerance
-                  && Math.abs(wrist.getWristPosition() - WristConstants.WristStates.STOW) < 5.0)
+                  && Math.abs(wrist.getWristPosition() - WristConstants.WristStates.S_L2) < 5.0)
         );
-        // final Command backUp = getFollowPath(path, 0);
-        return Commands.parallel(deactuateSuperstructure).withTimeout(0.5);
+        final Command backUp = getFollowPath(path, 0);
+        return Commands.sequence(backUp, deactuateSuperstructure).withTimeout(3);
     }
 
     /** Gets the prescore for a specific Pose2d */
@@ -218,6 +218,14 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
         return new Pose2d(
             targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
             targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getRotation()
+        );
+    }
+
+    public Pose2d get_backpuPose2d(Pose2d targetPose){
+        return new Pose2d(
+            targetPose.getX() + 0.5 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 0.5 * Math.sin(targetPose.getRotation().getRadians()), 
             targetPose.getRotation()
         );
     }
@@ -231,7 +239,7 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
         targetPoses.put(DereefIndex.BOTTOM_RIGHT, new Pose2d(13.376, 2.66, Rotation2d.fromDegrees(300)));
         targetPoses.put(DereefIndex.FAR_RIGHT, new Pose2d(14.412, 3.613, Rotation2d.fromDegrees(0)));
         targetPoses.put(DereefIndex.TOP_RIGHT, new Pose2d(14.083, 4.978, Rotation2d.fromDegrees(60)));
-        targetPoses.put(DereefIndex.TOP_LEFT, new Pose2d(12.801, 5.374, Rotation2d.fromDegrees(120)));
+        targetPoses.put(DereefIndex.TOP_LEFT, new Pose2d(12.868, 5.368, Rotation2d.fromDegrees(120)));
         targetPoses.put(DereefIndex.FAR_LEFT, new Pose2d(11.718, 4.429, Rotation2d.fromDegrees(180)));
         targetPoses.put(DereefIndex.BOTTOM_LEFT, new Pose2d(12.06, 3.075, Rotation2d.fromDegrees(240)));
 
