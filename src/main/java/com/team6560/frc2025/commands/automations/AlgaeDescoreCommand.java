@@ -98,7 +98,8 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
     /** Gets the algae intake command */
     public Command getIntakeAlgae() {
         return new RunCommand(() -> grabber.runIntake(), grabber)
-                .withTimeout(3.0);
+                .until(() -> grabber.getOutputCurrent() > 25.0) 
+                .withTimeout(3.0); // Safety timeout
     }
 
     /** Helper method for following a straight trajectory with a trapezoidal profile */

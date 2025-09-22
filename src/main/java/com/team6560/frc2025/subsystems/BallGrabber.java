@@ -5,29 +5,38 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
 
 import com.revrobotics.spark.SparkMax;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BallGrabber extends SubsystemBase {
     
     private SparkMax grabberMotor;
-
-    private static final int GRABBER_MOTOR_ID = 25; 
+    private static final int GRABBER_MOTOR_ID = 25;
 
     private static final double INTAKE_SPEED = -0.3;
     private static final double OUTTAKE_SPEED = 0.7;
 
     // max current where the ball isn't wedged in
     private static final double MAX_CURRENT_RUNNING = 30;
+    // min voltage threshold for operation
+    private static final double MIN_VOLTAGE_RUNNING = 8.0;
+      
+    private static final double MAX_APPLIED_VOLTAGE_STALL = 8.0; // Volts
+
+    public boolean isBallStuck() {
+        double appliedVoltage = Math.abs(grabberMotor.getAppliedOutput() * grabberMotor.getBusVoltage());
+        return appliedVoltage > MAX_APPLIED_VOLTAGE_STALL;
+    }
+
     public BallGrabber() {
         this.grabberMotor = new SparkMax(GRABBER_MOTOR_ID, MotorType.kBrushless);
         ntDispTab("Ball Grabber")
-            .add("Ball Grabber Duty Cycle", this::getDutyCycle)    
-            .add("Ball grabber motor current", grabberMotor::getOutputCurrent);
+            .add("Ball Grabber Duty Cycle", this::getDutyCycle)
+            .add("Ball grabber motor current", grabberMotor::getOutputCurrent)
+            .add("Ball grabber bus voltage", grabberMotor::getBusVoltage);
     }
 
     public void runIntake(){
-        if (grabberMotor.getOutputCurrent() < MAX_CURRENT_RUNNING){
+        if (grabberMotor.getOutputCurrent() < MAX_CURRENT_RUNNING && grabberMotor.getBusVoltage() > MIN_VOLTAGE_RUNNING){
             grabberMotor.set(INTAKE_SPEED);
         } else {
             grabberMotor.set(0.0);
@@ -35,7 +44,7 @@ public class BallGrabber extends SubsystemBase {
     }
 
     public void runOuttake(){
-        if (grabberMotor.getOutputCurrent() < MAX_CURRENT_RUNNING){
+        if (grabberMotor.getOutputCurrent() < MAX_CURRENT_RUNNING && grabberMotor.getBusVoltage() > MIN_VOLTAGE_RUNNING){
             grabberMotor.set(OUTTAKE_SPEED);
         } else {
             grabberMotor.set(0.0);
@@ -48,5 +57,9 @@ public class BallGrabber extends SubsystemBase {
 
     public double getDutyCycle() {
         return grabberMotor.get();
+    }
+
+    public double getOutputCurrent() {
+        return grabberMotor.getBusVoltage();
     }
 }
