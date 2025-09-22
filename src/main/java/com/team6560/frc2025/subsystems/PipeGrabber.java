@@ -52,6 +52,7 @@ public class PipeGrabber extends SubsystemBase {
     public void runIntake(){
         // This sets the motor's velocity to INTAKE_SPEED
         m_grabberMotor.set(INTAKE_SPEED);
+        System.out.println("Run");
     }
 
     public void zeroEncoder(){
