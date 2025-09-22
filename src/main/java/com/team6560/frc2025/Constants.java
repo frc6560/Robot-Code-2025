@@ -100,7 +100,7 @@ public final class Constants {
   public static final class WristConstants {
 
     public static final int M_ID = 16;
-    public static final int SWITCH_ID = 22;  
+    // public static final int SWITCH_ID = 22;  
     public static final int CANCODER_ID = 17; 
 
     public static final double GEAR_RATIO = 108;

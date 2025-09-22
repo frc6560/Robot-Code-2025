@@ -25,8 +25,8 @@ public class Wrist extends SubsystemBase {
   // motor
   private final TalonFX m_WristMotor;
 
-  // sensors
-  private final DigitalInput m_limitSwitch;
+  // // sensors
+  // private final DigitalInput m_limitSwitch;
 
   // encoder stuff
   private CANcoder m_relativeEncoder;
@@ -67,7 +67,7 @@ public class Wrist extends SubsystemBase {
       // m_relativeEncoder.setPosition(initialEncoderPos * );
 
 
-      this.m_limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
+      // this.m_limitSwitch = new DigitalInput(WristConstants.SWITCH_ID); //random
       this.state = State.STOW;
 
 
@@ -114,10 +114,10 @@ public class Wrist extends SubsystemBase {
       ntTargetPos.setDouble(this.targetPos);
       ntPosition.setDouble(m_WristMotor.getPosition().getValueAsDouble());
   }
-  /** Checks if the wrist is down based on the limit switch. */
-  private boolean limitDown(){
-    return m_limitSwitch.get();
-  }
+  // /** Checks if the wrist is down based on the limit switch. */
+  // private boolean limitDown(){
+  //   return m_limitSwitch.get();
+  // }
 
   /** Gets the current wrist angle */
   public double getWristAngle(){
