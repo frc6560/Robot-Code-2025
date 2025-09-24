@@ -24,6 +24,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -188,6 +189,10 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getScoreCommand(){
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
+                // Makes sure the drivetrain is entirely stopped before ejecting
+                drivetrain.drive(
+                    new ChassisSpeeds(0, 0, 0)
+                );
             },
             () -> {
                 grabber.runGrabberOuttake();
