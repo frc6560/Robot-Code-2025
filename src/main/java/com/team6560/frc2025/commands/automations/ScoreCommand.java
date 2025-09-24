@@ -250,12 +250,12 @@ public class ScoreCommand extends SequentialCommandGroup {
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<ReefIndex, Pose2d>();
 
         // All target poses are in meters
-        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.530, 2.614, Rotation2d.fromDegrees(300)));
-        targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.54, 3.720, Rotation2d.fromDegrees(0)));
-        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.064, 5.155, Rotation2d.fromDegrees(60)));
+        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.531, 2.722, Rotation2d.fromDegrees(300)));
+        targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.423, 3.721, Rotation2d.fromDegrees(0)));
+        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.950, 5.087, Rotation2d.fromDegrees(60)));
         targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.640, 5.361, Rotation2d.fromDegrees(120))); 
-        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.784, 4.339, Rotation2d.fromDegrees(180)));
-        targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.08, 2.908, Rotation2d.fromDegrees(240)));
+        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.693, 4.267, Rotation2d.fromDegrees(180)));
+        targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.111, 2.996, Rotation2d.fromDegrees(240)));
 
         // Puts a HashMap of all possible april tag positions. Notice this is viewed top down with the barge to the left.
         Pose2d aprilTagPose = targetPoses.get(location);
