@@ -45,7 +45,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
@@ -67,9 +66,6 @@ public class SwerveSubsystem extends SubsystemBase
 {
 
   private final SwerveDrive swerveDrive;
-
-  private ArrayList<Pose2d> targetPose2dsLeft = new ArrayList<Pose2d>();
-  private ArrayList<Pose2d> targetPose2dsRight = new ArrayList<Pose2d>();
 
   private final boolean visionDriveTest = true;
 

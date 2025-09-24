@@ -17,7 +17,6 @@ import com.team6560.frc2025.Constants.WristConstants;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Wrist extends SubsystemBase {
@@ -30,7 +29,6 @@ public class Wrist extends SubsystemBase {
 
   // encoder stuff
   private CANcoder m_relativeEncoder;
-  private double initialEncoderPos;
   private TalonFXConfiguration fxConfig;
 
   public enum State{
@@ -63,7 +61,6 @@ public class Wrist extends SubsystemBase {
 
       // reset to basically intake position if -120 --> try +240 to match thomas request
       this.m_WristMotor.setPosition((getWristAngle() + 240)/ 3.33333);
-      initialEncoderPos = 0;
       // m_relativeEncoder.setPosition(initialEncoderPos * );
 
 
