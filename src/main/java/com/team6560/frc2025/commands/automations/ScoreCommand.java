@@ -189,12 +189,12 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command getScoreCommand(){
         final Command dunkAndScore = new FunctionalCommand(
             () -> {
+            },
+            () -> {
                 // Makes sure the drivetrain is entirely stopped before ejecting
                 drivetrain.drive(
                     new ChassisSpeeds(0, 0, 0)
                 );
-            },
-            () -> {
                 grabber.runGrabberOuttake();
             },
             (interrupted) -> {
