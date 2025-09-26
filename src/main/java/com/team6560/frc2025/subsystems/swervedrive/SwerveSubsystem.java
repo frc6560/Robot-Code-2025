@@ -166,6 +166,7 @@ public class SwerveSubsystem extends SubsystemBase
       Pose2d limelightPose = limelightPoseEstimate.pose;
       if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
       double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
+      if(limelightPoseEstimate.avgTagDist > 3.5) return; // Don't use vision if the tags are too far away
       if(adjustedTime > 0){
         if(limelightPoseEstimate.tagCount < 2 && limelightPoseEstimate.avgTagDist > 1.8){
           limelightPose = new Pose2d(
