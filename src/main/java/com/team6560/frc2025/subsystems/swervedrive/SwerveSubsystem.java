@@ -262,7 +262,7 @@ public class SwerveSubsystem extends SubsystemBase
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
     swerveDrive.field.getObject("TargetPose").setPose(targetPose);
-    m_pidControllerTheta.setIZone(0.2);
+    m_pidControllerTheta.setIZone(0.08);
     m_pidControllerX.setIZone(0.25);
     m_pidControllerY.setIZone(0.25);
 
