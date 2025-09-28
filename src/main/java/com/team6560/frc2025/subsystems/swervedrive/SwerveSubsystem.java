@@ -560,7 +560,6 @@ public class SwerveSubsystem extends SubsystemBase
     if (pose == null || pose.equals(emptyPose)) return;
 
     resetOdometry(pose);
-    swerveDrive.setGyro(new Rotation3d(0, 0, pose.getRotation().getRadians()));
   }
 
   /**
