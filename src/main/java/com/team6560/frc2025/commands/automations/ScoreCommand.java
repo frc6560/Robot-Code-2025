@@ -16,12 +16,16 @@ import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.utility.AutoAlignPath;
+import com.team6560.frc2025.utility.LimelightHelpers;
+import com.team6560.frc2025.utility.LimelightHelpers.RawFiducial;
 import com.team6560.frc2025.utility.Setpoint;
 
 import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -176,6 +180,18 @@ public class ScoreCommand extends SequentialCommandGroup {
         return driveIn;
     }
 
+    public Command alignToTagCommand(){
+        // Rotation
+        String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
+        Command rotateToPose = Commands.runOnce(
+            () -> {
+                RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(limelightName);
+                double[] rotation = LimelightHelpers.getTargetPose_CameraSpace(limelightName);
+            }
+        );
+        return null;
+    }
+
     /** Actuates superstructure to our desired level */
     public Command getActuateCommand(){
         final Command actuateToPosition = new FunctionalCommand(
@@ -258,11 +274,11 @@ public class ScoreCommand extends SequentialCommandGroup {
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<ReefIndex, Pose2d>();
 
         // All target poses are in meters
-        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.531, 2.722, Rotation2d.fromDegrees(300)));
+        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.531, 2.722, Rotation2d.fromDegrees(300))); // wrong
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.423, 3.721, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.006, 5.056, Rotation2d.fromDegrees(60)));
         targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.640, 5.361, Rotation2d.fromDegrees(120))); 
-        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.693, 4.267, Rotation2d.fromDegrees(180)));
+        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.693, 4.267, Rotation2d.fromDegrees(180))); // wrong
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.111, 2.996, Rotation2d.fromDegrees(240)));
 
         // Puts a HashMap of all possible april tag positions. Notice this is viewed top down with the barge to the left.
