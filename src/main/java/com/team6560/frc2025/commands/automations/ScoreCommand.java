@@ -274,11 +274,11 @@ public class ScoreCommand extends SequentialCommandGroup {
         HashMap<ReefIndex, Pose2d> targetPoses = new HashMap<ReefIndex, Pose2d>();
 
         // All target poses are in meters
-        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.531, 2.722, Rotation2d.fromDegrees(300))); // wrong
+        targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.477, 2.691, Rotation2d.fromDegrees(300))); // wrong
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.423, 3.721, Rotation2d.fromDegrees(0)));
         targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.006, 5.056, Rotation2d.fromDegrees(60)));
         targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.640, 5.361, Rotation2d.fromDegrees(120))); 
-        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.693, 4.267, Rotation2d.fromDegrees(180))); // wrong
+        targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.693, 4.331, Rotation2d.fromDegrees(180))); // wrong
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.111, 2.996, Rotation2d.fromDegrees(240)));
 
         // Puts a HashMap of all possible april tag positions. Notice this is viewed top down with the barge to the left.
