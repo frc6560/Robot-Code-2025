@@ -46,9 +46,9 @@ public final class Constants {
     public static final double kMaxAlpha = Math.toRadians(360);
 
     // Tunable constants
-    public static final double kS = 0; //0.185;
-    public static final double kV = 0; //1.866
-    public static final double kA = 0; //0.159
+    public static final double kS = 0.185; 
+    public static final double kV = 1.866; 
+    public static final double kA = 0.159; 
 
     public static final double kP_translation = 2.0;  
     public static final double kI_translation = 0; 
