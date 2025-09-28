@@ -28,7 +28,6 @@ public class IntakeCommand extends SequentialCommandGroup{
     Pose2d targetPickupPose;
 
     // Note that this needs a second auto align, solely because rotation needs to be calculated differently.
-
     TrapezoidProfile translationProfile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
             DrivebaseConstants.kMaxAutoVelocity,

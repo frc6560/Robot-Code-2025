@@ -149,9 +149,17 @@ public class ScoreCommand extends SequentialCommandGroup {
             DrivebaseConstants.kMaxAutoAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
-        final Command driveToPrescore = getFollowPath(path, 2.1).until(
-            () -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.2
-        );
+        final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kMaxAlignmentVelocity).until(
+            () -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.3
+        ).andThen(
+            () -> drivetrain.driveFieldOriented(
+                new ChassisSpeeds(
+                    DrivebaseConstants.kMaxAlignmentVelocity * Math.cos(drivetrain.getHeading().getRadians()),
+                    DrivebaseConstants.kMaxAlignmentVelocity * Math.sin(drivetrain.getHeading().getRadians()),
+                    0
+                )
+            )
+        ).until(() -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.02);
         return driveToPrescore;
     }
 
@@ -252,7 +260,7 @@ public class ScoreCommand extends SequentialCommandGroup {
         // All target poses are in meters
         targetPoses.put(ReefIndex.BOTTOM_RIGHT, new Pose2d(13.531, 2.722, Rotation2d.fromDegrees(300)));
         targetPoses.put(ReefIndex.FAR_RIGHT, new Pose2d(14.423, 3.721, Rotation2d.fromDegrees(0)));
-        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(13.950, 5.087, Rotation2d.fromDegrees(60)));
+        targetPoses.put(ReefIndex.TOP_RIGHT, new Pose2d(14.006, 5.056, Rotation2d.fromDegrees(60)));
         targetPoses.put(ReefIndex.TOP_LEFT, new Pose2d(12.640, 5.361, Rotation2d.fromDegrees(120))); 
         targetPoses.put(ReefIndex.FAR_LEFT, new Pose2d(11.693, 4.267, Rotation2d.fromDegrees(180)));
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.111, 2.996, Rotation2d.fromDegrees(240)));
