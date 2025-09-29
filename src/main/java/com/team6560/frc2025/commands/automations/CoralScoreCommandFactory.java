@@ -81,7 +81,7 @@ public class CoralScoreCommandFactory{
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
-    public Command getScoreAuto(ReefIndex index, ReefLevel level, ReefSide side){
+    public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
         double wristTarget = getSuperstructureTargets(level).getFirst();
         double elevatorTarget = getSuperstructureTargets(level).getSecond();
         Pose2d targetPrescore = setPrescoreTarget(index, side);
@@ -95,8 +95,9 @@ public class CoralScoreCommandFactory{
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
-    
+
     // ---- SUB COMMANDS ----
+
 
     /** Runs a grabber intake during auto, which decreases wait time at the station */
     public Command getGrabberIntake(){
