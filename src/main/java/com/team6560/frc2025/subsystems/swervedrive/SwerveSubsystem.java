@@ -282,6 +282,11 @@ public class SwerveSubsystem extends SubsystemBase
     return (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians(), target));
   }
 
+  /** ta pid loop */
+  public double getForwardsOutput(double current, double target){
+    return m_pidControllerX.calculate(current, target);
+  }
+  
   /**
    * Get the path follower with events.
    *
