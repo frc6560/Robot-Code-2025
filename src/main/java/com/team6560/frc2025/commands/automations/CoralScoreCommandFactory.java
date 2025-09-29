@@ -77,7 +77,7 @@ public class CoralScoreCommandFactory{
                 Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
-                ), getScoreCommand(), getDeactuationCommand()
+                ).withTimeout(3), getScoreCommand(), getDeactuationCommand()
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
@@ -91,7 +91,7 @@ public class CoralScoreCommandFactory{
                 Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
-                ), getScoreCommand()
+                ).withTimeout(1.2), getScoreCommand()
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
