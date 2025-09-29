@@ -9,7 +9,6 @@ import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.commands.automations.CoralScoreCommandFactory;
 import com.team6560.frc2025.commands.automations.IntakeCommand;
-import com.team6560.frc2025.commands.automations.ScoreCommand;
 import com.team6560.frc2025.controls.ButtonBoard;
 import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.BallGrabber;

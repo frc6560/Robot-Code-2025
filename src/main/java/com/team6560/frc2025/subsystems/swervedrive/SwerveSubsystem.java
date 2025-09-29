@@ -27,7 +27,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -276,22 +275,22 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /** Measured in radians */
-  public double getRotationOutput(double current, double target){
+  public double getRotationOutput(double current){
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     SmartDashboard.getEntry("PID rotation error").setDouble(m_pidControllerTheta.getError());
-    return (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians(), target));
+    return (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians()));
   }
 
   /** PID output over robot relative x */
-  public double getXOutput(double current, double target){
+  public double getXOutput(double current){
     SmartDashboard.getEntry("PID X error").setDouble(m_pidControllerX.getError());
-    return m_pidControllerX.calculate(current, target);
+    return m_pidControllerX.calculate(current);
   }
 
   /** PID output over robot relative y */
-  public double getYOutput(double current, double target){
+  public double getYOutput(double current){
     SmartDashboard.getEntry("PID Y error").setDouble(m_pidControllerY.getError());
-    return m_pidControllerY.calculate(current, target);
+    return m_pidControllerY.calculate(current);
   }
   
   /**
