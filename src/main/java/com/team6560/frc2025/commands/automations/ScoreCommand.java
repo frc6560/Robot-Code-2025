@@ -163,7 +163,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                     0
                 )
             )
-        ).until(() -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.02);
+        ).until(() -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.05);
         return driveToPrescore;
     }
 
@@ -183,7 +183,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     public Command alignToTagCommand(){
         // Rotation
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
-        double taTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned.
+        double taTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned. magic numbers for now because this sucks
         double rotationSetpoint = targetPose.getRotation().getRadians();
         Command driveToTagPose = Commands.runOnce(
             () -> {
@@ -193,7 +193,16 @@ public class ScoreCommand extends SequentialCommandGroup {
         ).andThen(Commands.run(
             () -> {
                 double rotationTarget = drivetrain.getRotationOutput(rotationSetpoint);
-                
+                double ta = LimelightHelpers.getTA(limelightName); // pretty sure this only gets ta of closest tag
+                double distanceEstimate = 1.0 / Math.sqrt(ta); // heuristic for now, LUT for later
+                double forwardsTarget = drivetrain.getForwardsOutput(distanceEstimate, taTarget);
+                drivetrain.drive(
+                    new ChassisSpeeds(
+                        forwardsTarget,
+                        0,
+                        rotationTarget
+                    )
+                );
             }
         ));
         return null;
