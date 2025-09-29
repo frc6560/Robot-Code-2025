@@ -253,9 +253,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-  /** PID to a setpoint. Basis of all path following commands.
-   * @param {@link Setpoint} object for PID to target
-   * @return Nothing. I'm not joking. Nothing.
+  /** Full PID command with all three parameters
    */
   public void followSegment(Setpoint setpoint, Pose2d targetPose) {
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
@@ -274,7 +272,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.driveFieldOriented(targetSpeeds);
   }
 
-  /** Measured in radians */
+  /** PID output over robot relative theta */
   public double getRotationOutput(double current){
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     SmartDashboard.getEntry("PID rotation error").setDouble(m_pidControllerTheta.getError());

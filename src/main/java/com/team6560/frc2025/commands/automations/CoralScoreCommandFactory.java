@@ -153,12 +153,12 @@ public class CoralScoreCommandFactory{
                 double ta = LimelightHelpers.getTA(limelightName); 
                 double xEstimate = 1.0 / Math.sqrt(ta); // TODO: possibly add a lookup table
                 xError = xEstimate - xTarget;
-                double xOutput = drivetrain.getXOutput(xError);
+                double xOutput = (-1) * drivetrain.getXOutput(xError);
 
                 double tx = LimelightHelpers.getTX(limelightName);
                 double yEstimate = Math.tan(tx) * xEstimate;
                 yError = yEstimate - yTarget;
-                double yOutput = drivetrain.getYOutput(yError);
+                double yOutput = (-1) * drivetrain.getYOutput(yError);
 
                 // Rotation
                 thetaError = LimelightHelpers.getTargetPose3d_CameraSpace(limelightName).getRotation().getZ(); // this number might be changed.
