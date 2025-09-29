@@ -176,19 +176,23 @@ public class ScoreCommand extends SequentialCommandGroup {
             DrivebaseConstants.kMaxAlignmentAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
-        final Command driveIn = getFollowPath(path, 0);
+        final Command driveIn = Commands.parallel(Commands.runOnce(() -> drivetrain.resetOdometryToLimelight()), getFollowPath(path, 0));
         return driveIn;
     }
 
     public Command alignToTagCommand(){
         // Rotation
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
-        Command rotateToPose = Commands.runOnce(
+        double taTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned.
+        double rotationSetpoint = targetPose.getRotation().getRadians();
+        Command driveToTagPose = Commands.runOnce(
             () -> {
-                RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(limelightName);
-                double[] rotation = LimelightHelpers.getTargetPose_CameraSpace(limelightName);
             }
-        );
+        ).andThen(Commands.run(
+            () -> {
+                double rotationTarget = drivetrain.getRotationOutput(rotationSetpoint);
+            }
+        ));
         return null;
     }
 

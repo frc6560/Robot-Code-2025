@@ -276,18 +276,10 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /** Measured in radians */
-  public void rotateCommand(double target){
+  public double getRotationOutput(double target){
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
-    SmartDashboard.getEntry("pid error").setDouble(m_pidControllerTheta.getError());
-    SmartDashboard.getEntry("pose in radians").setDouble(getPose().getRotation().getRadians());
-    SmartDashboard.getEntry("target pose").setDouble(target);
-    ChassisSpeeds targetSpeeds = new ChassisSpeeds(
-      0,
-      0,
-      (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians(), target))
-    );
-
-    swerveDrive.driveFieldOriented(targetSpeeds);
+    SmartDashboard.getEntry("PID rotation error").setDouble(m_pidControllerTheta.getError());
+    return (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians(), target));
   }
 
   /**
