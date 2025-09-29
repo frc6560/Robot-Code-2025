@@ -3,10 +3,9 @@ package com.team6560.frc2025.commands.automations;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
@@ -17,15 +16,14 @@ import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.utility.AutoAlignPath;
 import com.team6560.frc2025.utility.LimelightHelpers;
-import com.team6560.frc2025.utility.LimelightHelpers.RawFiducial;
 import com.team6560.frc2025.utility.Setpoint;
 
 import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,11 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  * A command that automatically aligns the robot to a target pose, actuates the elevator and wrist, scores, and retracts.
  * This command is used for scoring at the reef on any level, from L1-L4.
  */
-public class ScoreCommand extends SequentialCommandGroup {
-
-    // Poses
-    private Pose2d targetPose;
-
+public class CoralScoreCommandFactory{
     // Paths
     private AutoAlignPath path;
 
@@ -63,41 +57,42 @@ public class ScoreCommand extends SequentialCommandGroup {
     private Elevator elevator;
     private PipeGrabber grabber;
 
-    // Levels
-    ReefSide side;
-    ReefIndex location;
-    ReefLevel level;
-
-    // Targets
-    private double elevatorTarget;
-    private double wristTarget;
-
 
     /** Constructor for our scoring command */
-    public ScoreCommand(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, 
-                            ReefSide side, ReefIndex location, ReefLevel level) {
-
+    public CoralScoreCommandFactory(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain) {
         this.drivetrain = drivetrain;
         this.wrist = wrist;
         this.elevator = elevator;
         this.grabber = grabber;
+    }
 
-        this.side = side;
-        this.location = location;
-        this.level = level;
+    // ---- SCORING COMMANDS ----
 
-        setTargets();
+    public Command getScoreTeleop(ReefLevel level, ReefSide side){
+        double wristTarget = getSuperstructureTargets(level).getFirst();
+        double elevatorTarget = getSuperstructureTargets(level).getSecond();
 
-        if(DriverStation.isAutonomous()){
-            super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
-                                new ParallelCommandGroup(alignToTagCommand(), getActuateCommand()).withTimeout(1.5), 
-                                getScoreCommand());
-        }
-        else{
-            super.addCommands(new ParallelCommandGroup(alignToTagCommand(), getActuateCommand()).withTimeout(3.5), 
-                                getScoreCommand(), getDeactuationCommand());
-        }
-        super.addRequirements(wrist, elevator, grabber, drivetrain);
+        return Commands.defer(
+            () -> Commands.sequence(
+                Commands.parallel(
+                    alignToTagCommand(side),
+                    getActuateCommand(elevatorTarget, wristTarget)
+                ), getScoreCommand(), getDeactuationCommand()
+            ), Set.of(drivetrain, wrist, elevator, grabber));
+    }
+
+    public Command getScoreAuto(ReefIndex index, ReefLevel level, ReefSide side){
+        double wristTarget = getSuperstructureTargets(level).getFirst();
+        double elevatorTarget = getSuperstructureTargets(level).getSecond();
+        Pose2d targetPrescore = setPrescoreTarget(index, side);
+        return Commands.defer(
+            () -> Commands.sequence(
+                getDriveToPrescore(targetPrescore),
+                Commands.parallel(
+                    alignToTagCommand(side),
+                    getActuateCommand(elevatorTarget, wristTarget)
+                ), getScoreCommand()
+            ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
     /** Runs a grabber intake during auto, which decreases wait time at the station */
@@ -109,7 +104,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     }
 
     /** Drives close to our target pose during auto */
-    public Command getDriveToPrescore(){
+    public Command getDriveToPrescore(Pose2d targetPose){
         path = new AutoAlignPath(
             drivetrain.getPose(),
             targetPose,
@@ -135,7 +130,7 @@ public class ScoreCommand extends SequentialCommandGroup {
     double yError;
     double thetaError;
 
-    public Command alignToTagCommand(){
+    public Command alignToTagCommand(ReefSide side){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
 
         double xTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned. magic numbers for now because this sucks
@@ -181,15 +176,13 @@ public class ScoreCommand extends SequentialCommandGroup {
     }
 
     /** Actuates superstructure to our desired level */
-    public Command getActuateCommand(){
+    public Command getActuateCommand(double elevatorTarget, double wristTarget){
         final Command actuateToPosition = new FunctionalCommand(
             () -> {
             },
             () -> {
-                if(drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.95){
-                    elevator.setElevatorPosition(elevatorTarget);
-                    wrist.setMotorPosition(wristTarget);
-                }
+                elevator.setElevatorPosition(elevatorTarget);
+                wrist.setMotorPosition(wristTarget);
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < ElevatorConstants.kElevatorTolerance
@@ -232,8 +225,21 @@ public class ScoreCommand extends SequentialCommandGroup {
         return deactuateSuperstructure.withTimeout(0.5);
     }
 
+
+    // ---- HELPER METHODS ---- 
+
+
+    /** Transforms red alliance poses to blue by reflecting around the center point of the field*/
+    public Pose2d applyAllianceTransform(Pose2d pose){
+        return new Pose2d(
+            pose.getX() - 2 * (pose.getX() - 8.75),
+            pose.getY() - 2 * (pose.getY() - 4.0),
+            pose.getRotation().rotateBy(Rotation2d.fromDegrees(180))
+        );
+    }
+
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
-    public void setTargets(){
+    public Pose2d setPrescoreTarget(ReefIndex index, ReefSide side){
         DriverStation.Alliance alliance;
         if(!DriverStation.getAlliance().isPresent()){
             alliance = DriverStation.Alliance.Blue;
@@ -253,60 +259,57 @@ public class ScoreCommand extends SequentialCommandGroup {
         targetPoses.put(ReefIndex.BOTTOM_LEFT, new Pose2d(12.111, 2.996, Rotation2d.fromDegrees(240)));
 
         // Puts a HashMap of all possible april tag positions. Notice this is viewed top down with the barge to the left.
-        Pose2d aprilTagPose = targetPoses.get(location);
+        Pose2d aprilTagPose = targetPoses.get(index);
 
-        targetPose = new Pose2d( 
+        Pose2d targetPose = new Pose2d( 
             aprilTagPose.getX() + (DISTANCE_FROM_TAG * Math.cos(aprilTagPose.getRotation().getRadians() + Math.PI/2) * multiplier),
             aprilTagPose.getY() + (DISTANCE_FROM_TAG * Math.sin(aprilTagPose.getRotation().getRadians() + Math.PI/2) * multiplier),
             aprilTagPose.getRotation()
         );
 
-        // Applies pre score transform
-        targetPose = new Pose2d(
-            targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
-            targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
-            targetPose.getRotation()
-        );
-        
         if(alliance == DriverStation.Alliance.Blue){
             targetPose = applyAllianceTransform(targetPose);
         }
 
+        // Applies pre score transform
+        return new Pose2d(
+            targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getRotation()
+        );
+    }
+
+    /** Returns wrist, elevator targets */
+    public Pair<Double, Double> getSuperstructureTargets(ReefLevel level){
+        double wristTarget;
+        double elevatorTarget;
         switch (level) {
             case L1:
                 wristTarget = WristConstants.WristStates.L1;
                 elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
                 break;
-
+    
             case L2:
                 wristTarget = WristConstants.WristStates.L2;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L2;
                 break;
-
+    
             case L3:
                 wristTarget = WristConstants.WristStates.L2;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L3;
                 break;
-
+    
             case L4: 
                 wristTarget = WristConstants.WristStates.L4;
                 elevatorTarget = ElevatorConstants.ElevatorStates.L4;
                 break;
-
+    
             default:
                 wristTarget = WristConstants.WristStates.STOW;
                 elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
                 break;
         }
-    }
-
-    /** Transforms red alliance poses to blue by reflecting around the center point of the field*/
-    public Pose2d applyAllianceTransform(Pose2d pose){
-        return new Pose2d(
-            pose.getX() - 2 * (pose.getX() - 8.75),
-            pose.getY() - 2 * (pose.getY() - 4.0),
-            pose.getRotation().rotateBy(Rotation2d.fromDegrees(180))
-        );
+        return new Pair<Double, Double>(wristTarget, elevatorTarget);
     }
 
     /** Helper method for following a straight trajectory with a trapezoidal profile */

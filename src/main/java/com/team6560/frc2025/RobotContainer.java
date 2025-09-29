@@ -7,6 +7,7 @@ import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
+import com.team6560.frc2025.commands.automations.CoralScoreCommandFactory;
 import com.team6560.frc2025.commands.automations.IntakeCommand;
 import com.team6560.frc2025.commands.automations.ScoreCommand;
 import com.team6560.frc2025.controls.ButtonBoard;
@@ -58,6 +59,7 @@ public class RobotContainer {
   private final Wrist wrist;
   private final Elevator elevator = new Elevator();
 
+  private final CoralScoreCommandFactory scoreFactory;
 
   private final SendableChooser<Auto> autoChooser;
   private final AutoFactory factory;
@@ -93,6 +95,8 @@ public class RobotContainer {
     wrist.setDefaultCommand(new WristCommand(wrist, controls));
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
+    scoreFactory = new CoralScoreCommandFactory(wrist, elevator, pipeGrabber, drivebase);
+
     configureBindings();
 
     factory = new AutoFactory(
@@ -126,12 +130,7 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
     );
 
-    autoAlignTrigger.onTrue(Commands.defer(() -> new ScoreCommand(wrist, elevator, pipeGrabber, drivebase,
-                                                                        locationManager.getReefSide(), 
-                                                                        locationManager.getCurrentReefIndex(), 
-                                                                        locationManager.getCurrentReefLevel()), 
-                                                                        Set.of(wrist, elevator, pipeGrabber, drivebase))
-                                                                        .finallyDo((interrupted) -> locationManager.reset()));
+    autoAlignTrigger.onTrue(scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
