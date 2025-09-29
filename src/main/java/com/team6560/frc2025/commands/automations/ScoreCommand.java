@@ -90,11 +90,11 @@ public class ScoreCommand extends SequentialCommandGroup {
 
         if(DriverStation.isAutonomous()){
             super.addCommands(new ParallelCommandGroup(getGrabberIntake(), getDriveToPrescore()),
-                                new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()).withTimeout(1.5), 
+                                new ParallelCommandGroup(alignToTagCommand(), getActuateCommand()).withTimeout(1.5), 
                                 getScoreCommand());
         }
         else{
-            super.addCommands(new ParallelCommandGroup(getDriveInCommand(), getActuateCommand()).withTimeout(3.5), 
+            super.addCommands(new ParallelCommandGroup(alignToTagCommand(), getActuateCommand()).withTimeout(3.5), 
                                 getScoreCommand(), getDeactuationCommand());
         }
         super.addRequirements(wrist, elevator, grabber, drivetrain);
@@ -108,53 +108,17 @@ public class ScoreCommand extends SequentialCommandGroup {
             .andThen(() -> grabber.stop());
     }
 
-    /** Helper method for following a straight trajectory with a trapezoidal profile */
-    public Command getFollowPath(AutoAlignPath path, double finalVelocity){
-        final Command followPath = new FunctionalCommand(
-            () -> {
-            // Resets profiles and states
-            translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
-            rotationConstraint = new Constraints(path.maxAngularVelocity, path.maxAngularAcceleration);
-
-            translationProfile = new TrapezoidProfile(translationConstraints);
-            rotationProfile = new TrapezoidProfile(rotationConstraint);
-
-            translationalState.position = path.getDisplacement().getNorm();
-            translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * path.getDisplacement().getX() 
-                                                                + drivetrain.getFieldVelocity().vyMetersPerSecond * path.getDisplacement().getY())/ translationalState.position),
-                                                                -path.maxVelocity,
-                                                                0);
-
-            targetTranslationalState.velocity = finalVelocity;
-
-            targetRotationalState.position = path.endPose.getRotation().getRadians();
-            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
-            rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
-        },
-            () -> {
-                // Move.
-                Setpoint newSetpoint = getNextSetpoint(path);
-                drivetrain.followSegment(newSetpoint, path.endPose);
-            },
-            (interrupted) -> {},
-            () -> drivetrain.getPose().getTranslation().getDistance(path.endPose.getTranslation()) < 0.02
-            && Math.abs(drivetrain.getPose().getRotation().getRadians() - path.endPose.getRotation().getRadians()) < 0.017
-        );
-        return followPath;
-
-    }
-
     /** Drives close to our target pose during auto */
     public Command getDriveToPrescore(){
         path = new AutoAlignPath(
             drivetrain.getPose(),
-            getPrescore(targetPose),
+            targetPose,
             DrivebaseConstants.kMaxAutoVelocity,
             DrivebaseConstants.kMaxAutoAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
         final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kMaxAlignmentVelocity).until(
-            () -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.3
+            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.3
         ).andThen(
             () -> drivetrain.driveFieldOriented(
                 new ChassisSpeeds(
@@ -163,49 +127,57 @@ public class ScoreCommand extends SequentialCommandGroup {
                     0
                 )
             )
-        ).until(() -> drivetrain.getPose().getTranslation().getDistance(getPrescore(targetPose).getTranslation()) < 0.05);
+        ).until(() -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.05);
         return driveToPrescore;
     }
 
-    /** Snaps to the reef pose */
-    public Command getDriveInCommand(){
-        path = new AutoAlignPath(
-            drivetrain.getPose(),
-            targetPose, //originally just target pose
-            DrivebaseConstants.kMaxAlignmentVelocity,
-            DrivebaseConstants.kMaxAlignmentAcceleration,
-            DrivebaseConstants.kMaxOmega,
-            DrivebaseConstants.kMaxAlpha);
-        final Command driveIn = Commands.parallel(Commands.runOnce(() -> drivetrain.updateOdometryWithVision()), getFollowPath(path, 0));
-        return driveIn;
-    }
+    double xError;
+    double yError;
+    double thetaError;
 
     public Command alignToTagCommand(){
-        // Rotation
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
-        double taTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned. magic numbers for now because this sucks
-        double rotationSetpoint = targetPose.getRotation().getRadians();
+
+        double xTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned. magic numbers for now because this sucks
+        double yTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0;
+
+        // Filters for rotation
+        LinearFilter filter = LinearFilter.movingAverage(5);
         Command driveToTagPose = Commands.runOnce(
             () -> {
-                // resets our odometry to the limelight reading once to offset drift
+                // This is also a great place to update our odometry
                 drivetrain.updateOdometryWithVision();
             }
         ).andThen(Commands.run(
             () -> {
-                double rotationTarget = drivetrain.getRotationOutput(rotationSetpoint);
-                double ta = LimelightHelpers.getTA(limelightName); // pretty sure this only gets ta of closest tag
-                double distanceEstimate = 1.0 / Math.sqrt(ta); // heuristic for now, LUT for later
-                double forwardsTarget = drivetrain.getForwardsOutput(distanceEstimate, taTarget);
+                // Translation
+                double ta = LimelightHelpers.getTA(limelightName); 
+                double xEstimate = 1.0 / Math.sqrt(ta); // TODO: possibly add a lookup table
+                xError = xEstimate - xTarget;
+                double xOutput = drivetrain.getXOutput(xError);
+
+                double tx = LimelightHelpers.getTX(limelightName);
+                double yEstimate = Math.tan(tx) * xEstimate;
+                yError = yEstimate - yTarget;
+                double yOutput = drivetrain.getYOutput(yError);
+
+                // Rotation
+                thetaError = LimelightHelpers.getTargetPose3d_CameraSpace(limelightName).getRotation().getZ(); // this number might be changed.
+                thetaError = filter.calculate(thetaError);
+                double rotationOutput = drivetrain.getRotationOutput(thetaError);
                 drivetrain.drive(
                     new ChassisSpeeds(
-                        forwardsTarget,
-                        0,
-                        rotationTarget
+                        xOutput,
+                        yOutput,
+                        rotationOutput
                     )
                 );
             }
-        ));
-        return null;
+        )).until(
+            () -> Math.abs(xError) < 0.02 && Math.abs(yError) < 0.02
+                    && Math.abs(thetaError) < 0.017
+        );
+        return driveToTagPose;
     }
 
     /** Actuates superstructure to our desired level */
@@ -247,13 +219,6 @@ public class ScoreCommand extends SequentialCommandGroup {
 
     /** Deactuates the superstructure in teleop for driver QOL */
     public Command getDeactuationCommand(){
-        path = new AutoAlignPath(
-            drivetrain.getPose(),
-            getPrescore(targetPose),
-            DrivebaseConstants.kMaxAlignmentVelocity, 
-            DrivebaseConstants.kMaxAlignmentAcceleration,
-            DrivebaseConstants.kMaxOmega,
-            DrivebaseConstants.kMaxAlpha);
         final Command deactuateSuperstructure = new FunctionalCommand(
                         () -> {
                         },
@@ -264,17 +229,7 @@ public class ScoreCommand extends SequentialCommandGroup {
                         (interrupted) -> {},
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < ElevatorConstants.kElevatorTolerance) 
         );
-        // final Command backUp = getFollowPath(path, 0);
-        return Commands.parallel(deactuateSuperstructure).withTimeout(0.5);
-    }
-
-    /** Gets the prescore for a specific Pose2d */
-    public Pose2d getPrescore(Pose2d targetPose){
-        return new Pose2d(
-            targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
-            targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
-            targetPose.getRotation()
-        );
+        return deactuateSuperstructure.withTimeout(0.5);
     }
 
     /** Sets the target for the robot, including target pose, elevator height, and arm angle */
@@ -304,6 +259,13 @@ public class ScoreCommand extends SequentialCommandGroup {
             aprilTagPose.getX() + (DISTANCE_FROM_TAG * Math.cos(aprilTagPose.getRotation().getRadians() + Math.PI/2) * multiplier),
             aprilTagPose.getY() + (DISTANCE_FROM_TAG * Math.sin(aprilTagPose.getRotation().getRadians() + Math.PI/2) * multiplier),
             aprilTagPose.getRotation()
+        );
+
+        // Applies pre score transform
+        targetPose = new Pose2d(
+            targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getRotation()
         );
         
         if(alliance == DriverStation.Alliance.Blue){
@@ -345,6 +307,42 @@ public class ScoreCommand extends SequentialCommandGroup {
             pose.getY() - 2 * (pose.getY() - 4.0),
             pose.getRotation().rotateBy(Rotation2d.fromDegrees(180))
         );
+    }
+
+    /** Helper method for following a straight trajectory with a trapezoidal profile */
+    public Command getFollowPath(AutoAlignPath path, double finalVelocity){
+        final Command followPath = new FunctionalCommand(
+            () -> {
+            // Resets profiles and states
+            translationConstraints = new Constraints(path.maxVelocity, path.maxAcceleration);
+            rotationConstraint = new Constraints(path.maxAngularVelocity, path.maxAngularAcceleration);
+
+            translationProfile = new TrapezoidProfile(translationConstraints);
+            rotationProfile = new TrapezoidProfile(rotationConstraint);
+
+            translationalState.position = path.getDisplacement().getNorm();
+            translationalState.velocity = MathUtil.clamp(((-1) * (drivetrain.getFieldVelocity().vxMetersPerSecond * path.getDisplacement().getX() 
+                                                                + drivetrain.getFieldVelocity().vyMetersPerSecond * path.getDisplacement().getY())/ translationalState.position),
+                                                                -path.maxVelocity,
+                                                                0);
+
+            targetTranslationalState.velocity = finalVelocity;
+
+            targetRotationalState.position = path.endPose.getRotation().getRadians();
+            rotationalState.position = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
+            rotationalState.velocity = drivetrain.getSwerveDrive().getRobotVelocity().omegaRadiansPerSecond;
+        },
+            () -> {
+                // Move.
+                Setpoint newSetpoint = getNextSetpoint(path);
+                drivetrain.followSegment(newSetpoint, path.endPose);
+            },
+            (interrupted) -> {},
+            () -> drivetrain.getPose().getTranslation().getDistance(path.endPose.getTranslation()) < 0.02
+            && Math.abs(drivetrain.getPose().getRotation().getRadians() - path.endPose.getRotation().getRadians()) < 0.017
+        );
+        return followPath;
+
     }
 
     /** Gets a setpoint for the robot PID to follow.

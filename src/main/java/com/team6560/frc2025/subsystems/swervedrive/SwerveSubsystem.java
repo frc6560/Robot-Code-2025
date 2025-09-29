@@ -276,15 +276,22 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   /** Measured in radians */
-  public double getRotationOutput(double target){
+  public double getRotationOutput(double current, double target){
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     SmartDashboard.getEntry("PID rotation error").setDouble(m_pidControllerTheta.getError());
     return (-1) * (m_pidControllerTheta.calculate(getPose().getRotation().getRadians(), target));
   }
 
-  /** ta pid loop */
-  public double getForwardsOutput(double current, double target){
+  /** PID output over robot relative x */
+  public double getXOutput(double current, double target){
+    SmartDashboard.getEntry("PID X error").setDouble(m_pidControllerX.getError());
     return m_pidControllerX.calculate(current, target);
+  }
+
+  /** PID output over robot relative y */
+  public double getYOutput(double current, double target){
+    SmartDashboard.getEntry("PID Y error").setDouble(m_pidControllerY.getError());
+    return m_pidControllerY.calculate(current, target);
   }
   
   /**
@@ -555,12 +562,6 @@ public class SwerveSubsystem extends SubsystemBase
     Pose2d pose = poseEstimate.pose;
 
     if (pose == null || pose.equals(emptyPose)) return;
-    if(poseEstimate.tagCount < 2 && poseEstimate.avgTagDist > 1.3){
-      pose = new Pose2d(
-        pose.getTranslation(),
-        swerveDrive.getOdometryHeading()
-      );
-    }
 
     resetOdometry(pose);
   }
