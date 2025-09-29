@@ -95,6 +95,9 @@ public class CoralScoreCommandFactory{
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
+    
+    // ---- SUB COMMANDS ----
+
     /** Runs a grabber intake during auto, which decreases wait time at the station */
     public Command getGrabberIntake(){
         return new RunCommand(
