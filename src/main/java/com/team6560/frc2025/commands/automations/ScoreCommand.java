@@ -176,7 +176,7 @@ public class ScoreCommand extends SequentialCommandGroup {
             DrivebaseConstants.kMaxAlignmentAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
-        final Command driveIn = Commands.parallel(Commands.runOnce(() -> drivetrain.resetOdometryToLimelight()), getFollowPath(path, 0));
+        final Command driveIn = Commands.parallel(Commands.runOnce(() -> drivetrain.updateOdometryWithVision()), getFollowPath(path, 0));
         return driveIn;
     }
 
@@ -187,10 +187,13 @@ public class ScoreCommand extends SequentialCommandGroup {
         double rotationSetpoint = targetPose.getRotation().getRadians();
         Command driveToTagPose = Commands.runOnce(
             () -> {
+                // resets our odometry to the limelight reading once to offset drift
+                drivetrain.updateOdometryWithVision();
             }
         ).andThen(Commands.run(
             () -> {
                 double rotationTarget = drivetrain.getRotationOutput(rotationSetpoint);
+                
             }
         ));
         return null;

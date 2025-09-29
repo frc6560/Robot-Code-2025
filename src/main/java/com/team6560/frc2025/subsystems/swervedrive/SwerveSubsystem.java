@@ -542,7 +542,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
-  public void resetOdometryToLimelight() {
+  public void updateOdometryWithVision() {
     Pose2d emptyPose = new Pose2d();
     PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
     if (poseEstimate == null) return;
@@ -550,6 +550,12 @@ public class SwerveSubsystem extends SubsystemBase
     Pose2d pose = poseEstimate.pose;
 
     if (pose == null || pose.equals(emptyPose)) return;
+    if(poseEstimate.tagCount < 2 && poseEstimate.avgTagDist > 1.3){
+      pose = new Pose2d(
+        pose.getTranslation(),
+        swerveDrive.getOdometryHeading()
+      );
+    }
 
     resetOdometry(pose);
   }
