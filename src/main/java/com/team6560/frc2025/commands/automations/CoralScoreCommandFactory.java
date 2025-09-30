@@ -134,10 +134,14 @@ public class CoralScoreCommandFactory{
     double yError;
     double thetaError;
 
+    /** Uses the vector in camera space to align to the reef, since it's pretty close to the tag. 
+     * TODOs: Find the final x target and y target. Handle units mismatch in tolerances. And make a lookup table.
+     * @return A {@link} Command that aligns the robot to the target pose using Limelight data.
+     */
     public Command alignToTagCommand(ReefSide side){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
 
-        double xTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // these need to be tuned. magic numbers for now because this sucks
+        double xTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // TODO: these need to be tuned. magic numbers for now because this sucks
         double yTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0;
 
         // Filters for rotation
