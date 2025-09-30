@@ -291,6 +291,9 @@ public class CoralScoreCommandFactory{
     public Pair<Double, Double> getSuperstructureTargets(ReefLevel level){
         double wristTarget;
         double elevatorTarget;
+        if(level == null){
+            level = ReefLevel.L1;
+        }
         switch (level) {
             case L1:
                 wristTarget = WristConstants.WristStates.L1;
