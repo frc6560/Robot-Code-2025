@@ -76,10 +76,10 @@ public class CoralScoreCommandFactory{
             () -> Commands.sequence(
                 Commands.runOnce(
                     () -> {
-                        double wristTarget = getSuperstructureTargets(level).getFirst();
+                        wristTarget = getSuperstructureTargets(level).getFirst();
                         elevatorTarget = getSuperstructureTargets(level).getSecond();
                     }
-                ).withTimeout(1.5),
+                ),
                 Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
@@ -159,41 +159,38 @@ public class CoralScoreCommandFactory{
         double yTarget = Math.tan(txTarget) * xTarget;
         // Filters for rotation
         LinearFilter filter = LinearFilter.movingAverage(5);
-        Command driveToTagPose = Commands.runOnce(
+        Command driveToTagPose = new FunctionalCommand(
             () -> {
                 // This is also a great place to update our odometry
                 drivetrain.updateOdometryWithVision();
-            }
-        ).andThen(Commands.run(
+            }, 
             () -> {
-                System.out.println("running");
                 // Translation
                 double ta = LimelightHelpers.getTA(limelightName); 
-                double xEstimate = 1.0 / Math.sqrt(ta); // TODO: possibly add a lookup table
+                double xEstimate = 1.0 / Math.sqrt(ta);
                 xError = xEstimate - xTarget;
-                double xOutput = (-1) * drivetrain.getXOutput(xError);
+                double xOutput = drivetrain.getXOutput(xError);
 
                 double tx = LimelightHelpers.getTX(limelightName);
                 double yEstimate = Math.tan(tx) * xEstimate;
                 yError = yEstimate - yTarget;
-                double yOutput = (-1) * drivetrain.getYOutput(yError);
+                double yOutput = drivetrain.getYOutput(yError);
 
                 // Rotation
-                thetaError = LimelightHelpers.getTargetPose3d_CameraSpace(limelightName).getRotation().getZ(); // this number might be changed.
+                thetaError = LimelightHelpers.getCameraPose3d_TargetSpace(limelightName).getRotation().getZ(); // this number might be changed.
                 thetaError = filter.calculate(thetaError);
                 double rotationOutput = drivetrain.getRotationOutput(thetaError);
                 drivetrain.drive(
                     new ChassisSpeeds(
-                        xOutput,
+                        xOutput, 
                         yOutput,
-                        rotationOutput
+                        0
                     )
                 );
-            }
-        )).until(
+            },
+            (interrupted) -> {},
             () -> Math.abs(xError) < 0.02 && Math.abs(yError) < 0.02
-                    && Math.abs(thetaError) < 0.017
-        );
+                    && Math.abs(thetaError) < 0.017);
         return driveToTagPose;
     }
 
@@ -203,6 +200,7 @@ public class CoralScoreCommandFactory{
             () -> {
             },
             () -> {
+                System.out.println("is this running?");
                 elevator.setElevatorPosition(elevatorTarget);
                 wrist.setMotorPosition(wristTarget);
             },
