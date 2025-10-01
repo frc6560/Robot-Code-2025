@@ -65,15 +65,21 @@ public class CoralScoreCommandFactory{
         this.elevator = elevator;
         this.grabber = grabber;
     }
+    double wristTarget;
+    double elevatorTarget;
+    Pose2d targetPrescore;
 
     // ---- SCORING COMMANDS ----
 
     public Command getScoreTeleop(ReefLevel level, ReefSide side){
-        double wristTarget = getSuperstructureTargets(level).getFirst();
-        double elevatorTarget = getSuperstructureTargets(level).getSecond();
-
         return Commands.defer(
             () -> Commands.sequence(
+                Commands.runOnce(
+                    () -> {
+                        double wristTarget = getSuperstructureTargets(level).getFirst();
+                        elevatorTarget = getSuperstructureTargets(level).getSecond();
+                    }
+                ).withTimeout(1.5),
                 Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
@@ -82,11 +88,16 @@ public class CoralScoreCommandFactory{
     }
 
     public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
-        double wristTarget = getSuperstructureTargets(level).getFirst();
-        double elevatorTarget = getSuperstructureTargets(level).getSecond();
-        Pose2d targetPrescore = setPrescoreTarget(index, side);
         return Commands.defer(
             () -> Commands.sequence(
+                Commands.runOnce(
+                    () -> {
+                        targetPrescore = setPrescoreTarget(index, side);
+                        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
+                        wristTarget = superstructureTargets.getFirst();
+                        elevatorTarget = superstructureTargets.getSecond();
+                    }
+                ),
                 getDriveToPrescore(targetPrescore),
                 Commands.parallel(
                     alignToTagCommand(side),
@@ -294,9 +305,6 @@ public class CoralScoreCommandFactory{
     public Pair<Double, Double> getSuperstructureTargets(ReefLevel level){
         double wristTarget;
         double elevatorTarget;
-        if(level == null){
-            level = ReefLevel.L1;
-        }
         switch (level) {
             case L1:
                 wristTarget = WristConstants.WristStates.L1;
