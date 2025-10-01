@@ -141,9 +141,11 @@ public class CoralScoreCommandFactory{
     public Command alignToTagCommand(ReefSide side){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
 
-        double xTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // TODO: these need to be tuned. magic numbers for now because this sucks
-        double yTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0;
+        double taTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0; // TODO: these need to be tuned. magic numbers for now because this sucks
+        double txTarget = (side == ReefSide.LEFT) ? -1.0 : 1.0;
 
+        double xTarget = 1.0 / Math.sqrt(taTarget); // TODO: possibly add a lookup table
+        double yTarget = Math.tan(txTarget) * xTarget;
         // Filters for rotation
         LinearFilter filter = LinearFilter.movingAverage(5);
         Command driveToTagPose = Commands.runOnce(
@@ -153,6 +155,7 @@ public class CoralScoreCommandFactory{
             }
         ).andThen(Commands.run(
             () -> {
+                System.out.println("running");
                 // Translation
                 double ta = LimelightHelpers.getTA(limelightName); 
                 double xEstimate = 1.0 / Math.sqrt(ta); // TODO: possibly add a lookup table
