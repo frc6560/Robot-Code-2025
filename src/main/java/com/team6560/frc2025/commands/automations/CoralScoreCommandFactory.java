@@ -30,6 +30,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -146,17 +147,16 @@ public class CoralScoreCommandFactory{
     double thetaError;
 
     /** Uses the vector in camera space to align to the reef, since it's pretty close to the tag. 
-     * TODOs: Find the final x target and y target. Handle units mismatch in tolerances. And make a lookup table.
      * @return A {@link} Command that aligns the robot to the target pose using Limelight data.
      */
     public Command alignToTagCommand(ReefSide side){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
 
-        double taTarget = (side == ReefSide.LEFT) ? -1.0 : 20.35; // TODO: these need to be tuned. magic numbers for now because this sucks
-        double txTarget = (side == ReefSide.LEFT) ? -1.0 : 0.96;
+        double taTarget = (side == ReefSide.LEFT) ? 8.35 : 20.35; // TODO: no magic numbers
+        double txTarget = (side == ReefSide.LEFT) ? 16.87 : 0.96;
 
         double xTarget = 1.0 / Math.sqrt(taTarget); // TODO: possibly add a lookup table
-        double yTarget = Math.tan(txTarget) * xTarget;
+        double yTarget = Math.tan(Units.degreesToRadians(txTarget)) * xTarget;
         // Filters for rotation
         LinearFilter filter = LinearFilter.movingAverage(5);
         Command driveToTagPose = new FunctionalCommand(
@@ -165,25 +165,28 @@ public class CoralScoreCommandFactory{
                 drivetrain.updateOdometryWithVision();
             }, 
             () -> {
-                // Translation
+                // x estimate relative to tag
                 double ta = LimelightHelpers.getTA(limelightName); 
                 double xEstimate = 1.0 / Math.sqrt(ta);
                 xError = xEstimate - xTarget;
-                double xOutput = drivetrain.getXOutput(xError);
 
+                // y estimate relative to tag
                 double tx = LimelightHelpers.getTX(limelightName);
-                double yEstimate = Math.tan(tx) * xEstimate;
+                double tx_rad = Units.degreesToRadians(tx);
+                double yEstimate = Math.tan(tx_rad) * xEstimate;
                 yError = yEstimate - yTarget;
-                double yOutput = drivetrain.getYOutput(yError);
-
-                // Rotation
+                
+                // rotation
                 thetaError = LimelightHelpers.getCameraPose3d_TargetSpace(limelightName).getRotation().getZ(); // this number might be changed.
                 thetaError = filter.calculate(thetaError);
+
+                double xOutput = drivetrain.getXOutput(xError);
+                double yOutput = drivetrain.getYOutput(yError);
                 double rotationOutput = drivetrain.getRotationOutput(thetaError);
                 drivetrain.drive(
                     new ChassisSpeeds(
                         xOutput, 
-                        yOutput,
+                        -yOutput, // inversion of axes 
                         0
                     )
                 );
@@ -200,7 +203,6 @@ public class CoralScoreCommandFactory{
             () -> {
             },
             () -> {
-                System.out.println("is this running?");
                 elevator.setElevatorPosition(elevatorTarget);
                 wrist.setMotorPosition(wristTarget);
             },
