@@ -178,7 +178,7 @@ public class CoralScoreCommandFactory{
                 yError = yEstimate - yTarget;
                 
                 // rotation
-                thetaError = LimelightHelpers.getCameraPose3d_TargetSpace(limelightName).getRotation().getZ(); // this number might be changed.
+                thetaError = LimelightHelpers.getBotPose2d(limelightName).getRotation().getRadians(); // this number might be changed.
                 thetaError = filter.calculate(thetaError);
 
                 double xOutput = drivetrain.getXOutput(xError);
@@ -188,7 +188,7 @@ public class CoralScoreCommandFactory{
                     new ChassisSpeeds(
                         xOutput, 
                         -yOutput, // inversion of axes 
-                        rotationOutput
+                        0
                     )
                 );
             },

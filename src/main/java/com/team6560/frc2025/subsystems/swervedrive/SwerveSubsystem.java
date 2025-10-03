@@ -143,8 +143,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic(){
     fuseVisionMeasurements();
-    double x = LimelightHelpers.getCameraPose3d_TargetSpace("limelight-left").getTranslation().getX();
-    double y = LimelightHelpers.getCameraPose3d_TargetSpace("limelight-left").getTranslation().getY();
+    double x = LimelightHelpers.getCameraPose3d_TargetSpace("limelight-left").getRotation().getX();
+    double y = LimelightHelpers.getCameraPose3d_TargetSpace("limelight-left").getRotation().getY();
     double z = LimelightHelpers.getCameraPose3d_TargetSpace("limelight-left").getRotation().getZ(); // this number might be changed.
     System.out.println("x: " + x + " y: " + y + " z: " + z);
     swerveDrive.field.setRobotPose(this.getPose());
