@@ -131,7 +131,7 @@ public class RobotContainer {
 
     autoAlignTrigger.onTrue(Commands.defer(
       () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
-      Set.of(drivebase, wrist, elevator, pipeGrabber)));
+      Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
