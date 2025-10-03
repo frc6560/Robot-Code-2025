@@ -260,7 +260,7 @@ public class CoralScoreCommandFactory{
         );
     }
 
-    /** Sets the target for the robot, including target pose, elevator height, and arm angle */
+    /** Sets the target for the robot, including target pose, elevator height, and arm angle in auto*/
     public Pose2d setPrescoreTarget(ReefIndex index, ReefSide side){
         DriverStation.Alliance alliance;
         if(!DriverStation.getAlliance().isPresent()){
