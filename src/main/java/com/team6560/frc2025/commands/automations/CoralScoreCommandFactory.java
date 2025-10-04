@@ -93,13 +93,12 @@ public class CoralScoreCommandFactory{
             () -> Commands.sequence(
                 Commands.runOnce(
                     () -> {
-                        targetPrescore = setPrescoreTarget(index, side);
                         Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
                         wristTarget = superstructureTargets.getFirst();
                         elevatorTarget = superstructureTargets.getSecond();
                     }
                 ),
-                Commands.defer(() -> getDriveToPrescore(targetPrescore), Set.of(drivetrain)),
+                Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain)),
                 Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
@@ -120,7 +119,9 @@ public class CoralScoreCommandFactory{
     }
 
     /** Drives close to our target pose during auto */
-    public Command getDriveToPrescore(Pose2d targetPose){
+    public Command getDriveToPrescore(ReefSide side, ReefIndex index){
+        Pose2d targetPose = setPrescoreTarget(index, side);
+        String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
         path = new AutoAlignPath(
             drivetrain.getPose(),
             targetPose,
@@ -138,7 +139,7 @@ public class CoralScoreCommandFactory{
                     0
                 )
             )
-        ).until(() -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.05);
+        ).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
         return driveToPrescore;
     }
 
