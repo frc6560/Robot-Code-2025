@@ -97,6 +97,7 @@ public class CoralScoreCommandFactory{
                         Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
                         wristTarget = superstructureTargets.getFirst();
                         elevatorTarget = superstructureTargets.getSecond();
+                        System.out.println(targetPrescore);
                     }
                 ),
                 getDriveToPrescore(targetPrescore),
