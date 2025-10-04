@@ -178,7 +178,7 @@ public class CoralScoreCommandFactory{
                 yError = yEstimate - yTarget;
                 
                 // rotation
-                thetaError = LimelightHelpers.getBotPose2d(limelightName).getRotation().getRadians(); // this number might be changed.
+                thetaError = LimelightHelpers.getCameraPose3d_TargetSpace(limelightName).getRotation().getY(); // this number might be changed.
                 thetaError = filter.calculate(thetaError);
 
                 double xOutput = drivetrain.getXOutput(xError);
