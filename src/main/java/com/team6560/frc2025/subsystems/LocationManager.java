@@ -32,9 +32,10 @@ public class LocationManager extends SubsystemBase {
     /** Runs periodically to check if an update to our target position has been made.*/
     public void update() {
         // Levels first. Checks top down. 
-        if(board.getL1()){
-            currentReefLevel = ReefLevel.L1;
-        } if(board.getL2()){
+        // if(board.getL1()){
+        //     currentReefLevel = ReefLevel.L1;
+        // }
+          if(board.getL2()){
             currentReefLevel = ReefLevel.L2; // test: 3
         } if(board.getL3()){
             currentReefLevel = ReefLevel.L3; // test: 12

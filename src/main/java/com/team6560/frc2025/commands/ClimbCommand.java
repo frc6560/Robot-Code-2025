@@ -23,17 +23,29 @@ public class ClimbCommand extends Command {
 
     }
 
-    @Override
+    // @Override
+    // public void execute() {
+    //     if (controls.getClimbDown()) {
+    //         // climb.state = Climb.State.DOWN;
+    //         climb.down();
+    //     } else if (controls.getClimbUp()) {
+    //         // climb.state = Climb.State.UP;
+    //         climb.up();
+    //     } else {
+    //          // climb.state = Climb.State.STATIC; continuous motion
+    //         climb.stop();
+    //     }
+    // }
+ @Override
     public void execute() {
-        if (controls.getClimbDown()) {
-            // climb.state = Climb.State.DOWN;
-            climb.down();
-        } else if (controls.getClimbUp()) {
-            // climb.state = Climb.State.UP;
-            climb.up();
-        } else {
-             // climb.state = Climb.State.STATIC; continuous motion
-            climb.stop();
+        if(controls.shiftedControls()){
+            if(controls.getClimbDown()){
+                climb.down();
+            } else if(controls.getClimbUp()){
+                climb.up();
+            } else {
+                climb.stop();
+            }
         }
     }
 

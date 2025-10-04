@@ -127,6 +127,7 @@ public class RobotContainer {
     // Trigger for auto align
     Trigger autoAlignTrigger = new Trigger(
       () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
+            
     );
 
     autoAlignTrigger.onTrue(Commands.defer(

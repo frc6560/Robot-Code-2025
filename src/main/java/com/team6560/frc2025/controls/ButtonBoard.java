@@ -59,7 +59,7 @@ public class ButtonBoard {
         // return buttonBoard.getRawButtonPressed(12);
     }
 
-    public boolean getL1(){
+    public boolean goToL1(){
         return buttonBoard.getRawButton(9);
     }
     public boolean getL2(){
