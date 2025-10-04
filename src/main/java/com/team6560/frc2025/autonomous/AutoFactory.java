@@ -90,7 +90,7 @@ public class AutoFactory {
     Pair<Pose2d, Command> getFourPieceRight(){
         return Pair.of(
             FieldConstants.getRight(alliance),
-            Commands.defer( () -> Commands.sequence(
+            Commands.defer(() -> Commands.sequence(
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),

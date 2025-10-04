@@ -188,7 +188,7 @@ public class CoralScoreCommandFactory{
                     new ChassisSpeeds(
                         xOutput, 
                         -yOutput, // inversion of axes 
-                        0
+                        -rotationOutput
                     )
                 );
             },
