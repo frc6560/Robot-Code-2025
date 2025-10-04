@@ -128,7 +128,7 @@ public class CoralScoreCommandFactory{
             DrivebaseConstants.kMaxAutoAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
-        final Command driveToPrescore = Commands.runOnce(drivetrain::updateOdometryWithVision).andThen(getFollowPath(path, DrivebaseConstants.kMaxAlignmentVelocity).until(
+        final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kMaxAlignmentVelocity).until(
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.3
         ).andThen(
             () -> drivetrain.driveFieldOriented(
@@ -138,7 +138,7 @@ public class CoralScoreCommandFactory{
                     0
                 )
             )
-        )).until(() -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.05);
+        ).until(() -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.05);
         return driveToPrescore;
     }
 
