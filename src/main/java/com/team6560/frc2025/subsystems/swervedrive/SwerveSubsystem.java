@@ -286,7 +286,7 @@ public class SwerveSubsystem extends SubsystemBase
   public double getRotationOutput(double current){
     m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
     SmartDashboard.getEntry("PID rotation error").setDouble(m_pidControllerTheta.getError());
-    return (-1) * (m_pidControllerTheta.calculate(current, 0));
+    return m_pidControllerTheta.calculate(current, 0);
   }
 
   /** PID output over robot relative x */
