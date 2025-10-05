@@ -134,13 +134,16 @@ public class CoralScoreCommandFactory{
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
         final Command driveConstantVelocity = Commands.run(
-            () ->  drivetrain.driveFieldOriented(
+            () ->  {
+                drivetrain.driveFieldOriented(
                 new ChassisSpeeds(
                     DrivebaseConstants.kHandoffVelocity * Math.cos(drivetrain.getHeading().getRadians()),
                     DrivebaseConstants.kHandoffVelocity * Math.sin(drivetrain.getHeading().getRadians()),
                     0
                 )
-        ), drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
+                
+        );
+        System.out.println("1");}, drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
         return Commands.sequence(driveToPrescore, driveConstantVelocity);
     }
 
@@ -166,6 +169,7 @@ public class CoralScoreCommandFactory{
             () -> {
             }, 
             () -> {
+                System.out.println("2");
                 // x estimate relative to tag
                 double ta = LimelightHelpers.getTA(limelightName); 
                 double xEstimate = 1.0 / Math.sqrt(ta);
