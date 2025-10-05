@@ -131,16 +131,17 @@ public class CoralScoreCommandFactory{
             DrivebaseConstants.kMaxAlpha);
         final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kMaxAlignmentVelocity).until(
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.3
-        ).andThen(
-            () -> drivetrain.driveFieldOriented(
+            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
+        );
+        final Command driveConstantVelocity = Commands.run(
+            () ->  drivetrain.driveFieldOriented(
                 new ChassisSpeeds(
                     DrivebaseConstants.kMaxAlignmentVelocity * Math.cos(drivetrain.getHeading().getRadians()),
                     DrivebaseConstants.kMaxAlignmentVelocity * Math.sin(drivetrain.getHeading().getRadians()),
                     0
                 )
-            )
-        ).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
-        return driveToPrescore;
+        ), drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
+        return Commands.sequence(driveToPrescore, driveConstantVelocity);
     }
 
 
