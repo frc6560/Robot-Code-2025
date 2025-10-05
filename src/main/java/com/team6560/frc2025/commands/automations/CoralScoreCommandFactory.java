@@ -74,36 +74,35 @@ public class CoralScoreCommandFactory{
 
     public Command getScoreTeleop(ReefLevel level, ReefSide side){
         return Commands.defer(
-            () -> Commands.sequence(
-                Commands.runOnce(
-                    () -> {
-                        wristTarget = getSuperstructureTargets(level).getFirst();
-                        elevatorTarget = getSuperstructureTargets(level).getSecond();
-                    }
-                ),
-                Commands.defer(() -> Commands.parallel(
-                    alignToTagCommand(side),
-                    getActuateCommand(elevatorTarget, wristTarget)
-                ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(3), getScoreCommand(), getDeactuationCommand()
-            ), Set.of(drivetrain, wrist, elevator, grabber));
+            () -> {
+                wristTarget = getSuperstructureTargets(level).getFirst();
+                elevatorTarget = getSuperstructureTargets(level).getSecond();
+                return Commands.sequence(
+                    Commands.parallel(
+                        alignToTagCommand(side),
+                        getActuateCommand(elevatorTarget, wristTarget)
+                    ).withTimeout(3),
+                    getScoreCommand()
+                );
+            }, Set.of(drivetrain, wrist, elevator, grabber));
     }
 
     public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
         return Commands.defer(
-            () -> Commands.sequence(
-                Commands.runOnce(
-                    () -> {
-                        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
-                        wristTarget = superstructureTargets.getFirst();
-                        elevatorTarget = superstructureTargets.getSecond();
-                    }
-                ),
-                Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain)),
-                Commands.defer(() -> Commands.parallel(
-                    alignToTagCommand(side),
-                    getActuateCommand(elevatorTarget, wristTarget)
-                ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(1.2), getScoreCommand() // TODO: tune
-            ), Set.of(drivetrain, wrist, elevator, grabber));
+            () -> {
+                Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
+                wristTarget = superstructureTargets.getFirst();
+                elevatorTarget = superstructureTargets.getSecond();
+
+                return Commands.sequence(
+                    getDriveToPrescore(side, index),
+                    Commands.parallel(
+                        alignToTagCommand(side),
+                        getActuateCommand(elevatorTarget, wristTarget)
+                    ).withTimeout(1.5),
+                getScoreCommand()
+            );
+            }, Set.of(drivetrain, wrist, elevator, grabber));
     }
 
 
@@ -134,16 +133,13 @@ public class CoralScoreCommandFactory{
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
         final Command driveConstantVelocity = Commands.run(
-            () ->  {
-                drivetrain.driveFieldOriented(
-                new ChassisSpeeds(
+            () -> drivetrain.driveFieldOriented(
+                    new ChassisSpeeds(
                     DrivebaseConstants.kHandoffVelocity * Math.cos(drivetrain.getHeading().getRadians()),
                     DrivebaseConstants.kHandoffVelocity * Math.sin(drivetrain.getHeading().getRadians()),
                     0
-                )
-                
-        );
-        System.out.println("1");}, drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
+                    )
+                ), drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
         return Commands.sequence(driveToPrescore, driveConstantVelocity);
     }
 
@@ -169,7 +165,6 @@ public class CoralScoreCommandFactory{
             () -> {
             }, 
             () -> {
-                System.out.println("2");
                 // x estimate relative to tag
                 double ta = LimelightHelpers.getTA(limelightName); 
                 double xEstimate = 1.0 / Math.sqrt(ta);
