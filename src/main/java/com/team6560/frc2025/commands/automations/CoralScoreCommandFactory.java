@@ -98,11 +98,11 @@ public class CoralScoreCommandFactory{
                         elevatorTarget = superstructureTargets.getSecond();
                     }
                 ),
-                Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain)),
-                Commands.defer(() -> Commands.parallel(
-                    alignToTagCommand(side),
-                    getActuateCommand(elevatorTarget, wristTarget)
-                ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(1.2), getScoreCommand() // TODO: tune
+                Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain))
+                // Commands.defer(() -> Commands.parallel(
+                //     alignToTagCommand(side),
+                //     getActuateCommand(elevatorTarget, wristTarget)
+                // ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(1.2), getScoreCommand() // TODO: tune
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
@@ -129,15 +129,15 @@ public class CoralScoreCommandFactory{
             DrivebaseConstants.kMaxAutoAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
-        final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kMaxAlignmentVelocity).until(
+        final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kHandoffVelocity).until(
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.3
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
         final Command driveConstantVelocity = Commands.run(
             () ->  drivetrain.driveFieldOriented(
                 new ChassisSpeeds(
-                    DrivebaseConstants.kMaxAlignmentVelocity * Math.cos(drivetrain.getHeading().getRadians()),
-                    DrivebaseConstants.kMaxAlignmentVelocity * Math.sin(drivetrain.getHeading().getRadians()),
+                    DrivebaseConstants.kHandoffVelocity * Math.cos(drivetrain.getHeading().getRadians()),
+                    DrivebaseConstants.kHandoffVelocity * Math.sin(drivetrain.getHeading().getRadians()),
                     0
                 )
         ), drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
