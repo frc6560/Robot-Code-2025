@@ -276,7 +276,7 @@ public class SwerveSubsystem extends SubsystemBase
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX_pose.calculate(pose.getX(), setpoint.x), 
       setpoint.vy + m_pidControllerY_pose.calculate(pose.getY(), setpoint.y),
-      setpoint.omega + m_pidControllerTheta_pose.calculate(pose.getRotation().getRadians(), setpoint.theta)
+      (-1) * (setpoint.omega + m_pidControllerTheta_pose.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
     swerveDrive.driveFieldOriented(targetSpeeds);
   }
