@@ -98,11 +98,11 @@ public class CoralScoreCommandFactory{
                         elevatorTarget = superstructureTargets.getSecond();
                     }
                 ),
-                Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain))
-                // Commands.defer(() -> Commands.parallel(
-                //     alignToTagCommand(side),
-                //     getActuateCommand(elevatorTarget, wristTarget)
-                // ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(1.2), getScoreCommand() // TODO: tune
+                Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain)),
+                Commands.defer(() -> Commands.parallel(
+                    alignToTagCommand(side),
+                    getActuateCommand(elevatorTarget, wristTarget)
+                ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(1.2), getScoreCommand() // TODO: tune
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
