@@ -40,7 +40,7 @@ public final class Constants {
     public static final double kMaxAutoAcceleration = 3.7; 
 
     // Max velocities and accelerations for teleop alignment
-    public static final double kHandoffVelocity = 2.1;   // formerly 2.1
+    public static final double kHandoffVelocity = 1;   // formerly 2.1
     public static final double kMaxOmega = Math.toRadians(270);
     public static final double kMaxAlpha = Math.toRadians(360);
 
