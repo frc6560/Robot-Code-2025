@@ -130,7 +130,7 @@ public class RobotContainer {
     );
 
     autoAlignTrigger.onTrue(Commands.defer(
-      () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
+      () -> scoreFactory.getScoreAuto(locationManager.getReefSide(), locationManager.getCurrentReefIndex(), locationManager.getCurrentReefLevel()), 
       Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
