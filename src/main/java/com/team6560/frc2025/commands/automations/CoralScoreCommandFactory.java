@@ -164,7 +164,7 @@ public class CoralScoreCommandFactory{
         Command driveToTagPose = new FunctionalCommand(
             () -> {
                 // This is also a great place to update our odometry
-                drivetrain.updateOdometryWithVision();
+                drivetrain.updateOdometryWithVision(limelightName);
             }, 
             () -> {
                 // x estimate relative to tag

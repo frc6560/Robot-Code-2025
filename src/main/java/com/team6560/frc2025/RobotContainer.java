@@ -135,7 +135,6 @@ public class RobotContainer {
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
-    driverXbox.a().onTrue((Commands.runOnce(drivebase::updateOdometryWithVision)));
     driverXbox.b().onTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT).schedule(), drivebase));
   }
 
@@ -145,7 +144,6 @@ public class RobotContainer {
   }
 
   public void resetLLBeforeAuto() {
-    drivebase.updateOdometryWithVision();;
   }
 
 

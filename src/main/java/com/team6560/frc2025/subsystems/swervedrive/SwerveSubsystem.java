@@ -551,9 +551,9 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
-  public void updateOdometryWithVision() {
+  public void updateOdometryWithVision(String limelightName) {
     Pose2d emptyPose = new Pose2d();
-    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     if (poseEstimate == null) return;
     
     Pose2d pose = poseEstimate.pose;
