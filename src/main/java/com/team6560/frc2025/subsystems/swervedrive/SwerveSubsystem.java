@@ -278,9 +278,9 @@ public class SwerveSubsystem extends SubsystemBase
       setpoint.vy + m_pidControllerY_pose.calculate(pose.getY(), setpoint.y),
       (-1) * (setpoint.omega + m_pidControllerTheta_pose.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
-
     swerveDrive.driveFieldOriented(targetSpeeds);
   }
+  
 
   /** PID output over robot relative theta */
   public double getRotationOutput(double current){

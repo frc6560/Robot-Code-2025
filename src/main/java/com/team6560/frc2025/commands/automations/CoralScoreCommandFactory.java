@@ -81,10 +81,10 @@ public class CoralScoreCommandFactory{
                         elevatorTarget = getSuperstructureTargets(level).getSecond();
                     }
                 ),
-                Commands.parallel(
+                Commands.defer(() -> Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
-                ).withTimeout(3), getScoreCommand(), getDeactuationCommand()
+                ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(3), getScoreCommand(), getDeactuationCommand()
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
@@ -99,10 +99,10 @@ public class CoralScoreCommandFactory{
                     }
                 ),
                 Commands.defer(() -> getDriveToPrescore(side, index), Set.of(drivetrain)),
-                Commands.parallel(
+                Commands.defer(() -> Commands.parallel(
                     alignToTagCommand(side),
                     getActuateCommand(elevatorTarget, wristTarget)
-                ).withTimeout(1.2), getScoreCommand()
+                ), Set.of(drivetrain, wrist, elevator, grabber)).withTimeout(1.2), getScoreCommand() // TODO: tune
             ), Set.of(drivetrain, wrist, elevator, grabber));
     }
 
@@ -298,8 +298,8 @@ public class CoralScoreCommandFactory{
 
         // Applies pre score transform
         return new Pose2d(
-            targetPose.getX() + 1 * Math.cos(targetPose.getRotation().getRadians()), 
-            targetPose.getY() + 1 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getX() + 0.45 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 0.45 * Math.sin(targetPose.getRotation().getRadians()), 
             targetPose.getRotation()
         );
     }
