@@ -142,7 +142,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic(){
-    fuseVisionMeasurements();
+    // fuseVisionMeasurements();
     swerveDrive.field.setRobotPose(this.getPose());
   } 
 

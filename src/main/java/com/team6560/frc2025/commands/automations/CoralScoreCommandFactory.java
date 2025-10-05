@@ -163,8 +163,6 @@ public class CoralScoreCommandFactory{
         LinearFilter filter = LinearFilter.movingAverage(5);
         Command driveToTagPose = new FunctionalCommand(
             () -> {
-                // This is also a great place to update our odometry
-                drivetrain.updateOdometryWithVision(limelightName);
             }, 
             () -> {
                 // x estimate relative to tag
@@ -193,7 +191,9 @@ public class CoralScoreCommandFactory{
                     )
                 );
             },
-            (interrupted) -> {},
+            (interrupted) -> {
+                drivetrain.updateOdometryWithVision(limelightName);
+            },
             () -> Math.abs(xError) < 0.02 && Math.abs(yError) < 0.02
                     && Math.abs(thetaError) < 0.017);
         return driveToTagPose;
