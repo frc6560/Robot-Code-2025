@@ -89,6 +89,16 @@ public class SwerveSubsystem extends SubsystemBase
                                                                 DrivebaseConstants.kI_rotation, 
                                                                 DrivebaseConstants.kD_rotation);
 
+  private final PIDController m_pidControllerX_pose = new PIDController(DrivebaseConstants.kP_translation_pose, 
+                                                            DrivebaseConstants.kI_translation_pose, 
+                                                            DrivebaseConstants.kD_translation_pose);
+  private final PIDController m_pidControllerY_pose = new PIDController(DrivebaseConstants.kP_translation_pose,
+                                                            DrivebaseConstants.kI_translation_pose, 
+                                                            DrivebaseConstants.kD_translation_pose);
+  private final PIDController m_pidControllerTheta_pose = new PIDController(DrivebaseConstants.kP_rotation_pose, 
+                                                                DrivebaseConstants.kI_rotation_pose, 
+                                                                DrivebaseConstants.kD_rotation_pose);
+
 
   /**\
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -256,17 +266,17 @@ public class SwerveSubsystem extends SubsystemBase
   /** Full PID command with all three parameters
    */
   public void followSegment(Setpoint setpoint, Pose2d targetPose) {
-    m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+    m_pidControllerTheta_pose.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
     swerveDrive.field.getObject("TargetPose").setPose(targetPose);
-    m_pidControllerTheta.setIZone(0.08);
-    m_pidControllerX.setIZone(0.25);
-    m_pidControllerY.setIZone(0.25);
+    m_pidControllerTheta_pose.setIZone(0.08);
+    m_pidControllerX_pose.setIZone(0.25);
+    m_pidControllerY_pose.setIZone(0.25);
 
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
-      setpoint.vx + m_pidControllerX.calculate(pose.getX(), setpoint.x), 
-      setpoint.vy + m_pidControllerY.calculate(pose.getY(), setpoint.y),
-      (-1) * (setpoint.omega + m_pidControllerTheta.calculate(pose.getRotation().getRadians(), setpoint.theta))
+      setpoint.vx + m_pidControllerX_pose.calculate(pose.getX(), setpoint.x), 
+      setpoint.vy + m_pidControllerY_pose.calculate(pose.getY(), setpoint.y),
+      (-1) * (setpoint.omega + m_pidControllerTheta_pose.calculate(pose.getRotation().getRadians(), setpoint.theta))
     );
 
     swerveDrive.driveFieldOriented(targetSpeeds);
