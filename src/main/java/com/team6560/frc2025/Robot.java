@@ -5,6 +5,7 @@
 package com.team6560.frc2025;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -110,7 +111,7 @@ public class Robot extends TimedRobot
     if (m_autonomousCommand != null)
     {
       m_robotContainer.getDrivebase().resetOdometry(startPose);
-      m_robotContainer.getDrivebase().zeroGyro();
+      m_robotContainer.getDrivebase().getSwerveDrive().setGyro(new Rotation3d(0, 0, startPose.getRotation().getRadians()));
       m_autonomousCommand.schedule();
     }
   }
