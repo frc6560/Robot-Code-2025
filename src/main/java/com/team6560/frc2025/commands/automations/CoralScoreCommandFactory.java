@@ -88,12 +88,11 @@ public class CoralScoreCommandFactory{
     }
 
     public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
+        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
+        wristTarget = superstructureTargets.getFirst();
+        elevatorTarget = superstructureTargets.getSecond();
         return Commands.defer(
             () -> {
-                Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
-                wristTarget = superstructureTargets.getFirst();
-                elevatorTarget = superstructureTargets.getSecond();
-
                 return Commands.sequence(
                     getDriveToPrescore(side, index),
                     Commands.parallel(
