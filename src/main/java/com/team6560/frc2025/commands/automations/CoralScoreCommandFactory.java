@@ -194,7 +194,7 @@ public class CoralScoreCommandFactory{
             (interrupted) -> {
                 drivetrain.updateOdometryWithVision(limelightName);
             },
-            () -> Math.abs(xError) < 0.02 && Math.abs(yError) < 0.02
+            () -> Math.abs(xError) < 0.014 && Math.abs(yError) < 0.014
                     && Math.abs(thetaError) < 0.017);
         return driveToTagPose;
     }

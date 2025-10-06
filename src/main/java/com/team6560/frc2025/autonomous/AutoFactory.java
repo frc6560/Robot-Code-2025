@@ -13,6 +13,7 @@ import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -47,6 +48,10 @@ public class AutoFactory {
 
     private static final Command IDLE= Commands.idle();
 
+    public Command getResetGyro(Pose2d startPose) {
+        return Commands.runOnce(() -> drivetrain.getSwerveDrive().setGyro(new Rotation3d(0, 0, startPose.getRotation().getRadians())), drivetrain);
+    }
+
     /** These literally do nothing. As in, nothing. */
     Pair<Pose2d, Command> getNoAutoLeft(){
         return Pair.of(FieldConstants.getFarLeft(alliance), IDLE);
@@ -61,6 +66,7 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.defer(() -> Commands.sequence(
+                getResetGyro(FieldConstants.getRight(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
@@ -76,6 +82,7 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getLeft(alliance),
             Commands.defer(() -> Commands.sequence(
+                getResetGyro(FieldConstants.getLeft(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
@@ -91,6 +98,7 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.defer(() -> Commands.sequence(
+                getResetGyro(FieldConstants.getRight(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
@@ -106,6 +114,7 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getLeft(alliance),
             Commands.defer(() -> Commands.sequence(
+                getResetGyro(FieldConstants.getLeft(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L2),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L2),
