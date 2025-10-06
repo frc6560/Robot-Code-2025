@@ -128,17 +128,17 @@ public class CoralScoreCommandFactory{
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
         final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kHandoffVelocity).until(
-            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.3
+            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.15
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
         final Command driveConstantVelocity = Commands.run(
-            () -> drivetrain.driveFieldOriented(
+            () -> {
+                drivetrain.drive(
                     new ChassisSpeeds(
-                    DrivebaseConstants.kHandoffVelocity * Math.cos(drivetrain.getHeading().getRadians()),
-                    DrivebaseConstants.kHandoffVelocity * Math.sin(drivetrain.getHeading().getRadians()),
-                    0
+                        - DrivebaseConstants.kHandoffVelocity, 0, 0
                     )
-                ), drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
+                );
+            }, drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
         return Commands.sequence(driveToPrescore, driveConstantVelocity);
     }
 
@@ -296,8 +296,8 @@ public class CoralScoreCommandFactory{
 
         // Applies pre score transform
         return new Pose2d(
-            targetPose.getX() + 0.45 * Math.cos(targetPose.getRotation().getRadians()), 
-            targetPose.getY() + 0.45 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getX() + 0.4 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 0.4 * Math.sin(targetPose.getRotation().getRadians()), 
             targetPose.getRotation()
         );
     }
@@ -364,8 +364,7 @@ public class CoralScoreCommandFactory{
                 drivetrain.followSegment(newSetpoint, path.endPose);
             },
             (interrupted) -> {},
-            () -> drivetrain.getPose().getTranslation().getDistance(path.endPose.getTranslation()) < 0.02
-            && Math.abs(drivetrain.getPose().getRotation().getRadians() - path.endPose.getRotation().getRadians()) < 0.017
+            () -> false
         );
         return followPath;
 
