@@ -111,7 +111,7 @@ public class Robot extends TimedRobot
     if (m_autonomousCommand != null)
     {
       m_robotContainer.getDrivebase().resetOdometry(startPose);
-      m_robotContainer.getDrivebase().getSwerveDrive().setGyro(new Rotation3d(0, 0, startPose.getRotation().getRadians()));
+      // m_robotContainer.getDrivebase().getSwerveDrive().setGyro(new Rotation3d(0, 0, startPose.getRotation().getRadians()));
       m_autonomousCommand.schedule();
     }
   }
