@@ -57,9 +57,9 @@ public final class Constants {
     public static final double kI_rotation = 0.02;
     public static final double kD_rotation = 0.2;
 
-    public static final double kP_translation_pose = 2;  
+    public static final double kP_translation_pose = 0.5;  
     public static final double kI_translation_pose = 0; 
-    public static final double kD_translation_pose = 0.15; 
+    public static final double kD_translation_pose = 0.05; 
 
     public static final double kP_rotation_pose = 2;
     public static final double kI_rotation_pose = 0.02;
@@ -151,14 +151,13 @@ public final class Constants {
   public static final class FieldConstants{
     // AUTO 
     // Left and right are viewed from the DS.
-    public static final double RED_X = 10.555;
     public static final double BLUE_X = 7.164;
 
-    public static final Pose2d FAR_RIGHT = new Pose2d(RED_X, 7.145, Rotation2d.fromDegrees(180));
-    public static final Pose2d FAR_LEFT = new Pose2d(RED_X, 1.08, Rotation2d.fromDegrees(180));
-    public static final Pose2d RIGHT = new Pose2d(RED_X, 5.645, Rotation2d.fromDegrees(180));
-    public static final Pose2d LEFT = new Pose2d(RED_X, 2.187, Rotation2d.fromDegrees(-120));
-    public static final Pose2d CENTER_RED = new Pose2d(RED_X, 4.0, Rotation2d.fromDegrees(180));
+    public static final Pose2d FAR_RIGHT = new Pose2d(10.645, 7.145, Rotation2d.fromDegrees(120));
+    public static final Pose2d FAR_LEFT = new Pose2d(10.555, 1.08, Rotation2d.fromDegrees(-120));
+    public static final Pose2d RIGHT = new Pose2d(10.645, 5.977, Rotation2d.fromDegrees(120));
+    public static final Pose2d LEFT = new Pose2d(10.555, 2.187, Rotation2d.fromDegrees(-120));
+    public static final Pose2d CENTER_RED = new Pose2d(10.413, 4.0, Rotation2d.fromDegrees(180));
 
     public static final Pose2d FAR_LEFT_BLUE = new Pose2d(BLUE_X, 6.92, Rotation2d.fromDegrees(0));
     public static final Pose2d FAR_RIGHT_BLUE = new Pose2d(BLUE_X, 1, Rotation2d.fromDegrees(0));

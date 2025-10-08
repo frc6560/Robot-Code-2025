@@ -18,6 +18,9 @@ import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.utility.Enums.PickupLocations;
+import com.team6560.frc2025.utility.Enums.ReefIndex;
+import com.team6560.frc2025.utility.Enums.ReefLevel;
+import com.team6560.frc2025.utility.Enums.ReefSide;
 import com.team6560.frc2025.subsystems.LocationManager;
 import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
@@ -130,7 +133,7 @@ public class RobotContainer {
     );
 
     autoAlignTrigger.onTrue(Commands.defer(
-      () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()),  // scoreFactory.getScoreAuto(locationManager.getReefIndex(), locationManager.getReefSide(), locationManager.getCurrentReefLevel()),
+      () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
       Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
