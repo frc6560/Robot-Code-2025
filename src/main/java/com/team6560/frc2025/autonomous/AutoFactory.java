@@ -76,7 +76,7 @@ public class AutoFactory {
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
             ), Set.of(wrist, elevator, grabber, drivetrain))
         );
-    }
+    } 
 
     Pair<Pose2d, Command> getFourPieceBackLeft(){
         return Pair.of(
