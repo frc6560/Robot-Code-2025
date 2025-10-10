@@ -68,8 +68,8 @@ public class IntakeCommand extends SequentialCommandGroup{
                 translationState.position = translationSetpoint.position;
                 translationState.velocity = translationSetpoint.velocity;
 
-                // only activate rotation at 2.0m from target
-                if(drivetrain.getPose().getTranslation().getDistance(targetPickupPose.getTranslation()) < 2.0){
+                // only activate rotation at 4.5m from target
+                if(drivetrain.getPose().getTranslation().getDistance(targetPickupPose.getTranslation()) < 4.5){
                     // rot wraparound calculations
                     double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
                     double goalRotation = rotationTarget.position;

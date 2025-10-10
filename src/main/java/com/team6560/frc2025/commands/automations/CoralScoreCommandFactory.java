@@ -128,7 +128,7 @@ public class CoralScoreCommandFactory{
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
         final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kHandoffVelocity).until(
-            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.15
+            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.25
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
         final Command driveConstantVelocity = Commands.run(
