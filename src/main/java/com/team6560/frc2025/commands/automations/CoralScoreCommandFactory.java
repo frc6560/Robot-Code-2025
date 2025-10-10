@@ -131,15 +131,7 @@ public class CoralScoreCommandFactory{
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.25
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
-        final Command driveConstantVelocity = Commands.run(
-            () -> {
-                drivetrain.drive(
-                    new ChassisSpeeds(
-                        -DrivebaseConstants.kHandoffVelocity, 0, 0
-                    )
-                );
-            }, drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
-        return Commands.sequence(driveToPrescore, driveConstantVelocity);
+        return driveToPrescore;
     }
 
 
