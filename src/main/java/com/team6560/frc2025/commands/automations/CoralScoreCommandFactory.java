@@ -88,6 +88,7 @@ public class CoralScoreCommandFactory{
     }
 
     public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
+        String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
         Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
         wristTarget = superstructureTargets.getFirst();
         elevatorTarget = superstructureTargets.getSecond();
@@ -96,7 +97,8 @@ public class CoralScoreCommandFactory{
                 return Commands.sequence(
                     getDriveToPrescore(side, index),
                     Commands.parallel(
-                        alignToTagCommand(side),
+                        Commands.either(alignToTagCommand(side), getDriveToScore(side, index), 
+                        () -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0)),
                         getActuateCommand(elevatorTarget, wristTarget)
                     ).withTimeout(1.5),
                 getScoreCommand()
@@ -118,7 +120,7 @@ public class CoralScoreCommandFactory{
 
     /** Drives close to our target pose during auto */
     public Command getDriveToPrescore(ReefSide side, ReefIndex index){
-        Pose2d targetPose = setPrescoreTarget(index, side);
+        Pose2d targetPose = getPrescoreTarget(getTarget(index, side));
         path = new AutoAlignPath(
             drivetrain.getPose(),
             targetPose,
@@ -131,6 +133,23 @@ public class CoralScoreCommandFactory{
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
         );
         return driveToPrescore;
+    }
+
+    /** Actually drives to our target. */
+    public Command getDriveToScore(ReefSide side, ReefIndex index){
+        Pose2d targetPose = getTarget(index, side);
+        path = new AutoAlignPath(
+            drivetrain.getPose(),
+            targetPose,
+            DrivebaseConstants.kHandoffVelocity,
+            1.8,
+            DrivebaseConstants.kMaxOmega,
+            DrivebaseConstants.kMaxAlpha);
+        final Command driveToScore = getFollowPath(path, 0).until(
+            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.02
+            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.017
+        );
+        return driveToScore;
     }
 
 
@@ -253,7 +272,7 @@ public class CoralScoreCommandFactory{
     }
 
     /** Sets the target for the robot, including target pose, elevator height, and arm angle in auto*/
-    public Pose2d setPrescoreTarget(ReefIndex index, ReefSide side){
+    public Pose2d getTarget(ReefIndex index, ReefSide side){
         DriverStation.Alliance alliance;
         if(!DriverStation.getAlliance().isPresent()){
             alliance = DriverStation.Alliance.Blue;
@@ -284,7 +303,10 @@ public class CoralScoreCommandFactory{
         if(alliance == DriverStation.Alliance.Blue){
             targetPose = applyAllianceTransform(targetPose);
         }
+        return targetPose;
+    }
 
+    public Pose2d getPrescoreTarget(Pose2d targetPose){
         // Applies pre score transform
         return new Pose2d(
             targetPose.getX() + 0.4 * Math.cos(targetPose.getRotation().getRadians()), 
