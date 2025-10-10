@@ -69,7 +69,7 @@ public class IntakeCommand extends SequentialCommandGroup{
                 translationState.velocity = translationSetpoint.velocity;
 
                 // only activate rotation at 4.5m from target
-                if(drivetrain.getPose().getTranslation().getDistance(targetPickupPose.getTranslation()) < 4.5){
+                if(drivetrain.getPose().getTranslation().getDistance(targetPickupPose.getTranslation()) < 3.2){
                     // rot wraparound calculations
                     double rotationalPose = drivetrain.getSwerveDrive().getPose().getRotation().getRadians();
                     double goalRotation = rotationTarget.position;
@@ -138,7 +138,7 @@ public class IntakeCommand extends SequentialCommandGroup{
                                                                             : new Pose2d(1.12, 7, Rotation2d.fromDegrees(55));
                 break;
             case TEST:
-                targetPickupPose = new Pose2d(10, 7, Rotation2d.fromDegrees(120));
+                targetPickupPose = new Pose2d(14.339, 6.794, Rotation2d.fromDegrees(55));
                 break;
         }
     }
