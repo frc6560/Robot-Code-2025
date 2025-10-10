@@ -18,6 +18,9 @@ import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
 import com.team6560.frc2025.utility.Enums.PickupLocations;
+import com.team6560.frc2025.utility.Enums.ReefIndex;
+import com.team6560.frc2025.utility.Enums.ReefLevel;
+import com.team6560.frc2025.utility.Enums.ReefSide;
 import com.team6560.frc2025.subsystems.LocationManager;
 import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
@@ -138,7 +141,9 @@ public class RobotContainer {
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
     driverXbox.b().onTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT).schedule(), drivebase));
-    driverXbox.x().onTrue(Commands.run(() -> drivebase.drive(new ChassisSpeeds(2.1, 0, 0)), drivebase));
+    driverXbox.x().onTrue(Commands.defer(
+      () -> scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4), 
+      Set.of(drivebase, wrist, elevator, pipeGrabber)));
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)
