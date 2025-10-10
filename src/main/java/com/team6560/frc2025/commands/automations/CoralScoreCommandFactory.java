@@ -137,6 +137,7 @@ public class CoralScoreCommandFactory{
 
     /** Actually drives to our target. */
     public Command getDriveToScore(ReefSide side, ReefIndex index){
+        String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
         Pose2d targetPose = getTarget(index, side);
         path = new AutoAlignPath(
             drivetrain.getPose(),
@@ -148,6 +149,8 @@ public class CoralScoreCommandFactory{
         final Command driveToScore = getFollowPath(path, 0).until(
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.02
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.017
+        ).finallyDo(
+            () -> drivetrain.updateOdometryWithVision(limelightName)
         );
         return driveToScore;
     }
