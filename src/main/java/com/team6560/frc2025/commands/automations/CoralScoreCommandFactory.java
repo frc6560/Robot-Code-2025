@@ -119,7 +119,6 @@ public class CoralScoreCommandFactory{
     /** Drives close to our target pose during auto */
     public Command getDriveToPrescore(ReefSide side, ReefIndex index){
         Pose2d targetPose = setPrescoreTarget(index, side);
-        String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
         path = new AutoAlignPath(
             drivetrain.getPose(),
             targetPose,
