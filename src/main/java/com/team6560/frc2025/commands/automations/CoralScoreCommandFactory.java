@@ -135,7 +135,7 @@ public class CoralScoreCommandFactory{
             () -> {
                 drivetrain.drive(
                     new ChassisSpeeds(
-                        - DrivebaseConstants.kHandoffVelocity, 0, 0
+                        -DrivebaseConstants.kHandoffVelocity, 0, 0
                     )
                 );
             }, drivetrain).until(() -> LimelightHelpers.getTV(limelightName) == true && LimelightHelpers.getTA(limelightName) != 0);
