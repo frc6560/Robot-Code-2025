@@ -38,15 +38,14 @@ public class ClimbCommand extends Command {
     // }
  @Override
     public void execute() {
-        if(controls.shiftedControls()){
-            if(controls.getClimbDown()){
+    if(controls.getClimbDown()){
                 climb.down();
             } else if(controls.getClimbUp()){
                 climb.up();
             } else {
                 climb.stop();
             }
-        }
+        
     }
 
     @Override

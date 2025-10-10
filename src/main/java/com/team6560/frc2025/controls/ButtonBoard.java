@@ -80,7 +80,7 @@ public class ButtonBoard {
         return buttonBoard.getRawButtonPressed(18);
     }
 
-    public boolean getClimb(){
-        return buttonBoard.getRawButtonPressed(19);
-    }
+    // public boolean getClimb(){
+    //     return buttonBoard.getRawButtonPressed(19);
+    // }
 }

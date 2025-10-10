@@ -36,14 +36,14 @@ public class XboxControls {
 
     // --- CLIMB ---
   
-    // is shifted for climb 
+  
     public boolean getClimbDown() {
-      return firstXbox.getLeftTriggerAxis() > 0.25; 
+      return firstXbox.getLeftBumper(); 
         // return secondXbox.getLeftStickButton(); 
     }
 
     public boolean getClimbUp() {
-      return firstXbox.getRightTriggerAxis() < -0.25;
+      return firstXbox.getRightBumper();
         // return secondXbox.getRightStickButton(); 
     }
 
@@ -74,7 +74,7 @@ public class XboxControls {
     }
 
     public boolean goToPickup(){
-        return firstXbox.getRightTriggerAxis() > 0.25;
+        return secondXbox.getRightTriggerAxis() > 0.25;
     }
 
     // --- END EFFECTORS ---
@@ -85,10 +85,10 @@ public class XboxControls {
     }
 
     public boolean runGrabberOuttake() {
-      return secondXbox.getRightBumper(); // change if inconvenient
+      return firstXbox.getRightTriggerAxis() > 0.25; // change if inconvenient
     }
     public boolean runGrabberOuttakeL1() {
-      return firstXbox.getLeftBumperButton();
+      return secondXbox.getLeftBumperButton();
     }
 
     public boolean goToPlacePos() {
