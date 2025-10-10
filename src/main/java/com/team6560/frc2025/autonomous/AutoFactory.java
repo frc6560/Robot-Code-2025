@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 
+// TODOs: delete all commented out files in robot.java, and this file
 public class AutoFactory {
     private DriverStation.Alliance alliance;
 
@@ -98,7 +99,8 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.defer(() -> Commands.sequence(
-                getResetGyro(FieldConstants.getRight(alliance)),
+                Commands.runOnce(() -> drivetrain.updateOdometryWithVision("limelight-right")),
+                // getResetGyro(FieldConstants.getRight(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
