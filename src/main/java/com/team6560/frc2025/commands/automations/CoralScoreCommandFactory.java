@@ -75,8 +75,8 @@ public class CoralScoreCommandFactory{
     public Command getScoreTeleop(ReefLevel level, ReefSide side){
         return Commands.defer(
             () -> {
-                wristTarget = getSuperstructureTargets(level).getFirst();
-                elevatorTarget = getSuperstructureTargets(level).getSecond();
+                wristTarget = getSuperstructureTargets(level, false).getFirst();
+                elevatorTarget = getSuperstructureTargets(level, false).getSecond();
                 return Commands.sequence(
                     Commands.parallel(
                         alignToTagCommand(side),
@@ -89,7 +89,7 @@ public class CoralScoreCommandFactory{
 
     public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
-        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level);
+        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level, false);
         wristTarget = superstructureTargets.getFirst();
         elevatorTarget = superstructureTargets.getSecond();
         return Commands.defer(
@@ -204,7 +204,9 @@ public class CoralScoreCommandFactory{
                 );
             },
             (interrupted) -> {
-                drivetrain.updateOdometryWithVision(limelightName);
+                if(DriverStation.isAutonomous()){
+                    drivetrain.updateOdometryWithVision(limelightName);
+                }
             },
             () -> Math.abs(xError) < 0.014 && Math.abs(yError) < 0.014
                     && Math.abs(thetaError) < 0.017);
@@ -319,7 +321,7 @@ public class CoralScoreCommandFactory{
     }
 
     /** Returns wrist, elevator targets */
-    public Pair<Double, Double> getSuperstructureTargets(ReefLevel level){
+    public Pair<Double, Double> getSuperstructureTargets(ReefLevel level, boolean isBall){
         double wristTarget;
         double elevatorTarget;
         switch (level) {
@@ -329,18 +331,18 @@ public class CoralScoreCommandFactory{
                 break;
     
             case L2:
-                wristTarget = WristConstants.WristStates.L2;
-                elevatorTarget = ElevatorConstants.ElevatorStates.L2;
+                wristTarget = (isBall == false) ? WristConstants.WristStates.L2 : WristConstants.WristStates.S_L2;
+                elevatorTarget = (isBall == false) ? ElevatorConstants.ElevatorStates.L2 : ElevatorConstants.ElevatorStates.S_L2;
                 break;
     
             case L3:
-                wristTarget = WristConstants.WristStates.L2;
-                elevatorTarget = ElevatorConstants.ElevatorStates.L3;
+                wristTarget = (isBall == false) ? WristConstants.WristStates.L2 : WristConstants.WristStates.S_L2;
+                elevatorTarget = (isBall == false) ? ElevatorConstants.ElevatorStates.L3 : ElevatorConstants.ElevatorStates.S_L3;
                 break;
     
             case L4: 
-                wristTarget = WristConstants.WristStates.L4;
-                elevatorTarget = ElevatorConstants.ElevatorStates.L4;
+                wristTarget = (isBall == false) ? WristConstants.WristStates.L4 : WristConstants.WristStates.S_L4;
+                elevatorTarget = (isBall == false) ? ElevatorConstants.ElevatorStates.L4 : ElevatorConstants.ElevatorStates.S_L4;
                 break;
     
             default:
