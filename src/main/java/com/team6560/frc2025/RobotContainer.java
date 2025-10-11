@@ -142,10 +142,6 @@ public class RobotContainer {
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
     driverXbox.y().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
-    driverXbox.x().onTrue(Commands.defer(
-      () -> scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT), 
-      Set.of(drivebase, wrist, elevator, pipeGrabber)));
-    driverXbox.b().onTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT).schedule(), drivebase));
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)
