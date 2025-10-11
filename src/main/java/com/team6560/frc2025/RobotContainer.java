@@ -147,7 +147,7 @@ public class RobotContainer {
       () -> Commands.sequence(
         scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT),
         new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT),
-        scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
+        scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4)
       ), Set.of(drivebase, wrist, elevator, pipeGrabber)));
   }
 
