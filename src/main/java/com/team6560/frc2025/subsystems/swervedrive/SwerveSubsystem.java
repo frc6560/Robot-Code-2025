@@ -155,6 +155,10 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic(){
     swerveDrive.field.setRobotPose(this.getPose());
+    SmartDashboard.getEntry("Limelight TV Right").setBoolean(LimelightHelpers.getTV("limelight-right"));
+    SmartDashboard.getEntry("Limelight TV Left").setBoolean(LimelightHelpers.getTV("limelight-left"));
+    SmartDashboard.getEntry("Limelight TA Right").setDouble(LimelightHelpers.getTA("limelight-right"));
+    SmartDashboard.getEntry("Limelight TA Left").setDouble(LimelightHelpers.getTA("limelight-left"));
   } 
 
   @Override
