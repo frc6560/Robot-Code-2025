@@ -268,12 +268,22 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-  /** Full PID command with all three parameters
+  /** Full PID commands with all three parameters
    */
-  public void followSegment(Setpoint setpoint, Pose2d targetPose) {
+  public void followSegment(Setpoint setpoint, Pose2d targetPose, boolean isIntake) {
     m_pidControllerTheta_pose.enableContinuousInput(-Math.PI, Math.PI);
     Pose2d pose = getPose();
     swerveDrive.field.getObject("TargetPose").setPose(targetPose);
+    if(!isIntake){
+      m_pidControllerX.setPID(DrivebaseConstants.kP_translation_pose, 
+                            DrivebaseConstants.kI_translation_pose, 
+                            DrivebaseConstants.kD_translation_pose);
+    }
+    else{
+      m_pidControllerX.setPID(DrivebaseConstants.kP_translation_intake, 
+                            DrivebaseConstants.kI_translation_intake, 
+                            DrivebaseConstants.kD_translation_intake);
+    }
     m_pidControllerTheta_pose.setIZone(0.08);
     m_pidControllerX_pose.setIZone(0.25);
     m_pidControllerY_pose.setIZone(0.25);

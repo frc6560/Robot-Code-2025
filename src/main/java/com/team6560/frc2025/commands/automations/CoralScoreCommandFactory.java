@@ -379,7 +379,7 @@ public class CoralScoreCommandFactory{
             () -> {
                 // Move.
                 Setpoint newSetpoint = getNextSetpoint(path);
-                drivetrain.followSegment(newSetpoint, path.endPose);
+                drivetrain.followSegment(newSetpoint, path.endPose, false);
             },
             (interrupted) -> {},
             () -> false
