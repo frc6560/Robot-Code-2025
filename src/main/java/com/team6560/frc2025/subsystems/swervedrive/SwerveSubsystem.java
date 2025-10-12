@@ -275,12 +275,18 @@ public class SwerveSubsystem extends SubsystemBase
     Pose2d pose = getPose();
     swerveDrive.field.getObject("TargetPose").setPose(targetPose);
     if(!isIntake){
-      m_pidControllerX.setPID(DrivebaseConstants.kP_translation_pose, 
+      m_pidControllerX_pose.setPID(DrivebaseConstants.kP_translation_pose, 
+                            DrivebaseConstants.kI_translation_pose, 
+                            DrivebaseConstants.kD_translation_pose);
+      m_pidControllerY_pose.setPID(DrivebaseConstants.kP_translation_pose, 
                             DrivebaseConstants.kI_translation_pose, 
                             DrivebaseConstants.kD_translation_pose);
     }
     else{
-      m_pidControllerX.setPID(DrivebaseConstants.kP_translation_intake, 
+      m_pidControllerX_pose.setPID(DrivebaseConstants.kP_translation_intake, 
+                            DrivebaseConstants.kI_translation_intake, 
+                            DrivebaseConstants.kD_translation_intake);
+      m_pidControllerY_pose.setPID(DrivebaseConstants.kP_translation_intake, 
                             DrivebaseConstants.kI_translation_intake, 
                             DrivebaseConstants.kD_translation_intake);
     }
