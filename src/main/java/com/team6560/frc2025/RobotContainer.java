@@ -141,7 +141,8 @@ public class RobotContainer {
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
     driverXbox.y().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
-    driverXbox.x().onTrue(Commands.runOnce(() -> new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT).schedule()));
+    driverXbox.x().onTrue(Commands.defer(
+      () -> scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.LEFT), Set.of(drivebase, wrist, elevator, pipeGrabber)));
     driverXbox.b().onTrue(Commands.defer(
       () -> Commands.sequence(
         scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT),
