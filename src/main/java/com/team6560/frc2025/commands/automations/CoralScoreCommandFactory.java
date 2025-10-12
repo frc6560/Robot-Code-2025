@@ -204,9 +204,7 @@ public class CoralScoreCommandFactory{
                 );
             },
             (interrupted) -> {
-                if(DriverStation.isAutonomous()){
                     drivetrain.updateOdometryWithVision(limelightName);
-                }
             },
             () -> Math.abs(xError) < 0.014 && Math.abs(yError) < 0.014
                     && Math.abs(thetaError) < 0.017);
