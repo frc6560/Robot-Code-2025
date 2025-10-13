@@ -13,15 +13,16 @@ public class LocationManager extends SubsystemBase {
     private ReefSide currentReefSide;
     private ReefLevel currentReefLevel;
 
-    private boolean goSwitch;
+    private boolean reefMode;
+
 
     public LocationManager(ButtonBoard board){
         this.board = board; 
 
-        this.goSwitch = true; // put as false after testing.
         this.currentReefIndex = null;
         this.currentReefLevel = null;
         this.currentReefSide = null;
+        this.reefMode = true;
     }
 
     @Override
@@ -31,19 +32,24 @@ public class LocationManager extends SubsystemBase {
 
     /** Runs periodically to check if an update to our target position has been made.*/
     public void update() {
+        if(board.getShift()){
+            reefMode = false;
+        }
+        else{
+            reefMode = true;
+        }
+
         // Levels first. Checks top down. 
         if(board.getL1()){
             currentReefLevel = ReefLevel.L1;
         } if(board.getL2()){
-            currentReefLevel = ReefLevel.L2; // test: 3
+            currentReefLevel = ReefLevel.L2; 
         } if(board.getL3()){
-            currentReefLevel = ReefLevel.L3; // test: 12
+            currentReefLevel = ReefLevel.L3; 
         } if(board.getL4()){
-            currentReefLevel = ReefLevel.L4; // test: 7
+            currentReefLevel = ReefLevel.L4; 
         }
 
-        // Reef indices.
-        // Indices are mapped from A to L. counterclockwise from left and far right, driver perspective
         if(board.getScoreA()){
             currentReefIndex = ReefIndex.FAR_RIGHT;
             currentReefSide = ReefSide.LEFT;
@@ -81,15 +87,9 @@ public class LocationManager extends SubsystemBase {
             currentReefIndex = ReefIndex.BOTTOM_RIGHT;
             currentReefSide = ReefSide.RIGHT;
         }
-
-        // Go switch.
-        if(board.getIntake()){
-            goSwitch = true;
-        } 
     }
 
     public void reset(){
-        this.goSwitch = true; // change to false.
         this.currentReefIndex = null;
         this.currentReefSide = null;
     }
@@ -106,11 +106,11 @@ public class LocationManager extends SubsystemBase {
         return currentReefSide;
     }
 
-    public boolean isGoSwitchPressed() {
-        return goSwitch;
-    }
-
     public boolean hasTarget(){
         return currentReefIndex != null && currentReefLevel != null && currentReefSide != null;
+    }
+
+    public boolean inReefMode(){
+        return reefMode;
     }
 }

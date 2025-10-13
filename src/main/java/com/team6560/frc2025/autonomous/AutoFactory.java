@@ -5,6 +5,7 @@ import java.util.Set;
 import com.team6560.frc2025.Constants.FieldConstants;
 import com.team6560.frc2025.commands.automations.CoralScoreCommandFactory;
 import com.team6560.frc2025.commands.automations.IntakeCommand;
+import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
@@ -42,7 +43,7 @@ public class AutoFactory {
         this.drivetrain = drivetrain;
         this.grabber = grabber;
 
-        scoreFactory = new CoralScoreCommandFactory(wrist, elevator, grabber, drivetrain);
+        scoreFactory = new CoralScoreCommandFactory(wrist, elevator, grabber, drivetrain, null);
     }
 
     /** These are functions for returning different autonomous routines. See AutoRoutines.java for more information. */

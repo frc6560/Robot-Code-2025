@@ -10,6 +10,7 @@ import java.util.Set;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.Constants.DrivebaseConstants;
+import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
@@ -57,14 +58,16 @@ public class CoralScoreCommandFactory{
     private Wrist wrist;
     private Elevator elevator;
     private PipeGrabber grabber;
+    private BallGrabber ballGrabber;
 
 
     /** Constructor for our scoring command */
-    public CoralScoreCommandFactory(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain) {
+    public CoralScoreCommandFactory(Wrist wrist, Elevator elevator, PipeGrabber grabber, SwerveSubsystem drivetrain, BallGrabber ballGrabber) {
         this.drivetrain = drivetrain;
         this.wrist = wrist;
         this.elevator = elevator;
         this.grabber = grabber;
+        this.ballGrabber = ballGrabber;
     }
     double wristTarget;
     double elevatorTarget;
@@ -113,6 +116,24 @@ public class CoralScoreCommandFactory{
                 )
             );
             }, Set.of(drivetrain, wrist, elevator, grabber));
+    }
+
+    public Command getScoreBall(ReefLevel level){
+        return Commands.defer(
+            () -> {
+                Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level, true);
+                wristTarget = superstructureTargets.getFirst();
+                elevatorTarget = superstructureTargets.getSecond();
+                return Commands.sequence(
+                    getActuateCommand(elevatorTarget, wristTarget),
+                    Commands.either(new RunCommand(
+                                    () -> ballGrabber.runIntake(), ballGrabber).withTimeout(3), 
+                                    new RunCommand(
+                                    () -> ballGrabber.runOuttake(), ballGrabber).withTimeout(2),
+                                    () -> (level == ReefLevel.L2 || level == ReefLevel.L3)), 
+                    getDeactuationCommand(), null);
+
+            }, Set.of(wrist, elevator, ballGrabber));
     }
 
 

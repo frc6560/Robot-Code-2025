@@ -47,7 +47,7 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final XboxController firstXbox = new XboxController(0);
   final XboxController secondXbox = new XboxController(1);
-  final ButtonBoard buttonBoard = new ButtonBoard(1); 
+  final ButtonBoard buttonBoard = new ButtonBoard(1, 2); 
 
   private final XboxControls controls = new XboxControls(firstXbox, secondXbox);
   private final LocationManager locationManager = new LocationManager(buttonBoard);
@@ -98,7 +98,7 @@ public class RobotContainer {
     wrist.setDefaultCommand(new WristCommand(wrist, controls));
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
-    scoreFactory = new CoralScoreCommandFactory(wrist, elevator, pipeGrabber, drivebase);
+    scoreFactory = new CoralScoreCommandFactory(wrist, elevator, pipeGrabber, drivebase, ballGrabber);
 
     configureBindings();
 
@@ -130,7 +130,7 @@ public class RobotContainer {
 
     // Trigger for auto align
     Trigger autoAlignTrigger = new Trigger(
-      () -> (locationManager.hasTarget() && locationManager.isGoSwitchPressed())
+      () -> (locationManager.hasTarget() && locationManager.inReefMode())
     );
 
     autoAlignTrigger.onTrue(Commands.defer(
