@@ -110,8 +110,7 @@ public class CoralScoreCommandFactory{
                         ), 
                         getScoreCommand()
                     ).withTimeout(2)
-                    .onlyWhile(() -> (LimelightHelpers.getTV(limelightName
-                    ) && LimelightHelpers.getTA(limelightName) > 0.0))
+                    .onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
                     .finallyDo(
                     () -> {drivetrain.drive(new ChassisSpeeds());}
                 )
