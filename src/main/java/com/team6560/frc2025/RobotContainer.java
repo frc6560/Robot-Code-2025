@@ -133,9 +133,17 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.inReefMode())
     );
 
+    Trigger ballTrigger = new Trigger(
+      () -> (locationManager.hasTarget() && !locationManager.inReefMode())
+    );
+
     autoAlignTrigger.onTrue(Commands.defer(
       () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
       Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
+    
+    ballTrigger.onTrue(Commands.defer(
+      () -> scoreFactory.getScoreBall(locationManager.getCurrentReefLevel()), 
+      Set.of(wrist, elevator, ballGrabber)).finallyDo((interrupted) -> locationManager.reset()));
 
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
