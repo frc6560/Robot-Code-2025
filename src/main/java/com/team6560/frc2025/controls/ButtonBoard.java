@@ -71,7 +71,7 @@ public class ButtonBoard {
     }
 
     public boolean getShift(){
-        return buttonBoard_2.getRawButtonPressed(6);
+        return buttonBoard_2.getRawButton(6);
     }
 
     public boolean getIntake(){

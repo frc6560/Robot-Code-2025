@@ -110,7 +110,8 @@ public class CoralScoreCommandFactory{
                         ), 
                         getScoreCommand()
                     ).withTimeout(2)
-                    .onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
+                    .onlyWhile(() -> (LimelightHelpers.getTV(limelightName
+                    ) && LimelightHelpers.getTA(limelightName) > 0.0))
                     .finallyDo(
                     () -> {drivetrain.drive(new ChassisSpeeds());}
                 )
@@ -119,11 +120,11 @@ public class CoralScoreCommandFactory{
     }
 
     public Command getScoreBall(ReefLevel level){
+        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level, true);
+        wristTarget = superstructureTargets.getFirst();
+        elevatorTarget = superstructureTargets.getSecond();
         return Commands.defer(
             () -> {
-                Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level, true);
-                wristTarget = superstructureTargets.getFirst();
-                elevatorTarget = superstructureTargets.getSecond();
                 return Commands.sequence(
                     getActuateCommand(elevatorTarget, wristTarget),
                     Commands.either(new RunCommand(
@@ -131,7 +132,7 @@ public class CoralScoreCommandFactory{
                                     new RunCommand(
                                     () -> ballGrabber.runOuttake(), ballGrabber).withTimeout(2),
                                     () -> (level == ReefLevel.L2 || level == ReefLevel.L3)), 
-                    getDeactuationCommand(), null);
+                    getDeactuationCommand());
 
             }, Set.of(wrist, elevator, ballGrabber));
     }
