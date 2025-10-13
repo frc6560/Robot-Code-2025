@@ -49,13 +49,13 @@ public final class Constants {
     public static final double kV = 1.866; 
     public static final double kA = 0.159; 
 
-    public static final double kP_translation = 4.5;  
+    public static final double kP_translation = 4;  
     public static final double kI_translation = 0; 
     public static final double kD_translation = 0; 
 
-    public static final double kP_rotation = 2;
+    public static final double kP_rotation = 1.75;
     public static final double kI_rotation = 0.02;
-    public static final double kD_rotation = 0.2;
+    public static final double kD_rotation = 0.17;
 
     public static final double kP_translation_pose = 0.3;  
     public static final double kI_translation_pose = 0; 

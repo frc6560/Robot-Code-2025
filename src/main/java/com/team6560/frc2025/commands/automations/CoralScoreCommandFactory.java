@@ -75,14 +75,18 @@ public class CoralScoreCommandFactory{
     public Command getScoreTeleop(ReefLevel level, ReefSide side){
         return Commands.defer(
             () -> {
+                String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
                 wristTarget = getSuperstructureTargets(level, false).getFirst();
                 elevatorTarget = getSuperstructureTargets(level, false).getSecond();
                 return Commands.sequence(
                     Commands.parallel(
                         alignToTagCommand(side),
                         getActuateCommand(elevatorTarget, wristTarget)
-                    ).withTimeout(2),
+                    ).withTimeout(8), //2
                     getScoreCommand(), getDeactuationCommand()
+                ).onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
+                .finallyDo(
+                    () -> {drivetrain.drive(new ChassisSpeeds());}
                 );
             }, Set.of(drivetrain, wrist, elevator, grabber));
     }
@@ -96,12 +100,17 @@ public class CoralScoreCommandFactory{
             () -> {
                 return Commands.sequence(
                     getDriveToPrescore(side, index),
-                    Commands.parallel(
-                        Commands.either(alignToTagCommand(side), getDriveToScore(side, index), 
-                        () -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0)),
-                        getActuateCommand(elevatorTarget, wristTarget)
-                    ).withTimeout(1.5),
-                getScoreCommand()
+                    Commands.sequence(
+                        Commands.parallel(
+                            alignToTagCommand(side), 
+                            getActuateCommand(elevatorTarget, wristTarget)
+                        ), 
+                        getScoreCommand()
+                    ).withTimeout(2)
+                    .onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
+                    .finallyDo(
+                    () -> {drivetrain.drive(new ChassisSpeeds());}
+                )
             );
             }, Set.of(drivetrain, wrist, elevator, grabber));
     }
