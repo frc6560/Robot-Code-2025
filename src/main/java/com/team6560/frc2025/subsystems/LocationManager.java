@@ -110,6 +110,10 @@ public class LocationManager extends SubsystemBase {
         return currentReefIndex != null && currentReefLevel != null && currentReefSide != null;
     }
 
+    public boolean hasLevel(){
+        return currentReefLevel != null;
+    }
+
     public boolean inReefMode(){
         return reefMode;
     }

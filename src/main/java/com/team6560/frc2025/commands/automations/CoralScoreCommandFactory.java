@@ -123,17 +123,7 @@ public class CoralScoreCommandFactory{
         wristTarget = superstructureTargets.getFirst();
         elevatorTarget = superstructureTargets.getSecond();
         return Commands.defer(
-            () -> {
-                return Commands.sequence(
-                    getActuateCommand(elevatorTarget, wristTarget),
-                    Commands.either(new RunCommand(
-                                    () -> ballGrabber.runIntake(), ballGrabber).withTimeout(3), 
-                                    new RunCommand(
-                                    () -> ballGrabber.runOuttake(), ballGrabber).withTimeout(2),
-                                    () -> (level == ReefLevel.L2 || level == ReefLevel.L3)), 
-                    getDeactuationCommand());
-
-            }, Set.of(wrist, elevator, ballGrabber));
+            () -> getActuateCommand(elevatorTarget, wristTarget), Set.of(wrist, elevator));
     }
 
 

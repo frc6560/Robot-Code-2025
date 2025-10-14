@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -133,19 +134,33 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.inReefMode())
     );
 
-    Trigger ballTrigger = new Trigger(
-      () -> (locationManager.hasTarget() && !locationManager.inReefMode())
+    Trigger ballActuateTrigger = new Trigger(
+      () -> (locationManager.hasLevel() && !locationManager.inReefMode())
+    );
+
+    Trigger ballEjectTrigger = new Trigger(
+      () -> (buttonBoard.getIntake() && !locationManager.inReefMode())
     );
 
     autoAlignTrigger.onTrue(Commands.defer(
       () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
       Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
-    
-    ballTrigger.onTrue(Commands.defer(
-      () -> scoreFactory.getScoreBall(locationManager.getCurrentReefLevel()), 
-      Set.of(wrist, elevator, ballGrabber)).finallyDo((interrupted) -> locationManager.reset()));
 
+    ballActuateTrigger.whileTrue(Commands.defer(
+      () -> scoreFactory.getScoreBall(locationManager.getCurrentReefLevel()), 
+      Set.of(wrist, elevator)).finallyDo((interrupted) -> locationManager.reset()));
+
+    ballEjectTrigger.whileTrue(Commands.defer(
+      () -> Commands.either(
+        new RunCommand(() -> ballGrabber.runIntake(), ballGrabber),
+        new RunCommand(() -> ballGrabber.runOuttake(), ballGrabber),
+        () -> (locationManager.getCurrentReefLevel() == ReefLevel.L2 || locationManager.getCurrentReefLevel() == ReefLevel.L3))
+        , Set.of(ballGrabber)).finallyDo((interrupted) -> {
+          ballGrabber.stop();
+        }));
+    
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
     driverXbox.y().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
