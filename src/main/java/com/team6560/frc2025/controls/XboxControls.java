@@ -37,17 +37,15 @@ public class XboxControls {
     // --- CLIMB ---
 
     public boolean getClimbDown() {
-      return secondXbox.getRightY() > 0.7; 
-        // return secondXbox.getLeftStickButton(); 
+      return firstXbox.getRightBumperButton(); 
     }
 
     public boolean getClimbUp() {
-      return secondXbox.getRightY() < -0.7;
-        // return secondXbox.getRightStickButton(); 
+      return firstXbox.getLeftBumperButton();
     }
 
     // // --- SUPERSTRUCTURE ---
-
+// note that this code is deprecated
     public boolean goToL1(){
         return secondXbox.getAButton();
     }
@@ -78,16 +76,8 @@ public class XboxControls {
 
     // --- END EFFECTORS ---
 
-    // shifted for ball
-    public boolean runGrabberIntake(){
-      return firstXbox.getLeftTriggerAxis() > 0.25;
-    }
-
     public boolean runGrabberOuttake() {
-      return firstXbox.getRightBumper(); // change if inconvenient
-    }
-    public boolean runGrabberOuttakeL1() {
-      return firstXbox.getLeftBumperButton();
+      return firstXbox.getLeftTriggerAxis() > 0.25;
     }
 
     public boolean goToPlacePos() {

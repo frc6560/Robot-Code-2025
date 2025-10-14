@@ -23,12 +23,8 @@ public class PipeGrabberCommand extends Command {
     @Override
     public void execute() {
         if (!controls.shiftedControls()) {
-            if (controls.runGrabberIntake()) {
-                grabber.runIntake();
-            } else if (controls.runGrabberOuttake()) {
+            if (controls.runGrabberOuttake()) {
                 grabber.runGrabberOuttake();
-            } else if (controls.runGrabberOuttakeL1()) {
-                grabber.runGrabberOuttakeL1();
             } else {
                 grabber.stop();
             }

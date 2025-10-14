@@ -142,6 +142,10 @@ public class RobotContainer {
       () -> (buttonBoard.getIntake() && !locationManager.inReefMode())
     );
 
+    Trigger intakeTrigger = new Trigger(
+      () -> (buttonBoard.getIntake() && locationManager.inReefMode())
+    );
+
     autoAlignTrigger.onTrue(Commands.defer(
       () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
       Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
@@ -158,6 +162,11 @@ public class RobotContainer {
         , Set.of(ballGrabber)).finallyDo((interrupted) -> {
           ballGrabber.stop();
         }));
+    
+    intakeTrigger.whileTrue(Commands.defer(
+      () -> new RunCommand(
+        () -> pipeGrabber.runIntake(), pipeGrabber), 
+      Set.of(wrist, elevator, drivebase, pipeGrabber)));
     
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
