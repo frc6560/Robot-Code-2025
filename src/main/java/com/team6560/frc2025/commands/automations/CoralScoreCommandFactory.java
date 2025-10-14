@@ -23,6 +23,7 @@ import com.team6560.frc2025.utility.Enums.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -109,7 +110,7 @@ public class CoralScoreCommandFactory{
                             getActuateCommand(elevatorTarget, wristTarget)
                         ), 
                         getScoreCommand()
-                    ).withTimeout(2)
+                    ).withTimeout(5)
                     .onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
                     .finallyDo(
                     () -> {drivetrain.drive(new ChassisSpeeds());}
@@ -134,8 +135,7 @@ public class CoralScoreCommandFactory{
     public Command getGrabberIntake(){
         return new RunCommand(
             () -> grabber.runIntakeMaxSpeed(),
-            grabber).withTimeout(0.4)
-            .andThen(() -> grabber.stop());
+            grabber);
     }
 
     /** Drives close to our target pose during auto */
@@ -148,10 +148,10 @@ public class CoralScoreCommandFactory{
             DrivebaseConstants.kMaxAutoAcceleration,
             DrivebaseConstants.kMaxOmega,
             DrivebaseConstants.kMaxAlpha);
-        final Command driveToPrescore = getFollowPath(path, DrivebaseConstants.kHandoffVelocity).until(
+        final Command driveToPrescore = Commands.parallel(getFollowPath(path, DrivebaseConstants.kHandoffVelocity), getGrabberIntake()).until(
             () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.25
             && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
-        );
+        ).finallyDo(() -> grabber.stop());
         return driveToPrescore;
     }
 
@@ -180,6 +180,8 @@ public class CoralScoreCommandFactory{
     double yError;
     double thetaError;
 
+    Debouncer debouncer;
+
     /** Uses the vector in camera space to align to the reef, since it's pretty close to the tag. 
      * @return A {@link} Command that aligns the robot to the target pose using Limelight data.
      */
@@ -195,6 +197,7 @@ public class CoralScoreCommandFactory{
         LinearFilter filter = LinearFilter.movingAverage(5);
         Command driveToTagPose = new FunctionalCommand(
             () -> {
+                debouncer = new Debouncer(0.05);
             }, 
             () -> {
                 // x estimate relative to tag
@@ -226,8 +229,8 @@ public class CoralScoreCommandFactory{
             (interrupted) -> {
                     drivetrain.updateOdometryWithVision(limelightName);
             },
-            () -> Math.abs(xError) < 0.014 && Math.abs(yError) < 0.014
-                    && Math.abs(thetaError) < 0.017);
+            () -> debouncer.calculate(Math.abs(xError) < 0.014 && Math.abs(yError) < 0.014
+                    && Math.abs(thetaError) < 0.017));
         return driveToTagPose;
     }
 

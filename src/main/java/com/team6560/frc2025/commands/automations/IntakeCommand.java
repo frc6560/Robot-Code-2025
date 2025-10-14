@@ -44,11 +44,16 @@ public class IntakeCommand extends SequentialCommandGroup{
     TrapezoidProfile.State translationTarget = new TrapezoidProfile.State(0, 0);
     TrapezoidProfile.State rotationTarget =  new TrapezoidProfile.State(0, 0);
 
+    AutoAlignPath path;
+
     public IntakeCommand(Wrist wrist, Elevator elevator, SwerveSubsystem drivetrain, PickupLocations pickupLocation) {
         location = pickupLocation;
 
         getTargetPose();
-        AutoAlignPath path = new AutoAlignPath(
+
+        Command pathCommand = new FunctionalCommand(
+            () -> {
+                path = new AutoAlignPath(
                     drivetrain.getPose(),
                     targetPickupPose,
                     DrivebaseConstants.kMaxAutoVelocity,
@@ -56,12 +61,10 @@ public class IntakeCommand extends SequentialCommandGroup{
                     DrivebaseConstants.kMaxOmega,
                     DrivebaseConstants.kMaxAlpha
                 );
-        translationState.position = path.getDisplacement().getNorm();
-        rotationState.position = path.startPose.getRotation().getRadians();
-        rotationTarget.position = path.endPose.getRotation().getRadians();
-
-        Command pathCommand = new FunctionalCommand(
-            () -> {},
+                translationState.position = path.getDisplacement().getNorm();
+                rotationState.position = path.startPose.getRotation().getRadians();
+                rotationTarget.position = path.endPose.getRotation().getRadians();
+            },
             () -> {
                 // trans
                 State translationSetpoint = translationProfile.calculate(0.02, translationState, translationTarget);
@@ -130,7 +133,7 @@ public class IntakeCommand extends SequentialCommandGroup{
         else alliance = DriverStation.getAlliance().get();
         switch(location){
             case RIGHT:
-                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(16.219, 7.347, Rotation2d.fromDegrees(55)) 
+                targetPickupPose = alliance == DriverStation.Alliance.Red ? new Pose2d(16.219+0.02, 7.347+0.02, Rotation2d.fromDegrees(55)) 
                                                                             : new Pose2d(1.12, 1.05, Rotation2d.fromDegrees(-125));
                 break;
             case LEFT:

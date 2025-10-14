@@ -165,7 +165,7 @@ public class RobotContainer {
     driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
     driverXbox.y().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
     driverXbox.x().onTrue(Commands.defer(
-      () -> scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.LEFT), Set.of(drivebase, wrist, elevator, pipeGrabber)));
+      () -> scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT), Set.of(drivebase, wrist, elevator, pipeGrabber)));
     driverXbox.b().onTrue(Commands.defer(
       () -> Commands.sequence(
         scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT),

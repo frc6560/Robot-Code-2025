@@ -290,8 +290,8 @@ public class SwerveSubsystem extends SubsystemBase
                             DrivebaseConstants.kD_translation_intake);
     }
     m_pidControllerTheta_pose.setIZone(0.08);
-    m_pidControllerX_pose.setIZone(5);
-    m_pidControllerY_pose.setIZone(5);
+    m_pidControllerX_pose.setIZone(0.5);
+    m_pidControllerY_pose.setIZone(0.5);
 
     ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
       setpoint.vx + m_pidControllerX_pose.calculate(pose.getX(), setpoint.x), 
