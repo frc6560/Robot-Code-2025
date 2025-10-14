@@ -36,8 +36,8 @@ public final class Constants {
     public static final double WHEEL_LOCK_TIME = 10; // seconds
 
     // Max velocities and accelerations for auto
-    public static final double kMaxAutoVelocity = 5.0; 
-    public static final double kMaxAutoAcceleration = 3.7; 
+    public static final double kMaxAutoVelocity = 3; 
+    public static final double kMaxAutoAcceleration = 2.5; 
 
     // Max velocities and accelerations for teleop alignment
     public static final double kHandoffVelocity = 2.1;   // formerly 2.1
@@ -65,8 +65,8 @@ public final class Constants {
     public static final double kI_rotation_pose = 0.02;
     public static final double kD_rotation_pose = 0.2;
 
-    public static final double kP_translation_intake = 2.5;
-    public static final double kI_translation_intake = 0;
+    public static final double kP_translation_intake = 0.85;
+    public static final double kI_translation_intake = 0.028;
     public static final double kD_translation_intake = 0.0;
 
 

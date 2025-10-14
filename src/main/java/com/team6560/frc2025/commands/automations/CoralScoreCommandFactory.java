@@ -332,8 +332,8 @@ public class CoralScoreCommandFactory{
     public Pose2d getPrescoreTarget(Pose2d targetPose){
         // Applies pre score transform
         return new Pose2d(
-            targetPose.getX() + 0.4 * Math.cos(targetPose.getRotation().getRadians()), 
-            targetPose.getY() + 0.4 * Math.sin(targetPose.getRotation().getRadians()), 
+            targetPose.getX() + 0.8 * Math.cos(targetPose.getRotation().getRadians()), 
+            targetPose.getY() + 0.8 * Math.sin(targetPose.getRotation().getRadians()), 
             targetPose.getRotation()
         );
     }
