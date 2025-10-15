@@ -61,6 +61,7 @@ public class ButtonBoard {
         return buttonBoard_2.getRawButton(2);
     }
     public boolean getL2(){
+        System.out.println("L2");
         return buttonBoard_2.getRawButton(3);
     }
     public boolean getL3(){
@@ -71,10 +72,11 @@ public class ButtonBoard {
     }
 
     public boolean getShift(){
+        System.out.println("Shifted");
         return buttonBoard_2.getRawButton(6);
     }
 
     public boolean getIntake(){
-        return buttonBoard_2.getRawButtonPressed(1);
+        return buttonBoard_2.getRawButton(9);
     }
 }

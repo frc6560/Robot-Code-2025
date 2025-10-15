@@ -2,6 +2,7 @@ package com.team6560.frc2025;
 
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.OperatorConstants;
+import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
@@ -134,10 +135,6 @@ public class RobotContainer {
       () -> (locationManager.hasTarget() && locationManager.inReefMode())
     );
 
-    Trigger ballActuateTrigger = new Trigger(
-      () -> (locationManager.hasLevel() && !locationManager.inReefMode())
-    );
-
     Trigger ballEjectTrigger = new Trigger(
       () -> (buttonBoard.getIntake() && !locationManager.inReefMode())
     );
@@ -146,20 +143,32 @@ public class RobotContainer {
       () -> (buttonBoard.getIntake() && locationManager.inReefMode())
     );
 
+    Trigger l1Trigger = new Trigger(
+      () -> buttonBoard.getL1() && locationManager.inReefMode()
+    );
+
+    Trigger l2BallTrigger = new Trigger(
+      () -> buttonBoard.getL2() && buttonBoard.getShift()
+    );
+
+    Trigger l3BallTrigger = new Trigger(
+      () -> buttonBoard.getL3() && buttonBoard.getShift()
+    );
+
+    Trigger l4BallTrigger = new Trigger(
+      () -> buttonBoard.getL4() && buttonBoard.getShift()
+    );
+
     autoAlignTrigger.onTrue(Commands.defer(
       () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
       Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
-
-    ballActuateTrigger.whileTrue(Commands.defer(
-      () -> scoreFactory.getScoreBall(locationManager.getCurrentReefLevel()), 
-      Set.of(wrist, elevator)).finallyDo((interrupted) -> locationManager.reset()));
 
     ballEjectTrigger.whileTrue(Commands.defer(
       () -> Commands.either(
         new RunCommand(() -> ballGrabber.runOuttake(), ballGrabber),
         new RunCommand(() -> ballGrabber.runIntake(), ballGrabber),
         () -> (locationManager.getCurrentReefLevel() == null || 
-                locationManager.getCurrentReefLevel() == ReefLevel.L1 || locationManager.getCurrentReefLevel() == ReefLevel.L1))
+                locationManager.getCurrentReefLevel() == ReefLevel.L4))
         , Set.of(ballGrabber)).finallyDo((interrupted) -> {
           ballGrabber.stop();
         }));
@@ -168,6 +177,20 @@ public class RobotContainer {
       () -> new RunCommand(
         () -> pipeGrabber.runIntake(), pipeGrabber), 
       Set.of(wrist, elevator, drivebase, pipeGrabber)));
+
+    l1Trigger.whileTrue(Commands.run(() -> wrist.setMotorPosition(WristConstants.WristStates.L1)));
+    l2BallTrigger.whileTrue(Commands.run(() -> {
+                                        wrist.setMotorPosition(WristConstants.WristStates.S_L2);
+                                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.S_L2);
+                                      }));
+    l3BallTrigger.whileTrue(Commands.run(() -> {
+                                        wrist.setMotorPosition(WristConstants.WristStates.S_L2);
+                                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.S_L3);
+                                      }));
+    l4BallTrigger.whileTrue(Commands.run(() -> {
+                                        wrist.setMotorPosition(WristConstants.WristStates.S_L4);
+                                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.S_L4);
+                                      }));
     
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 

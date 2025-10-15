@@ -40,9 +40,7 @@ public class LocationManager extends SubsystemBase {
         }
 
         // Levels first. Checks top down. 
-        if(board.getL1()){
-            currentReefLevel = ReefLevel.L1;
-        } if(board.getL2()){
+        if(board.getL2()){
             currentReefLevel = ReefLevel.L2; 
         } if(board.getL3()){
             currentReefLevel = ReefLevel.L3; 

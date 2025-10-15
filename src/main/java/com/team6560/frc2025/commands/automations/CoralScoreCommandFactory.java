@@ -119,14 +119,6 @@ public class CoralScoreCommandFactory{
             }, Set.of(drivetrain, wrist, elevator, grabber));
     }
 
-    public Command getScoreBall(ReefLevel level){
-        Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level, true);
-        wristTarget = superstructureTargets.getFirst();
-        elevatorTarget = superstructureTargets.getSecond();
-        return Commands.defer(
-            () -> getActuateCommand(elevatorTarget, wristTarget), Set.of(wrist, elevator));
-    }
-
 
     // ---- SUB COMMANDS ----
 
@@ -346,11 +338,6 @@ public class CoralScoreCommandFactory{
         double wristTarget;
         double elevatorTarget;
         switch (level) {
-            case L1:
-                wristTarget = WristConstants.WristStates.L1;
-                elevatorTarget = ElevatorConstants.ElevatorStates.STOW;
-                break;
-    
             case L2:
                 wristTarget = (isBall == false) ? WristConstants.WristStates.L2 : WristConstants.WristStates.S_L2;
                 elevatorTarget = (isBall == false) ? ElevatorConstants.ElevatorStates.L2 : ElevatorConstants.ElevatorStates.S_L2;
