@@ -156,9 +156,10 @@ public class RobotContainer {
 
     ballEjectTrigger.whileTrue(Commands.defer(
       () -> Commands.either(
-        new RunCommand(() -> ballGrabber.runIntake(), ballGrabber),
         new RunCommand(() -> ballGrabber.runOuttake(), ballGrabber),
-        () -> (locationManager.getCurrentReefLevel() == ReefLevel.L2 || locationManager.getCurrentReefLevel() == ReefLevel.L3))
+        new RunCommand(() -> ballGrabber.runIntake(), ballGrabber),
+        () -> (locationManager.getCurrentReefLevel() == null || 
+                locationManager.getCurrentReefLevel() == ReefLevel.L1 || locationManager.getCurrentReefLevel() == ReefLevel.L1))
         , Set.of(ballGrabber)).finallyDo((interrupted) -> {
           ballGrabber.stop();
         }));
