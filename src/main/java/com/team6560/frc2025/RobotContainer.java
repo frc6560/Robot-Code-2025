@@ -116,7 +116,7 @@ public class RobotContainer {
 
     for(AutoRoutines auto : AutoRoutines.values()) {
       Auto autonomousRoutine = new Auto(auto, factory);
-      if(auto == AutoRoutines.TEST){
+      if(auto == AutoRoutines.LEFT_4P){
         autoChooser.setDefaultOption(autonomousRoutine.getName(), autonomousRoutine);
       }
       else {
