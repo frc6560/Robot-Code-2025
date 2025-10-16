@@ -89,7 +89,7 @@ public class RobotContainer {
     ballGrabber.setDefaultCommand(ballGrabberCommand);
 
     pipeGrabber = new PipeGrabber();
-    pipeGrabberCommand = new PipeGrabberCommand(pipeGrabber, controls);
+    pipeGrabberCommand = new PipeGrabberCommand(pipeGrabber, controls, buttonBoard);
     pipeGrabber.setDefaultCommand(pipeGrabberCommand);
 
     wrist = new Wrist();
