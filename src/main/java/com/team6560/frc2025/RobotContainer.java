@@ -9,7 +9,6 @@ import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
 import com.team6560.frc2025.commands.automations.CoralScoreCommandFactory;
-import com.team6560.frc2025.commands.automations.IntakeCommand;
 import com.team6560.frc2025.controls.ButtonBoard;
 import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.BallGrabber;
@@ -18,10 +17,7 @@ import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
-import com.team6560.frc2025.utility.Enums.PickupLocations;
-import com.team6560.frc2025.utility.Enums.ReefIndex;
 import com.team6560.frc2025.utility.Enums.ReefLevel;
-import com.team6560.frc2025.utility.Enums.ReefSide;
 import com.team6560.frc2025.subsystems.LocationManager;
 import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
@@ -116,7 +112,7 @@ public class RobotContainer {
 
     for(AutoRoutines auto : AutoRoutines.values()) {
       Auto autonomousRoutine = new Auto(auto, factory);
-      if(auto == AutoRoutines.LEFT_4P){
+      if(auto == AutoRoutines.TEST){
         autoChooser.setDefaultOption(autonomousRoutine.getName(), autonomousRoutine);
       }
       else {
@@ -197,14 +193,6 @@ public class RobotContainer {
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
     driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
     driverXbox.y().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
-    driverXbox.x().onTrue(Commands.defer(
-      () -> scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT), Set.of(drivebase, wrist, elevator, pipeGrabber)));
-    driverXbox.b().onTrue(Commands.defer(
-      () -> Commands.sequence(
-        scoreFactory.getScoreTeleop(ReefLevel.L4, ReefSide.RIGHT),
-        new IntakeCommand(wrist, elevator, drivebase, PickupLocations.RIGHT),
-        scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4)
-      ), Set.of(drivebase, wrist, elevator, pipeGrabber)));
   }
 
   public void elevL4BeginTele() { // values for auto (don't touch!)

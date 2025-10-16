@@ -165,8 +165,8 @@ public final class Constants {
 
     public static final Pose2d FAR_LEFT_BLUE = new Pose2d(BLUE_X, 6.92, Rotation2d.fromDegrees(0));
     public static final Pose2d FAR_RIGHT_BLUE = new Pose2d(BLUE_X, 1, Rotation2d.fromDegrees(0));
-    public static final Pose2d LEFT_BLUE = new Pose2d(BLUE_X, 5.645, Rotation2d.fromDegrees(0));
-    public static final Pose2d RIGHT_BLUE = new Pose2d(BLUE_X, 2.636, Rotation2d.fromDegrees(0));
+    public static final Pose2d LEFT_BLUE = new Pose2d(7.039, 5.897, Rotation2d.fromDegrees(60));
+    public static final Pose2d RIGHT_BLUE = new Pose2d(6.908, 2.110, Rotation2d.fromDegrees(-60));
     public static final Pose2d CENTER_BLUE = new Pose2d(BLUE_X, 4.0, Rotation2d.fromDegrees(0));
 
     public static final double Elevator_top_algae = 0.0;

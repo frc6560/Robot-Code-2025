@@ -67,7 +67,6 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.defer(() -> Commands.sequence(
-                getResetGyro(FieldConstants.getRight(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
@@ -83,7 +82,6 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getLeft(alliance),
             Commands.defer(() -> Commands.sequence(
-                getResetGyro(FieldConstants.getLeft(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
@@ -99,8 +97,6 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.defer(() -> Commands.sequence(
-                Commands.runOnce(() -> drivetrain.updateOdometryWithVision("limelight-right")),
-                // getResetGyro(FieldConstants.getRight(alliance)),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
                 scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
@@ -116,8 +112,6 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getLeft(alliance),
             Commands.defer(() -> Commands.sequence(
-                // getResetGyro(FieldConstants.getLeft(alliance)),
-                Commands.runOnce(() -> drivetrain.updateOdometryWithVision("limelight-right")),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
