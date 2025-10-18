@@ -74,8 +74,8 @@ public final class Constants {
       // C + 35.0 = -215.6 + 360
 
       public static final double STOW = 90.0;
-      public static final double PICKUP = 225;  
-      public static final double L1 = 200; 
+      public static final double PICKUP = 215;  
+      public static final double L1 = 200; // 215
       public static final double L2 = 80.0; // -215.6, -223 dunk
       public static final double L4 = 40.0; // good
 
