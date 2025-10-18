@@ -166,7 +166,7 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-    LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getOdometryHeading().getDegrees(),0,0,0,0,0);
+    LimelightHelpers.SetRobotOrientation("limelight-left", swerveDrive.getOdometryHeading().getDegrees(),0,0,0,0,0);
     PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
     if (limelightPoseEstimate == null) return;
 
@@ -569,7 +569,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void resetOdometryToLimelight() {
-    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limlight-right");
     if (poseEstimate == null) return;
     
     Pose2d pose = poseEstimate.pose;
