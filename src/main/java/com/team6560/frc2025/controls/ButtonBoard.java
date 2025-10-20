@@ -75,6 +75,6 @@ public class ButtonBoard {
     }
 
     public boolean getIntake(){
-        return buttonBoard_2.getRawButton(9);
+        return buttonBoard_2.getRawButton(1);
     }
 }
