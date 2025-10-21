@@ -86,7 +86,7 @@ public class CoralScoreCommandFactory{
                     Commands.parallel(
                         alignToTagCommand(side),
                         getActuateCommand(elevatorTarget, wristTarget)
-                    ).withTimeout(8), //2
+                    ).withTimeout(3), //2
                     getScoreCommand(), getDeactuationCommand()
                 ).onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
                 .finallyDo(
@@ -110,7 +110,7 @@ public class CoralScoreCommandFactory{
                             getActuateCommand(elevatorTarget, wristTarget)
                         ), 
                         getScoreCommand()
-                    ).withTimeout(5)
+                    ).withTimeout(2)
                     .onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
                     .finallyDo(
                     () -> {drivetrain.drive(new ChassisSpeeds());}
