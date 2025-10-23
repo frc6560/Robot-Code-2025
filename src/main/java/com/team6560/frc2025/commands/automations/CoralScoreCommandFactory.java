@@ -87,8 +87,8 @@ public class CoralScoreCommandFactory{
                         alignToTagCommand(side),
                         getActuateCommand(elevatorTarget, wristTarget)
                     ).withTimeout(3), 
-                    getScoreCommand(), getDeactuationCommand()
-                ).onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
+                    getScoreCommand(), getDeactuationCommand()             
+                   ).onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
                 .finallyDo(
                     () -> {drivetrain.drive(new ChassisSpeeds());}
                 );
@@ -237,6 +237,7 @@ public class CoralScoreCommandFactory{
             },
             (interrupted) -> {},
             () ->  Math.abs(elevator.getElevatorHeight() - elevatorTarget) < ElevatorConstants.kElevatorTolerance
+                    && Math.abs(wrist.getWristAngle() - wristTarget) - 240 < WristConstants.kWristTolerance
         );
         return actuateToPosition;
     }
@@ -258,7 +259,7 @@ public class CoralScoreCommandFactory{
             },
             () -> false
         );
-        return dunkAndScore.withTimeout(0.25);
+        return dunkAndScore.withTimeout(0.3);
     }
 
     /** Deactuates the superstructure in teleop for driver QOL */

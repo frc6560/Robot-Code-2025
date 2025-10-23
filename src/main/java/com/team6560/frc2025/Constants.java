@@ -116,12 +116,12 @@ public final class Constants {
     public static final int CANCODER_ID = 17; 
 
     public static final double GEAR_RATIO = 108;
+    public static final double kWristTolerance = 1.5;
 
     public static final double UPPER_SOFT_BOUND = 254.0; 
     public static final double LOWER_SOFT_BOUND = -5.0;
 
     public static final int LIMIT_SWITCH_PORT_ID = 19;
-    public static final double kWristTolerance = 8.0;
     public static final class WristStates {
       public static final double STOW = 90.0;
       public static final double PICKUP = 225;  
