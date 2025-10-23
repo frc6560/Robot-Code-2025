@@ -273,6 +273,7 @@ public class CoralScoreCommandFactory{
                         },
                         (interrupted) -> {},
                         () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < ElevatorConstants.kElevatorTolerance) 
+                        && Math.abs(wrist.getWristAngle() - wristTarget) - 240 < WristConstants.kWristTolerance
         );
         return deactuateSuperstructure.withTimeout(0.5);
     }
