@@ -591,9 +591,10 @@ public class SwerveSubsystem extends SubsystemBase
     Pose2d pose = poseEstimate.pose;
 
     if (pose == null || pose.equals(emptyPose)) return;
-
-    resetOdometry(pose);
-    if(!DriverStation.isTeleop()) swerveDrive.setGyro(new Rotation3d(0, 0, pose.getRotation().getRadians()));
+    if(!DriverStation.isTeleop()){
+      resetOdometry(pose);
+      swerveDrive.setGyro(new Rotation3d(0, 0, pose.getRotation().getRadians()));
+    }
   }
 
   /**
