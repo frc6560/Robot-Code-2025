@@ -168,11 +168,6 @@ public class RobotContainer {
         , Set.of(ballGrabber)).finallyDo((interrupted) -> {
           ballGrabber.stop();
         }));
-    
-    intakeTrigger.whileTrue(Commands.defer(
-      () -> new RunCommand(
-        () -> pipeGrabber.runIntake(), pipeGrabber), 
-      Set.of(wrist, elevator, drivebase, pipeGrabber)));
 
     l1Trigger.whileTrue(Commands.run(() -> wrist.setMotorPosition(WristConstants.WristStates.L1)));
     l2BallTrigger.whileTrue(Commands.run(() -> {
