@@ -292,6 +292,11 @@ public class CoralScoreCommandFactory{
         );
     }
 
+    public boolean isTagVisible(ReefSide side){
+        String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
+        return LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0;
+    }
+
     /** Sets the target for the robot, including target pose, elevator height, and arm angle in auto*/
     public Pose2d getTarget(ReefIndex index, ReefSide side){
         DriverStation.Alliance alliance;

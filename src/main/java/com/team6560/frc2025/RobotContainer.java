@@ -156,8 +156,14 @@ public class RobotContainer {
     );
 
     autoAlignTrigger.onTrue(Commands.defer(
-      () -> scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide()), 
-      Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset()));
+      () -> {
+        if(!scoreFactory.isTagVisible(locationManager.getReefSide())){
+          System.out.println("Failed to auto align");
+          return Commands.none();
+        }
+        return scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide());
+      }, Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset())
+    );
 
     ballEjectTrigger.whileTrue(Commands.defer(
       () -> Commands.either(
