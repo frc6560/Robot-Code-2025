@@ -97,13 +97,13 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getRight(alliance),
             Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4)
+                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4)
+                // new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+                // scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
+                // new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+                // scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
+                // new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+                // scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4)
             ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
