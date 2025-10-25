@@ -36,6 +36,9 @@ public class PipeGrabberCommand extends Command {
             } else{
                 grabber.stop();
             }
+            if(board.getIntake()){
+                grabber.runIntake();
+            }
        }
     }
 
