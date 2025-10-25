@@ -160,31 +160,41 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-
+  private static final String LIMELIGHT_LEFT = "limelight-left";
+  private static final String LIMELIGHT_RIGHT = "limelight-right";
   private Pose2d emptyPose = new Pose2d();
 
   @Override
-  public void periodic()
-  {
-    LimelightHelpers.SetRobotOrientation("limelight-left", swerveDrive.getOdometryHeading().getDegrees(),0,0,0,0,0);
-    PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+  public void periodic() {
+      
+      LimelightHelpers.SetRobotOrientation(LIMELIGHT_LEFT, swerveDrive.getOdometryHeading().getDegrees()
+      , 0, 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation(LIMELIGHT_RIGHT, swerveDrive.getOdometryHeading().getDegrees()
+      , 0, 0, 0, 0, 0);
+    
+      helper_processLimelight(LIMELIGHT_LEFT);
+      helper_processLimelight(LIMELIGHT_RIGHT);
+    
+      swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
+      swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
+      swerveDrive.field.setRobotPose(this.getPose());
+  }
+
+  private void helper_processLimelight(String limelightName) {
+    PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
     if (limelightPoseEstimate == null) return;
 
     Pose2d limelightPose = limelightPoseEstimate.pose;
     if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
 
     double latency = limelightPoseEstimate.latency / 1000;
-
-    swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
-    swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
-    swerveDrive.field.setRobotPose(this.getPose());
-
     double timestampSeconds = Timer.getFPGATimestamp() - latency;
       
-    if(timestampSeconds > 0){
-      swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
+    if (timestampSeconds > 0) {
+        swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
     }
   }
+
 
   Pose2d getClosestTargetPoseLeft() {
     return getPose().nearest(targetPose2dsLeft);
@@ -195,8 +205,7 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   @Override
-  public void simulationPeriodic()
-  {
+  public void simulationPeriodic() {
   }
 
   /**
