@@ -109,9 +109,9 @@ public class CoralScoreCommandFactory{
                         Commands.parallel(
                             alignToTagCommand(side), 
                             getActuateCommand(elevatorTarget, wristTarget)
-                        ), 
+                        ).withTimeout(2), 
                         getScoreCommand()
-                    ).withTimeout(2)
+                    )
                     .onlyWhile(() -> (LimelightHelpers.getTV(limelightName) && LimelightHelpers.getTA(limelightName) > 0.0))
                     .finallyDo(
                     () -> {drivetrain.drive(new ChassisSpeeds());}
