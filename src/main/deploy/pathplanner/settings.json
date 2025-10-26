@@ -3,9 +3,10 @@
   "robotLength": 0.838,
   "holonomicMode": true,
   "pathFolders": [
+    "4pleft",
     "HueAuto2.5Bottom",
     "HueAuto2.5Top",
-    "4pleft"
+    "4pright"
   ],
   "autoFolders": [
     "AeroAutoNoProcessor",
