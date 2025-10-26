@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.056,
-        "y": 7.5440000000000005
+        "x": 1.336,
+        "y": 7.263999999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.938432972420265,
-        "y": 7.147391426185369
+        "x": 2.218432972420265,
+        "y": 6.8673914261853675
       },
       "isLocked": false,
-      "linkedName": "4pleftintake"
+      "linkedName": "4pieceintakestart"
     },
     {
       "anchor": {
