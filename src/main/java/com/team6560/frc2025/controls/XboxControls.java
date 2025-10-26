@@ -54,8 +54,4 @@ public class XboxControls {
     public boolean runGrabberOuttake() {
       return firstXbox.getLeftTriggerAxis() > 0.25;
     }
-
-    public boolean goToPlacePos() {
-      return secondXbox.getLeftBumperButton();
-    }
 }

@@ -3,8 +3,9 @@
   "robotLength": 0.838,
   "holonomicMode": true,
   "pathFolders": [
+    "HueAuto2.5Bottom",
     "HueAuto2.5Top",
-    "HueAuto2.5Bottom"
+    "4pleft"
   ],
   "autoFolders": [
     "KianBottom",

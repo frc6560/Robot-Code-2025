@@ -66,45 +66,32 @@ public class AutoFactory {
     Pair<Pose2d, Command> getFourPieceBackRight(){
         return Pair.of(
             FieldConstants.getRight(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     } 
 
     Pair<Pose2d, Command> getFourPieceBackLeft(){
         return Pair.of(
             FieldConstants.getLeft(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
-        );
-    }
-
-    Pair<Pose2d, Command> getFourPieceRight(){
-        return Pair.of(
-            FieldConstants.getRight(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4)
-                // new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                // scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                // new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                // scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                // new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                // scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     }
 
@@ -112,27 +99,42 @@ public class AutoFactory {
         return Pair.of(
             FieldConstants.getLeft(alliance),
             Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4)
+                scoreFactory.getScoreAuto(ReefSide.LEFT, "4pl1", ReefLevel.L4),
+                new IntakeCommand(wrist, elevator, drivetrain, "4pl2"),
+                scoreFactory.getScoreAuto(ReefSide.RIGHT, "4pl3", ReefLevel.L4),
+                new IntakeCommand(wrist, elevator, drivetrain, "4pl4"),
+                scoreFactory.getScoreAuto(ReefSide.LEFT, "4pl5", ReefLevel.L4)
             ), Set.of(wrist, elevator, grabber, drivetrain))
+        );
+    }
+
+    Pair<Pose2d, Command> getFourPieceRight(){
+        return Pair.of(
+            FieldConstants.getRight(alliance),
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     }
 
     Pair<Pose2d, Command> getThreePieceBackRight(){
         return Pair.of(
             FieldConstants.getFarRight(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.RIGHT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     }
 
@@ -140,13 +142,14 @@ public class AutoFactory {
     Pair<Pose2d, Command> getThreePieceBackLeft(){
         return Pair.of(
             FieldConstants.getFarLeft(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_RIGHT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.FAR_RIGHT, ReefLevel.L4)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     }
 
@@ -154,25 +157,27 @@ public class AutoFactory {
     Pair<Pose2d, Command> getThreePieceCenter(){
         return Pair.of(
             FieldConstants.getCenter(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.FAR_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     }
 
     Pair<Pose2d, Command> getTest(){
         return Pair.of(
             FieldConstants.getRight(alliance),
-            Commands.defer(() -> Commands.sequence(
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
-                scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3)
-            ), Set.of(wrist, elevator, grabber, drivetrain))
+            // Commands.defer(() -> Commands.sequence(
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
+            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.TOP_LEFT, ReefLevel.L4),
+            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.TEST),
+            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.TOP_LEFT, ReefLevel.L3)
+            // ), Set.of(wrist, elevator, grabber, drivetrain))
+            IDLE
         );
     }
 

@@ -96,7 +96,7 @@ public class CoralScoreCommandFactory{
             }, Set.of(drivetrain, wrist, elevator, grabber));
     }
 
-    public Command getScoreAuto(ReefSide side, ReefIndex index, ReefLevel level){
+    public Command getScoreAuto(ReefSide side, String pathFileName, ReefLevel level){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
         Pair<Double, Double> superstructureTargets = getSuperstructureTargets(level, false);
         wristTarget = superstructureTargets.getFirst();
@@ -104,7 +104,7 @@ public class CoralScoreCommandFactory{
         return Commands.defer(
             () -> {
                 return Commands.sequence(
-                    getDriveToPrescore(side, index),
+                    getDriveToPrescore(pathFileName),
                     Commands.sequence(
                         Commands.parallel(
                             alignToTagCommand(side), 
@@ -132,20 +132,9 @@ public class CoralScoreCommandFactory{
     }
 
     /** Drives close to our target pose during auto */
-    public Command getDriveToPrescore(ReefSide side, ReefIndex index){
-        Pose2d targetPose = getPrescoreTarget(getTarget(index, side));
-        path = new AutoAlignPath(
-            drivetrain.getPose(),
-            targetPose,
-            DrivebaseConstants.kMaxAutoVelocity,
-            DrivebaseConstants.kMaxAutoAcceleration,
-            DrivebaseConstants.kMaxOmega,
-            DrivebaseConstants.kMaxAlpha);
-        final Command driveToPrescore = Commands.parallel(getFollowPath(path, DrivebaseConstants.kHandoffVelocity), getGrabberIntake()).until(
-            () -> drivetrain.getPose().getTranslation().getDistance(targetPose.getTranslation()) < 0.25
-            && Math.abs(drivetrain.getPose().getRotation().getRadians() - targetPose.getRotation().getRadians()) < 0.1
-        ).finallyDo(() -> grabber.stop());
-        return driveToPrescore;
+    public Command getDriveToPrescore(String pathFileName){
+        Command pathCommand = drivetrain.getAutonomousCommand(pathFileName);
+        return pathCommand;
     }
 
     /** Actually drives to our target. */
