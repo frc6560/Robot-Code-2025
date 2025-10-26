@@ -101,8 +101,8 @@ public class AutoFactory {
             Commands.defer(() -> Commands.sequence(
                 scoreFactory.getScoreAuto(ReefSide.RIGHT, "4pl1", ReefLevel.L4),
                 new IntakeCommand(wrist, elevator, drivetrain, "4pl2"),
-                scoreFactory.getScoreAuto(ReefSide.LEFT, "4pl3", ReefLevel.L4),
-                new IntakeCommand(wrist, elevator, drivetrain, "4pl4")
+                scoreFactory.getScoreAuto(ReefSide.LEFT, "4pl3", ReefLevel.L4)
+                // new IntakeCommand(wrist, elevator, drivetrain, "4pl4")
                 // scoreFactory.getScoreAuto(ReefSide.LEFT, "4pl5", ReefLevel.L4)
             ), Set.of(wrist, elevator, grabber, drivetrain))
         );
