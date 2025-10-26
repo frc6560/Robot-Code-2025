@@ -128,7 +128,7 @@ public class CoralScoreCommandFactory{
     public Command getGrabberIntake(){
         return new RunCommand(
             () -> grabber.runIntakeMaxSpeed(),
-            grabber).withTimeout(0.4);
+            grabber).withTimeout(0.8);
     }
 
     /** Drives close to our target pose during auto */
