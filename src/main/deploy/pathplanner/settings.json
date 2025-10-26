@@ -8,8 +8,9 @@
     "4pleft"
   ],
   "autoFolders": [
+    "AeroAutoNoProcessor",
     "KianBottom",
-    "AeroAutoNoProcessor"
+    "New Folder"
   ],
   "defaultMaxVel": 5.0,
   "defaultMaxAccel": 3.7,
