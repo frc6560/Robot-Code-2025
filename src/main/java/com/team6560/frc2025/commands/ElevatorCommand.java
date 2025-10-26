@@ -29,46 +29,13 @@ public class ElevatorCommand extends Command {
 
     @Override
     public void execute() {
-
-        if (controls.shiftedControls()) {
-            if (controls.goToL2()) {
-                targetState = State.S_L2;
-            } else if (controls.goToL3()) {
-                targetState = State.S_L3;
-            } else if (controls.goToL4()) {
-                targetState = State.S_L4;
-            } else if (controls.goToStow()) {
-                targetState = State.S_STOW;
-            }
-        } else {
-            if (controls.goToL1() || controls.goToPickup() || controls.goToStow()) {
+            if (controls.goToPickup()) {
                 targetState = State.STOW;
-            } else if (controls.goToL2()) {
-                targetState = State.L2;
-            } else if (controls.goToL3()) {
-                targetState = State.L3;
-            } else if (controls.goToL4()) {
-                targetState = State.L4;
-            }
-        }
+            } 
 
         if (targetState == State.STOW) {
             targetrotelev = ElevatorConstants.ElevatorStates.STOW;
-        } else if (targetState == State.L2) {
-            targetrotelev = ElevatorConstants.ElevatorStates.L2;
-        } else if (targetState == State.L3) {
-            targetrotelev = ElevatorConstants.ElevatorStates.L3;
-        } else if (targetState == State.L4) {
-            targetrotelev = ElevatorConstants.ElevatorStates.L4;
-        } else if (targetState == State.S_L2) {
-            targetrotelev = ElevatorConstants.ElevatorStates.S_L2;
-        } else if (targetState == State.S_L3) {
-            targetrotelev = ElevatorConstants.ElevatorStates.S_L3;
-        } else if (targetState == State.S_L4) {
-            targetrotelev = ElevatorConstants.ElevatorStates.S_L4;
-        } else if (targetState == State.S_STOW) {
-            targetrotelev = ElevatorConstants.ElevatorStates.S_STOW;
-        }
+        } 
 
         elevator.setElevatorPosition(targetrotelev);
     }

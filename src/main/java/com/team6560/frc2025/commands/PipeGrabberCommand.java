@@ -25,7 +25,6 @@ public class PipeGrabberCommand extends Command {
     
     @Override
     public void execute() {
-        if (!controls.shiftedControls()) {
             if (controls.runGrabberOuttake()) {
                 if(!board.getL1()){
                     grabber.runGrabberOuttake();
@@ -39,7 +38,6 @@ public class PipeGrabberCommand extends Command {
             if(board.getIntake()){
                 grabber.runIntake();
             }
-       }
     }
 
     @Override

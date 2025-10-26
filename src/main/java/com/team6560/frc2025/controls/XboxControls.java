@@ -45,31 +45,6 @@ public class XboxControls {
     }
 
     // // --- SUPERSTRUCTURE ---
-// note that this code is deprecated
-    public boolean goToL1(){
-        return secondXbox.getAButton();
-    }
-
-    public boolean goToL2(){
-        return secondXbox.getXButton();
-    }
-
-    public boolean goToL3(){
-        return secondXbox.getBButton();
-    }
-
-    public boolean goToL4(){
-        return secondXbox.getYButton();
-    }
-
-    public boolean shiftedControls(){
-      return secondXbox.getRightBumperButton();
-    }
-
-    public boolean goToStow(){
-        return secondXbox.getBackButton(); // TODO change to correct button
-    }
-
     public boolean goToPickup(){
         return firstXbox.getRightTriggerAxis() > 0.25;
     }

@@ -135,10 +135,6 @@ public class RobotContainer {
       () -> (buttonBoard.getIntake() && !locationManager.inReefMode())
     );
 
-    Trigger intakeTrigger = new Trigger(
-      () -> (buttonBoard.getIntake() && locationManager.inReefMode())
-    );
-
     Trigger l1Trigger = new Trigger(
       () -> buttonBoard.getL1() && locationManager.inReefMode()
     );
