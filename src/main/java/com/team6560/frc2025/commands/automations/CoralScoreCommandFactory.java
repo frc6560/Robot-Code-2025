@@ -128,13 +128,13 @@ public class CoralScoreCommandFactory{
     public Command getGrabberIntake(){
         return new RunCommand(
             () -> grabber.runIntakeMaxSpeed(),
-            grabber);
+            grabber).withTimeout(0.4);
     }
 
     /** Drives close to our target pose during auto */
     public Command getDriveToPrescore(String pathFileName){
         Command pathCommand = drivetrain.getAutonomousCommand(pathFileName);
-        return pathCommand;
+        return Commands.parallel(getGrabberIntake(), pathCommand);
     }
 
     /** Actually drives to our target. */
