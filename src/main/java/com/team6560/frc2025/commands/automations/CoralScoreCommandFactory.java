@@ -170,8 +170,8 @@ public class CoralScoreCommandFactory{
     public Command alignToTagCommand(ReefSide side){
         String limelightName = (side == ReefSide.LEFT) ? "limelight-right" : "limelight-left";
 
-        double taTarget = (side == ReefSide.LEFT) ? 8.52 : 19.3; // TODO: no magic numbers
-        double txTarget = (side == ReefSide.LEFT) ? 16.87 : 9.91;
+        double taTarget = (side == ReefSide.LEFT) ? 8.63 : 20.021; // TODO: no magic numbers
+        double txTarget = (side == ReefSide.LEFT) ? 22.61 : 8.04;
 
         double xTarget = 1.0 / Math.sqrt(taTarget); // TODO: possibly add a lookup table
         double yTarget = Math.tan(Units.degreesToRadians(txTarget)) * xTarget;

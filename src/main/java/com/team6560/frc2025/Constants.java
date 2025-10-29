@@ -98,8 +98,8 @@ public final class Constants {
     public static final class ElevatorStates {
 
       public static final double STOW = 0.4;
-      public static final double L2 = 2.04; 
-      public static final double L3 = 8.155;
+      public static final double L2 = 1.79; 
+      public static final double L3 = 7.905;
       public static final double L4 = 19.3;  // prior value: 18.9
 
       public static final double S_STOW = 0.4;
