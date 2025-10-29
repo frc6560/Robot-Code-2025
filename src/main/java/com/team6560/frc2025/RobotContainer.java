@@ -23,6 +23,8 @@ import com.team6560.frc2025.autonomous.Auto;
 import com.team6560.frc2025.autonomous.AutoFactory;
 import com.team6560.frc2025.autonomous.AutoRoutines;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -211,7 +213,8 @@ public class RobotContainer {
   }
   public void resetHeading() {
     // TODO Auto-generated method stub
-    this.drivebase.zeroGyro();
+    drivebase.resetOdometry(new Pose2d(drivebase.getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+    drivebase.zeroGyro();
   }
 
   /** Subsystem getters */
