@@ -113,16 +113,14 @@ public class AutoFactory {
     Pair<Pose2d, Command> getFourPieceRight(){
         return Pair.of(
             FieldConstants.getRight(alliance),
-            // Commands.defer(() -> Commands.sequence(
-            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4),
-            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-            //     scoreFactory.getScoreAuto(ReefSide.RIGHT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_RIGHT, ReefLevel.L4),
-            //     new IntakeCommand(wrist, elevator, drivetrain, PickupLocations.LEFT),
-            //     scoreFactory.getScoreAuto(ReefSide.LEFT, ReefIndex.BOTTOM_LEFT, ReefLevel.L4)
-            // ), Set.of(wrist, elevator, grabber, drivetrain))
-            IDLE
+            Commands.defer(() -> Commands.sequence(
+                scoreFactory.getScoreAuto(ReefSide.LEFT, "4pr1", ReefLevel.L4),
+                new IntakeCommand(wrist, elevator, drivetrain, "4pr2"),
+                scoreFactory.getScoreAuto(ReefSide.RIGHT, "4pr3", ReefLevel.L4),
+                new IntakeCommand(wrist, elevator, drivetrain, "4pr4"),
+                scoreFactory.getScoreAuto(ReefSide.LEFT, "4pr5", ReefLevel.L4),
+                new IntakeCommand(wrist, elevator, drivetrain, "4pr6")
+            ), Set.of(wrist, elevator, grabber, drivetrain))
         );
     }
 
