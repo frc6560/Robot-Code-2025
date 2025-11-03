@@ -1,7 +1,7 @@
 # Charging Champions Robot Code 2025
 [![Build Robot Code](https://github.com/frc6560/2025season/actions/workflows/main.yml/badge.svg)](https://github.com/frc6560/2025season/actions/workflows/main.yml)
 
-This code is the Charging Champions robot code for 2025. 
+This is the Charging Champions robot code for 2025. 
 
 ## Notable Features:
 - Fully automated align to tag and scoring command on L2-L4
@@ -9,6 +9,11 @@ This code is the Charging Champions robot code for 2025.
 - Commands-based architecture
 - Vision relocalization with AprilTags
 
+## How to Run
+- Clone the repository
+- Run `./gradlew` to donwload gradle and all necessary vendor deps
+- Run `./gradlew deploy` to deploy to robot on any Unix like terminal
+- Have fun!
 
 ## Authors
 
