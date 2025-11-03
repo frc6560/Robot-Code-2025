@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6516893974735194,
-        "y": 0.800869025180657
+        "x": 1.4432565789473681,
+        "y": 0.8594572368421052
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5518597533762986,
-        "y": 3.1964195170788052
+        "x": 3.351231991760484,
+        "y": 3.1204127252569442
       },
       "isLocked": false,
       "linkedName": "3pStationIntake"
     },
     {
       "anchor": {
-        "x": 3.442648799400272,
-        "y": 3.1590362658537594
+        "x": 3.42,
+        "y": 3.1
       },
       "prevControl": {
-        "x": 1.9397234647639028,
-        "y": 1.163539540992
+        "x": 1.4798511832504813,
+        "y": 0.8968036035684812
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 3.75,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.30783401924836
+    "rotation": -125.00000000000001
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

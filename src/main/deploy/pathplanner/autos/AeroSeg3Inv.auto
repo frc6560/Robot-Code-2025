@@ -31,13 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Aero3pSeg5"
+            "pathName": "Aero3Part5"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Aero3pSeg6"
+            "pathName": "Aero3Part6"
           }
         }
       ]

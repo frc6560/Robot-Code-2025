@@ -1,37 +1,44 @@
 package com.team6560.frc2025;
 
-import com.pathplanner.lib.auto.NamedCommands;
 import com.team6560.frc2025.Constants.ElevatorConstants;
 import com.team6560.frc2025.Constants.OperatorConstants;
+import com.team6560.frc2025.Constants.WristConstants;
 import com.team6560.frc2025.commands.BallGrabberCommand;
 import com.team6560.frc2025.commands.ClimbCommand;
 import com.team6560.frc2025.commands.ElevatorCommand;
 import com.team6560.frc2025.commands.PipeGrabberCommand;
 import com.team6560.frc2025.commands.WristCommand;
-import com.team6560.frc2025.commands.auto.*;
+import com.team6560.frc2025.commands.automations.CoralScoreCommandFactory;
+import com.team6560.frc2025.controls.ButtonBoard;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.BallGrabber;
 import com.team6560.frc2025.subsystems.Climb;
 import com.team6560.frc2025.subsystems.Elevator;
 import com.team6560.frc2025.subsystems.PipeGrabber;
 import com.team6560.frc2025.subsystems.Wrist;
 import com.team6560.frc2025.subsystems.swervedrive.SwerveSubsystem;
+import com.team6560.frc2025.utility.Enums.ReefLevel;
+import com.team6560.frc2025.subsystems.LocationManager;
+import com.team6560.frc2025.autonomous.Auto;
+import com.team6560.frc2025.autonomous.AutoFactory;
+import com.team6560.frc2025.autonomous.AutoRoutines;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.path.TravelingSalesman;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.io.File;
+import java.util.Set;
+
 import com.frc3481.swervelib.SwerveInputStream;
 
 // took out subsystems + added camera
@@ -40,9 +47,10 @@ public class RobotContainer {
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final XboxController firstXbox = new XboxController(0);
   final XboxController secondXbox = new XboxController(1);
+  final ButtonBoard buttonBoard = new ButtonBoard(1, 2); 
 
-  private final ManualControls controls = new ManualControls(firstXbox, secondXbox);
-
+  private final XboxControls controls = new XboxControls(firstXbox, secondXbox);
+  private final LocationManager locationManager = new LocationManager(buttonBoard);
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
   private final Climb climb;
@@ -51,11 +59,13 @@ public class RobotContainer {
   private final PipeGrabberCommand pipeGrabberCommand;
   private final BallGrabber ballGrabber;
   private final BallGrabberCommand ballGrabberCommand;
-
   private final Wrist wrist;
   private final Elevator elevator = new Elevator();
 
-  private final SendableChooser<Command> autoChooser;
+  private final CoralScoreCommandFactory scoreFactory;
+
+  private final SendableChooser<Auto> autoChooser;
+  private final AutoFactory factory;
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(
     drivebase.getSwerveDrive(),
@@ -72,9 +82,6 @@ public class RobotContainer {
     .allianceRelativeControl(true);; 
 
   public RobotContainer() {
-
-    CameraServer.startAutomaticCapture(0);
-
     climb = new Climb(controls);
     climbCommand = new ClimbCommand(climb, controls);
     climb.setDefaultCommand(climbCommand);
@@ -84,128 +91,119 @@ public class RobotContainer {
     ballGrabber.setDefaultCommand(ballGrabberCommand);
 
     pipeGrabber = new PipeGrabber();
-    pipeGrabberCommand = new PipeGrabberCommand(pipeGrabber, controls);
+    pipeGrabberCommand = new PipeGrabberCommand(pipeGrabber, controls, buttonBoard);
     pipeGrabber.setDefaultCommand(pipeGrabberCommand);
 
     wrist = new Wrist();
     wrist.setDefaultCommand(new WristCommand(wrist, controls));
     elevator.setDefaultCommand(new ElevatorCommand(elevator, controls));
 
-    NamedCommands.registerCommand("Scoring L4", new ScoringL4(wrist, elevator, pipeGrabber));
-    NamedCommands.registerCommand("Station Intake", new StationIntake(pipeGrabber));
-    NamedCommands.registerCommand("TravelingL3", new L3Travel(wrist, elevator));
+    scoreFactory = new CoralScoreCommandFactory(wrist, elevator, pipeGrabber, drivebase, ballGrabber);
+
     configureBindings();
 
-    autoChooser = new SendableChooser<Command>();
-    // autoChooser.addOption("1p Mid", get1PAuto());    
-    autoChooser.addOption("No Auto", null);
-    autoChooser.addOption("Taxi Auto", getTaxiAuto());
-    autoChooser.addOption("HueAuto 2.5", getHue25Auto());
-    autoChooser.addOption("Auto align test", getAutoAlignTestAuto());
-    autoChooser.addOption("Score Auto Test", getScoreAutoTest());
-    autoChooser.addOption("Aero 3 Processor", getAero3PAuto());
-    autoChooser.addOption("Aero 3 No Processor", getAero3pAutoNoProcessor());
-    autoChooser.addOption("Bump Auto", getAeroBumpAuto());
+    factory = new AutoFactory(
+      null,
+      wrist,
+      elevator,
+      drivebase,
+      pipeGrabber
+    );
 
-    autoChooser.setDefaultOption("1p Mid", get1PAuto());
+    autoChooser = new SendableChooser<Auto>();
+
+    for(AutoRoutines auto : AutoRoutines.values()) {
+      Auto autonomousRoutine = new Auto(auto, factory);
+      if(auto == AutoRoutines.TEST){
+        autoChooser.setDefaultOption(autonomousRoutine.getName(), autonomousRoutine);
+      }
+      else {
+        autoChooser.addOption(autonomousRoutine.getName(), autonomousRoutine);
+      }
+    }
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
-  private void configureBindings() { 
 
+  private void configureBindings() { 
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
+    // Trigger for auto align
+    Trigger autoAlignTrigger = new Trigger(
+      () -> (locationManager.hasTarget() && locationManager.inReefMode())
+    );
+
+    Trigger ballEjectTrigger = new Trigger(
+      () -> (buttonBoard.getIntake() && !locationManager.inReefMode())
+    );
+
+    Trigger l1Trigger = new Trigger(
+      () -> buttonBoard.getL1() && locationManager.inReefMode()
+    );
+
+    Trigger l2BallTrigger = new Trigger(
+      () -> buttonBoard.getL2() && buttonBoard.getShift()
+    );
+
+    Trigger l3BallTrigger = new Trigger(
+      () -> buttonBoard.getL3() && buttonBoard.getShift()
+    );
+
+    Trigger l4BallTrigger = new Trigger(
+      () -> buttonBoard.getL4() && buttonBoard.getShift()
+    );
+
+    autoAlignTrigger.onTrue(Commands.defer(
+      () -> {
+        if(!scoreFactory.isTagVisible(locationManager.getReefSide())){
+          System.out.println("Failed to auto align");
+          return Commands.none();
+        }
+        return scoreFactory.getScoreTeleop(locationManager.getCurrentReefLevel(), locationManager.getReefSide());
+      }, Set.of(drivebase, wrist, elevator, pipeGrabber)).finallyDo((interrupted) -> locationManager.reset())
+    );
+
+    ballEjectTrigger.whileTrue(Commands.defer(
+      () -> Commands.either(
+        new RunCommand(() -> ballGrabber.runOuttake(), ballGrabber),
+        new RunCommand(() -> ballGrabber.runIntake(), ballGrabber),
+        () -> (locationManager.getCurrentReefLevel() == null || 
+                locationManager.getCurrentReefLevel() == ReefLevel.L4))
+        , Set.of(ballGrabber)).finallyDo((interrupted) -> {
+          ballGrabber.stop();
+        }));
+
+    l1Trigger.whileTrue(Commands.run(() -> wrist.setMotorPosition(WristConstants.WristStates.L1)));
+    l2BallTrigger.whileTrue(Commands.run(() -> {
+                                        wrist.setMotorPosition(WristConstants.WristStates.S_L2);
+                                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.S_L2);
+                                      }));
+    l3BallTrigger.whileTrue(Commands.run(() -> {
+                                        wrist.setMotorPosition(WristConstants.WristStates.S_L2);
+                                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.S_L3);
+                                      }));
+    l4BallTrigger.whileTrue(Commands.run(() -> {
+                                        wrist.setMotorPosition(WristConstants.WristStates.S_L4);
+                                        elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.S_L4);
+                                      }));
+    
     drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
     driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroNoAprilTagsGyro)));
-
-    driverXbox.b().onTrue((Commands.runOnce(drivebase::resetOdometryToLimelight)));
-
-    // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-    // driverXbox.b().whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    
-    //  driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-
-    // use auto align mechanism
-    driverXbox.x().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseLeft().schedule(), drivebase));
-
-    driverXbox.a().whileTrue(new RunCommand(() -> drivebase.driveToNearestPoseRight().schedule(), drivebase));
-
-
+    driverXbox.a().onTrue((Commands.runOnce(() -> drivebase.updateOdometryWithVision("limelight-right"))));
+    driverXbox.y().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
   }
 
-  public Command getAero3PAuto() {
-    return drivebase.getAutonomousCommand("Aero3pSeg1p")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg4p"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg5p"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg6p"));
-  }
-
-  public Command getAero3pAutoNoProcessor(){
-    return drivebase.getAutonomousCommand("Aero3p-1")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-2"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-3"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-4"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3p-5"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
-  }
-
-  public Command getAeroBumpAuto(){
-    return drivebase.getAutonomousCommand("Aero3pSeg1p")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg2p"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Aero3pSeg3p"))
-      .andThen(drivebase.getAutonomousCommand("AeroBump-4"))
-      .andThen(drivebase.getAutonomousCommand("AeroBump-5"));
+  public void elevL4BeginTele() { // values for auto (don't touch!)
+    elevator.setElevatorPosition(17.65);
+    wrist.setMotorPosition(40.0);
   }
 
   public void resetLLBeforeAuto() {
-    drivebase.resetOdometryToLimelight();
   }
 
-  public Command get1PAuto() {
-    return drivebase.getAutonomousCommand("Taxi Auto")
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
-  }
 
-  public Command getTestAuto(){
-    return drivebase.getAutonomousCommand("TestAuto");
-  }
-
-  public Command getHue25Auto() {
-    return drivebase.getAutonomousCommand("HueAuto2.5");
-  }
-
-  public Command getTaxiAuto() {
-    return drivebase.getAutonomousCommand("Taxi Auto");
-  }
-
-  public Command getScoreAutoTest(){
-    return new ScoringL4(wrist, elevator, pipeGrabber);
-  }
-
-  public Command getAutoAlignTestAuto() {
-    return drivebase.getAutonomousCommand("Auto align test")
-      // .alongWith(new L3Travel(wrist, elevator, 2.78))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Auto align test 2"))
-      .andThen(new StationIntake(pipeGrabber))
-      .andThen(drivebase.getAutonomousCommand("Auto align test 3"))
-      .andThen(new ScoringL4(wrist, elevator, pipeGrabber));
-  }
-
-  public Command getAutonomousCommand() {
+  public Auto getAutonomousCommand() {
     return autoChooser.getSelected();
   }
   
@@ -215,6 +213,44 @@ public class RobotContainer {
   }
   public void resetHeading() {
     // TODO Auto-generated method stub
-    this.drivebase.zeroGyro();
+    drivebase.resetOdometry(new Pose2d(drivebase.getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+    drivebase.zeroGyro();
+  }
+
+  /** Subsystem getters */
+  public SwerveSubsystem getDrivebase() {
+    return drivebase;
+  }
+
+  public Climb getClimb() {
+    return climb;
+  }
+
+  public PipeGrabber getPipeGrabber() {
+    return pipeGrabber;
+  }
+
+  public BallGrabber getBallGrabber() {
+    return ballGrabber;
+  }
+
+  public Wrist getWrist() {
+    return wrist;
+  }
+
+  public Elevator getElevator() {
+    return elevator;
+  }
+
+  public XboxControls getControls() {
+    return controls;
+  }
+
+  public ButtonBoard getButtonBoard() {
+    return buttonBoard;
+  }
+
+  public LocationManager getLocationManager() {
+    return locationManager;
   }
 }

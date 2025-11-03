@@ -1,10 +1,1 @@
-- faster grabber auto   DONE
-- L3 travel pose        
-- gradual/exponential function for changing height
-
-- slightly closer to reef
-- fix pickup angle
-- L3 travel
-
-- Make L4 sequential command
-- Test sequential command
+- switch a and b for auto align

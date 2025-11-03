@@ -1,7 +1,6 @@
 package com.team6560.frc2025.commands;
 
-import com.team6560.frc2025.ManualControls;
-import com.team6560.frc2025.Constants.ClimbConstants;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.Climb;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -10,9 +9,9 @@ public class ClimbCommand extends Command {
 
     private final Climb climb;
     // State targetState = State.UP;
-    private final ManualControls controls;
+    private final XboxControls controls;
 
-    public ClimbCommand(Climb climb, ManualControls controls) {
+    public ClimbCommand(Climb climb, XboxControls controls) {
         this.climb = climb;
         this.controls = controls;
 

@@ -1,15 +1,15 @@
 package com.team6560.frc2025.commands;
 
-import com.team6560.frc2025.ManualControls;
+import com.team6560.frc2025.controls.XboxControls;
 import com.team6560.frc2025.subsystems.BallGrabber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 public class BallGrabberCommand extends Command {
     
     final BallGrabber ballGrabber;
-    final ManualControls controls;
+    final XboxControls controls;
 
-    public BallGrabberCommand(BallGrabber grabber, ManualControls controls) {
+    public BallGrabberCommand(BallGrabber grabber, XboxControls controls) {
         this.ballGrabber = grabber;
         this.controls = controls;
         addRequirements(grabber);
@@ -22,18 +22,7 @@ public class BallGrabberCommand extends Command {
     
     @Override
     public void execute() {
-        if(controls.shiftedControls()){
-            if(controls.runGrabberIntake()){
-                ballGrabber.runIntake();
-            } else if(controls.runGrabberOuttake()){
-                ballGrabber.runOuttake();
-            } else {
-                ballGrabber.stop();
-            }
-        }
-        else{
-            ballGrabber.stop();
-        }
+        ballGrabber.stop();
     }
 
     @Override

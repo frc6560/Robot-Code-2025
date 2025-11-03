@@ -5,7 +5,6 @@
 package com.team6560.frc2025.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
-import static edu.wpi.first.units.Units.Rotation;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -13,50 +12,45 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.team6560.frc2025.Constants;
+import com.team6560.frc2025.Constants.DrivebaseConstants;
 import com.team6560.frc2025.utility.LimelightHelpers;
 import com.team6560.frc2025.utility.LimelightHelpers.PoseEstimate;
+import com.team6560.frc2025.utility.Setpoint;
 
 import edu.wpi.first.math.VecBuilder;
-// import edu.wpi.first.apriltag.AprilTagFieldLayout;
-// import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-// import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
+
 import com.frc3481.swervelib.SwerveController;
 import com.frc3481.swervelib.SwerveDrive;
 import com.frc3481.swervelib.SwerveDriveTest;
@@ -66,27 +60,48 @@ import com.frc3481.swervelib.parser.SwerveDriveConfiguration;
 import com.frc3481.swervelib.parser.SwerveParser;
 import com.frc3481.swervelib.telemetry.SwerveDriveTelemetry;
 import com.frc3481.swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
-import java.util.Set;
 
 public class SwerveSubsystem extends SubsystemBase
 {
 
   private final SwerveDrive swerveDrive;
 
-  private ArrayList<Pose2d> targetPose2dsLeft = new ArrayList<Pose2d>();
-  private ArrayList<Pose2d> targetPose2dsRight = new ArrayList<Pose2d>();
+  private final boolean visionDriveTest = true;
 
-  // private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  
+  // Values to tune 
 
-  // private final Field2d aprilTagField = new Field2d();
+  private final SimpleMotorFeedforward driveFF = new SimpleMotorFeedforward(DrivebaseConstants.kS, 
+                                                                            DrivebaseConstants.kV, 
+                                                                            DrivebaseConstants.kA);
 
-  private final boolean visionDriveTest = true; // don't actually need this but ok
+  Matrix<N3, N1> visionStdDevs = VecBuilder.fill(DrivebaseConstants.kStdvX,
+                                                 DrivebaseConstants.kStdvY, 
+                                                 DrivebaseConstants.kStdvTheta);
 
-  Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.08, 0.08, 2);
+  private final PIDController m_pidControllerX = new PIDController(DrivebaseConstants.kP_translation, 
+                                                            DrivebaseConstants.kI_translation, 
+                                                            DrivebaseConstants.kD_translation);
+  private final PIDController m_pidControllerY = new PIDController(DrivebaseConstants.kP_translation,
+                                                            DrivebaseConstants.kI_translation, 
+                                                            DrivebaseConstants.kD_translation);
+  private final PIDController m_pidControllerTheta = new PIDController(DrivebaseConstants.kP_rotation, 
+                                                                DrivebaseConstants.kI_rotation, 
+                                                                DrivebaseConstants.kD_rotation);
 
-  /**
+  private final PIDController m_pidControllerX_pose = new PIDController(DrivebaseConstants.kP_translation_pose, 
+                                                            DrivebaseConstants.kI_translation_pose, 
+                                                            DrivebaseConstants.kD_translation_pose);
+  private final PIDController m_pidControllerY_pose = new PIDController(DrivebaseConstants.kP_translation_pose,
+                                                            DrivebaseConstants.kI_translation_pose, 
+                                                            DrivebaseConstants.kD_translation_pose);
+  private final PIDController m_pidControllerTheta_pose = new PIDController(DrivebaseConstants.kP_rotation_pose, 
+                                                                DrivebaseConstants.kI_rotation_pose, 
+                                                                DrivebaseConstants.kD_rotation_pose);
+
+
+  /**\
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
@@ -111,45 +126,11 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,true,0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
-//    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
+    swerveDrive.replaceSwerveModuleFeedforward(driveFF);
     setMotorBrake(true);
     setupPathPlanner();
 
-    // Shuffleboard.getTab("Field").add(aprilTagField);
-
-    // for (int i = 0; i < targetPose2ds.size(); i++) {
-    //   aprilTagField.getObject("TargetPosition+" + i).setPose(targetPose2ds.get(i));
-    // }
-
-
     swerveDrive.setVisionMeasurementStdDevs(visionStdDevs);
-
-    // NOTE: These positions have basically zero offset
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.858,	5.303), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.589,	5.124), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082,	4.865), Rotation2d.fromDegrees(60)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.807,	5.031), Rotation2d.fromDegrees(60)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3,	3.549), Rotation2d.fromDegrees(0)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3,	3.892), Rotation2d.fromDegrees(0)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266,	2.741), Rotation2d.fromDegrees(300)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.553,	2.903), Rotation2d.fromDegrees(300)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064,	3.204), Rotation2d.fromDegrees(240)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.337,	3.029), Rotation2d.fromDegrees(240)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850,	4.478), Rotation2d.fromDegrees(180)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816,	4.143), Rotation2d.fromDegrees(180)));
-
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.887 - 8.577,	5.329), Rotation2d.fromDegrees(120)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.589 - 8.577,	5.124), Rotation2d.fromDegrees(120)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.082 - 8.577,	4.865), Rotation2d.fromDegrees(60)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.807 - 8.577,	5.031), Rotation2d.fromDegrees(60)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.549), Rotation2d.fromDegrees(0)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(14.3 - 8.577,	3.892), Rotation2d.fromDegrees(0)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(13.266 - 8.577,	2.741), Rotation2d.fromDegrees(300)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(13.553 - 8.577,	2.903), Rotation2d.fromDegrees(300)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(12.064 - 8.577,	3.204), Rotation2d.fromDegrees(240)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(12.337 - 8.577,	3.029), Rotation2d.fromDegrees(240)));
-    targetPose2dsLeft.add(new Pose2d(new Translation2d(11.850 - 8.577,	4.478), Rotation2d.fromDegrees(180)));
-    targetPose2dsRight.add(new Pose2d(new Translation2d(11.816 - 8.577,	4.143), Rotation2d.fromDegrees(180)));
   }
 
   /**
@@ -170,51 +151,49 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-  // static {
-
-  // }
-
-
-  private Pose2d emptyPose = new Pose2d();
-
   @Override
-  public void periodic()
-  {
-    LimelightHelpers.SetRobotOrientation("limelight", swerveDrive.getOdometryHeading().getDegrees(),0,0,0,0,0);
-    PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-    if (limelightPoseEstimate == null) return;
-
-    Pose2d limelightPose = limelightPoseEstimate.pose;
-    if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
-
-    double latency = limelightPoseEstimate.latency / 1000;
-
-    swerveDrive.field.getObject("Closest Right").setPose(getClosestTargetPoseRight());
-    swerveDrive.field.getObject("Closest Left").setPose(getClosestTargetPoseLeft());
+  public void periodic(){
+    fuseVisionMeasurements();
+    
     swerveDrive.field.setRobotPose(this.getPose());
-
-    // if(DriverStation.isTeleop() || limelightPoseEstimate.tagCount > 1){
-
-      double timestampSeconds = Timer.getFPGATimestamp() - latency;
-      
-      if(timestampSeconds > 0){
-        swerveDrive.addVisionMeasurement(limelightPose, timestampSeconds); 
-      }
-
-    // }
-  }
-
-  Pose2d getClosestTargetPoseLeft() {
-    return getPose().nearest(targetPose2dsLeft);
-  }
-
-  Pose2d getClosestTargetPoseRight() {
-    return getPose().nearest(targetPose2dsRight);
-  }
+    SmartDashboard.getEntry("Limelight TV Right").setBoolean(LimelightHelpers.getTV("limelight-right"));
+    SmartDashboard.getEntry("Limelight TV Left").setBoolean(LimelightHelpers.getTV("limelight-left"));
+    SmartDashboard.getEntry("Limelight TA Right").setDouble(LimelightHelpers.getTA("limelight-right"));
+    SmartDashboard.getEntry("Limelight TA Left").setDouble(LimelightHelpers.getTA("limelight-left"));
+    SmartDashboard.getEntry("Robot Odometry").setDouble(swerveDrive.getOdometryHeadingNoAprilTags().getDegrees());
+    SmartDashboard.getEntry("Pose Estimator Odometry").setDouble(swerveDrive.getOdometryHeading().getDegrees());
+  } 
 
   @Override
   public void simulationPeriodic()
   {
+  }
+
+  /** Uses a Kalman filter and a couple heuristics to fuse our april tag pose estimator */
+  public void fuseVisionMeasurements(){
+    Pose2d emptyPose = new Pose2d();
+    // This is viewed top down, facing the front of the robot
+    String[] limelightNames = {"limelight-right", "limelight-left"};
+    // Vision fusion
+    for( String limelightName : limelightNames) {
+      LimelightHelpers.SetRobotOrientation(limelightName, swerveDrive.getOdometryHeading().getDegrees(), 0, 0, 0, 0, 0);
+      PoseEstimate limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+
+      if(limelightPoseEstimate == null) return;
+      Pose2d limelightPose = limelightPoseEstimate.pose;
+      if (limelightPose == null || limelightPoseEstimate.tagCount < 1 || limelightPose.equals(emptyPose)) return;
+      double adjustedTime = Timer.getFPGATimestamp() - limelightPoseEstimate.latency / 1000;
+      if(limelightPoseEstimate.avgTagDist > 2.2) return; // Don't use vision if the tags are too far away
+      if(adjustedTime > 0){
+        if(limelightPoseEstimate.tagCount < 2 && limelightPoseEstimate.avgTagDist > 1.3){
+          limelightPose = new Pose2d(
+            limelightPose.getTranslation(),
+            swerveDrive.getOdometryHeading()
+          );
+        }
+        swerveDrive.addVisionMeasurement(limelightPose, adjustedTime);
+      }
+    }
   }
 
   /**
@@ -248,7 +227,7 @@ public class SwerveSubsystem extends SubsystemBase
                   speedsRobotRelative,
                   swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
                   moduleFeedForwards.linearForces()
-                               );
+                              );
             } else
             {
               swerveDrive.setChassisSpeeds(speedsRobotRelative);
@@ -257,12 +236,18 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.3, 0.0, 0.0), // 2.3 // 5.7 // kI was 0.06 but do not use
+              new PIDConstants(DrivebaseConstants.kP_translation_pose, 
+                                DrivebaseConstants.kI_translation_pose, 
+                                DrivebaseConstants.kD_translation_pose),  // these constants can go kys
               // Translation PID constants
-              new PIDConstants(4.0, 0.0, 0.0) 
+              new PIDConstants(DrivebaseConstants.kP_rotation_pose,
+                                DrivebaseConstants.kI_rotation_pose, 
+                                DrivebaseConstants.kD_rotation_pose) 
               // Rotation PID constants
           ),
           config,
+          
+          
           
           // The robot configuration
           () -> {
@@ -279,7 +264,7 @@ public class SwerveSubsystem extends SubsystemBase
           },
           this
           // Reference to this subsystem to set requirements
-                           );
+                          );
 
     } catch (Exception e)
     {
@@ -287,12 +272,64 @@ public class SwerveSubsystem extends SubsystemBase
       e.printStackTrace();
     }
 
-    //Preload PathPlanner Path finding
-    // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
-
     PathfindingCommand.warmupCommand().schedule();
   }
 
+
+  /** Full PID commands with all three parameters
+   */
+  public void followSegment(Setpoint setpoint, Pose2d targetPose, boolean isIntake) {
+    m_pidControllerTheta_pose.enableContinuousInput(-Math.PI, Math.PI);
+    Pose2d pose = getPose();
+    swerveDrive.field.getObject("TargetPose").setPose(targetPose);
+    if(!isIntake){
+      m_pidControllerX_pose.setPID(DrivebaseConstants.kP_translation_pose, 
+                            DrivebaseConstants.kI_translation_pose, 
+                            DrivebaseConstants.kD_translation_pose);
+      m_pidControllerY_pose.setPID(DrivebaseConstants.kP_translation_pose, 
+                            DrivebaseConstants.kI_translation_pose, 
+                            DrivebaseConstants.kD_translation_pose);
+    }
+    else{
+      m_pidControllerX_pose.setPID(DrivebaseConstants.kP_translation_intake, 
+                            DrivebaseConstants.kI_translation_intake, 
+                            DrivebaseConstants.kD_translation_intake);
+      m_pidControllerY_pose.setPID(DrivebaseConstants.kP_translation_intake, 
+                            DrivebaseConstants.kI_translation_intake, 
+                            DrivebaseConstants.kD_translation_intake);
+    }
+    m_pidControllerTheta_pose.setIZone(0.08);
+    m_pidControllerX_pose.setIZone(0.5);
+    m_pidControllerY_pose.setIZone(0.5);
+
+    ChassisSpeeds targetSpeeds = new ChassisSpeeds( 
+      setpoint.vx + m_pidControllerX_pose.calculate(pose.getX(), setpoint.x), 
+      setpoint.vy + m_pidControllerY_pose.calculate(pose.getY(), setpoint.y),
+      (-1) * (setpoint.omega + m_pidControllerTheta_pose.calculate(pose.getRotation().getRadians(), setpoint.theta))
+    );
+    swerveDrive.driveFieldOriented(targetSpeeds);
+  }
+  
+
+  /** PID output over robot relative theta */
+  public double getRotationOutput(double current){
+    m_pidControllerTheta.enableContinuousInput(-Math.PI, Math.PI);
+    SmartDashboard.getEntry("PID rotation error").setDouble(m_pidControllerTheta.getError());
+    return m_pidControllerTheta.calculate(current, 0);
+  }
+
+  /** PID output over robot relative x */
+  public double getXOutput(double current){
+    SmartDashboard.getEntry("PID X error").setDouble(m_pidControllerX.getError());
+    return m_pidControllerX.calculate(current, 0);
+  }
+
+  /** PID output over robot relative y */
+  public double getYOutput(double current){
+    SmartDashboard.getEntry("PID Y error").setDouble(m_pidControllerY.getError());
+    return m_pidControllerY.calculate(current, 0);
+  }
+  
   /**
    * Get the path follower with events.
    *
@@ -303,40 +340,6 @@ public class SwerveSubsystem extends SubsystemBase
   {
     // Create a path following command using AutoBuilder. This will also trigger event markers.
     return new PathPlannerAuto(pathName);
-  }
-
-  /**
-   * Use PathPlanner Path finding to go to a point on the field.
-   *
-   * @param pose Target {@link Pose2d} to go to.
-   * @return PathFinding command
-   */
-  public Command driveToPose(Pose2d pose)
-  {
-    System.out.println("Driving to pose: " + pose);
-
-  // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-        1, 1.5,
-        Units.degreesToRadians(200), Units.degreesToRadians(200));
-
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        pose,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     );
-  }
-
-
-
-
-  public Command driveToNearestPoseLeft() {
-    return driveToPose(getClosestTargetPoseLeft());
-  }
-
-  public Command driveToNearestPoseRight(){
-    return driveToPose(getClosestTargetPoseRight());
   }
 
   /**
@@ -403,6 +406,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public Command sysIdDriveMotorCommand()
   {
+    System.out.println("Running SysID command!");
     return SwerveDriveTest.generateSysIdCommand(
         SwerveDriveTest.setDriveSysIdRoutine(
             new Config(),
@@ -432,7 +436,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command centerModulesCommand()
   {
     return run(() -> Arrays.asList(swerveDrive.getModules())
-                           .forEach(it -> it.setAngle(0.0)));
+                          .forEach(it -> it.setAngle(0.0)));
   }
 
   /**
@@ -586,15 +590,18 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
-  public void resetOdometryToLimelight() {
-    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+  public void updateOdometryWithVision(String limelightName) {
+    Pose2d emptyPose = new Pose2d();
+    PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     if (poseEstimate == null) return;
     
     Pose2d pose = poseEstimate.pose;
 
     if (pose == null || pose.equals(emptyPose)) return;
-
-    resetOdometry(pose);
+    if(!DriverStation.isTeleop()){
+      resetOdometry(pose);
+      swerveDrive.setGyro(new Rotation3d(0, 0, pose.getRotation().getRadians()));
+    }
   }
 
   /**

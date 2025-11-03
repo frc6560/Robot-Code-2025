@@ -7,15 +7,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.team6560.frc2025.Constants;
-import com.team6560.frc2025.ManualControls;
 import com.team6560.frc2025.Constants.ClimbConstants;
+import com.team6560.frc2025.controls.XboxControls;
 
-import static com.team6560.frc2025.utility.NetworkTable.NtValueDisplay.ntDispTab;
-
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
 
 // range of motion: 125.96 deg
 // GR: 1.5 --> motor spins 188.94 deg
@@ -34,7 +29,6 @@ public class Climb extends SubsystemBase {
 
     // encoder moves in same direction as motor1
     private CANcoder absoluteEncoder;
-    private final double initialEncoderPos = 0;
     private TalonFXConfiguration fxConfig;
 
     // negative values handled in function logic
@@ -47,7 +41,7 @@ public class Climb extends SubsystemBase {
 
     // public State state;
 
-    public Climb(ManualControls controls) { 
+    public Climb(XboxControls controls) { 
 
         this.motor1 = new TalonFX(ClimbConstants.MOTOR_1_ID, "Canivore");
         this.motor2 = new TalonFX(ClimbConstants.MOTOR_2_ID, "Canivore");
@@ -70,17 +64,6 @@ public class Climb extends SubsystemBase {
     @Override
     public void periodic() {
         ntPos.setDouble(this.getEncoderPos());
-        // System.out.println(this.state);
-        // System.out.println(this.getEncoderPos());
-        // if (this.state == State.STATIC) {
-        //     stop();
-        // } else if (this.state == State.UP) {
-        //     up();
-        // } else if (this.state == State.DOWN) {
-        //     down();
-        // } else {
-        //     stop();
-        // }
     }
 
     public void resetEncoderPos() {

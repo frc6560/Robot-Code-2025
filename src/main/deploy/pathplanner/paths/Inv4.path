@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.9679303278688525,
-        "y": 3.0480020491803272
+        "x": 2.9088707502080893,
+        "y": 4.165148905874887
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3249303278688527,
-        "y": 0.7442520491803264
+        "x": 2.7273883706676094,
+        "y": 3.22001655058481
       },
       "isLocked": false,
       "linkedName": "Inv4"
     },
     {
       "anchor": {
-        "x": 0.6593237704918034,
-        "y": 0.21890368852459005
+        "x": 1.3847110098447464,
+        "y": 0.8252065248826296
       },
       "prevControl": {
-        "x": 3.2525737704918027,
-        "y": 2.51640368852459
+        "x": 3.0443247251225243,
+        "y": 0.7828718171280002
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.0,
-    "maxAcceleration": 3.75,
+    "maxAcceleration": 3.7,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

@@ -3,15 +3,18 @@
   "robotLength": 0.838,
   "holonomicMode": true,
   "pathFolders": [
+    "4pleft",
+    "HueAuto2.5Bottom",
     "HueAuto2.5Top",
-    "HueAuto2.5Bottom"
+    "4pright"
   ],
   "autoFolders": [
+    "AeroAutoNoProcessor",
     "KianBottom",
-    "AeroAutoNoProcessor"
+    "New Folder"
   ],
   "defaultMaxVel": 5.0,
-  "defaultMaxAccel": 3.75,
+  "defaultMaxAccel": 3.7,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
@@ -35,6 +38,7 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.064,
   "robotFeatures": [
-    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.419,\"y\":0.306},\"end\":{\"x\":0.419,\"y\":0.306},\"strokeWidth\":0.02}}"
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.419,\"y\":0.306},\"end\":{\"x\":0.419,\"y\":0.306},\"strokeWidth\":0.02}}",
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.419,\"y\":0.3979},\"end\":{\"x\":0.419,\"y\":0.398},\"strokeWidth\":0.02}}"
   ]
 }
