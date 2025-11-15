@@ -210,20 +210,13 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
             () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < ElevatorConstants.kElevatorTolerance
                   && Math.abs(wrist.getWristPosition() - WristConstants.WristStates.S_L2) < 5.0)
         );
-        final Command backUp = Commands.defer(
+        final Command backUp = Commands.run(
         () -> {
-            AutoAlignPath backupPath = new AutoAlignPath(
-                drivetrain.getPose(),  // Gets CURRENT pose at execution time
-                get_backpuPose2d(targetPose),
-                DrivebaseConstants.kMaxAlignmentVelocity, 
-                DrivebaseConstants.kMaxAlignmentAcceleration,
-                DrivebaseConstants.kMaxOmega,
-                DrivebaseConstants.kMaxAlpha
-            );
-            return getFollowPath(backupPath, 0);
+            // Move backward at -0.5 m/s in robot-relative coordinates
+            drivetrain.drive(new ChassisSpeeds(-0.2, 0, 0));
         },
-        java.util.Set.of(drivetrain)  // Required subsystem set
-    );
+        drivetrain
+    ).withTimeout(1.0);
         return Commands.sequence(backUp, deactuateSuperstructure).withTimeout(3);
     }
 
