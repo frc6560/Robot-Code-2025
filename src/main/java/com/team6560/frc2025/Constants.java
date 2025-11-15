@@ -158,7 +158,7 @@ public final class Constants {
     public static final Pose2d RIGHT_BLUE = new Pose2d(BLUE_X, 2.636, Rotation2d.fromDegrees(0));
     public static final Pose2d CENTER_BLUE = new Pose2d(BLUE_X, 4.0, Rotation2d.fromDegrees(0));
 
-    public static final double Elevator_top_algae = 8.15;
+    public static final double Elevator_top_algae = 8.2;
     public static final double Wrist_top_algae = 148.5;
     public static final double Elevator_low_algae = 1.51;
     public static final double Wrist_low_algae = 148.5;
