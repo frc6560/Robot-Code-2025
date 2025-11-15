@@ -186,13 +186,13 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
 
     /** Deactuates the superstructure in teleop for driver QOL */
     public Command getDeactuationCommand(){
-        path = new AutoAlignPath(
-            drivetrain.getPose(),
-            get_backpuPose2d(targetPose),
-            DrivebaseConstants.kMaxAlignmentVelocity, 
-            DrivebaseConstants.kMaxAlignmentAcceleration,
-            DrivebaseConstants.kMaxOmega,
-            DrivebaseConstants.kMaxAlpha);
+        // path = new AutoAlignPath(
+        //     drivetrain.getPose(),
+        //     get_backpuPose2d(targetPose),
+        //     DrivebaseConstants.kMaxAlignmentVelocity, 
+        //     DrivebaseConstants.kMaxAlignmentAcceleration,
+        //     DrivebaseConstants.kMaxOmega,
+        //     DrivebaseConstants.kMaxAlpha);
         final Command deactuateSuperstructure = new FunctionalCommand(
             () -> {
 
@@ -210,7 +210,20 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
             () -> (Math.abs(elevator.getElevatorHeight() - ElevatorConstants.ElevatorStates.STOW) < ElevatorConstants.kElevatorTolerance
                   && Math.abs(wrist.getWristPosition() - WristConstants.WristStates.S_L2) < 5.0)
         );
-        final Command backUp = getFollowPath(path, 0);
+        final Command backUp = Commands.defer(
+        () -> {
+            AutoAlignPath backupPath = new AutoAlignPath(
+                drivetrain.getPose(),  // Gets CURRENT pose at execution time
+                get_backpuPose2d(targetPose),
+                DrivebaseConstants.kMaxAlignmentVelocity, 
+                DrivebaseConstants.kMaxAlignmentAcceleration,
+                DrivebaseConstants.kMaxOmega,
+                DrivebaseConstants.kMaxAlpha
+            );
+            return getFollowPath(backupPath, 0);
+        },
+        java.util.Set.of(drivetrain)  // Required subsystem set
+    );
         return Commands.sequence(backUp, deactuateSuperstructure).withTimeout(3);
     }
 
