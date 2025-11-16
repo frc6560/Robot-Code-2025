@@ -21,7 +21,7 @@ This is the Charging Champions robot code for 2025.
 - [@Kevin Chou](https://github.com/kevinchou1122)
 - [@Aneya Patel](https://github.com/aneyap)
 - [@Aleksandr Naganov](https://github.com/nagan319)
-
+- [@Anish Kumar](https://github.com/AnishKumar-gesgts)
 
 
 
