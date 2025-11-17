@@ -200,7 +200,7 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
             },
             () -> { 
                 // Retract superstructure to stow position
-                wrist.setMotorPosition(WristConstants.WristStates.S_L2);
+                wrist.setMotorPosition(WristConstants.WristStates.PICKUP);
                 elevator.setElevatorPosition(ElevatorConstants.ElevatorStates.STOW);
             },
             (interrupted) -> {
@@ -217,7 +217,7 @@ public class AlgaeDescoreCommand extends SequentialCommandGroup {
         },
         drivetrain
     ).withTimeout(1.0);
-        return Commands.sequence(backUp, deactuateSuperstructure).withTimeout(3);
+        return Commands.parallel(backUp, deactuateSuperstructure).withTimeout(3);
     }
 
     /** Gets the prescore for a specific Pose2d */
